@@ -3,7 +3,7 @@ package com.joshualorett.nebula
 import retrofit2.Retrofit
 
 /**
- * Retrofit instance for Nasa Api.
+ * Retrofit instance for Nasa API.
  * Created by Joshua on 1/7/2020.
  */
 object NasaRetrofitClient: RetrofitServiceDelegate {
