@@ -1,6 +1,6 @@
 package com.joshualorett.nebula.apod
 
-import com.joshualorett.nebula.shared.Result
+import com.joshualorett.nebula.shared.Resource
 import java.util.*
 
 /**
@@ -8,13 +8,13 @@ import java.util.*
  * Created by Joshua on 1/8/2020.
  */
 class ApodRepository(private val apodDataSource: ApodDataSource) {
-    suspend fun getApod(date: Date): Result<Apod> {
-        Result.loading()
+    suspend fun getApod(date: Date): Resource<Apod> {
+        Resource.loading()
         val response = apodDataSource.getApod(date)
         return if(response.isSuccessful) {
-            Result.success(response.body())
+            Resource.success(response.body())
         } else {
-            Result.error(response.errorBody().toString())
+            Resource.error(response.errorBody().toString())
         }
     }
 }
