@@ -36,7 +36,7 @@ class ApodRepositoryTest {
             "https://example.com/hd")
         `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApod))
         val resource = repository.getApod(testDate)
-        assertEquals(Resource.success(mockApod), resource)
+        assertEquals(Resource.Success(mockApod), resource)
         assertTrue(resource.status == Success)
     }
 

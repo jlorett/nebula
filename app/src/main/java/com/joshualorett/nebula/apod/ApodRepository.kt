@@ -9,12 +9,17 @@ import java.util.*
  */
 class ApodRepository(private val apodDataSource: ApodDataSource) {
     suspend fun getApod(date: Date): Resource<Apod> {
-        Resource.loading()
+        Resource.Loading
         val response = apodDataSource.getApod(date)
         return if(response.isSuccessful) {
-            Resource.success(response.body())
+            val apod = response.body()
+            if(apod == null) {
+                Resource.Error("Empty body")
+            } else {
+                Resource.Success(apod)
+            }
         } else {
-            Resource.error(response.errorBody().toString())
+            Resource.Error(response.errorBody().toString())
         }
     }
 }

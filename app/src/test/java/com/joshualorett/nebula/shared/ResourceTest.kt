@@ -11,16 +11,16 @@ import org.junit.Assert.*
 class ResourceTest {
     @Test
     fun `returns loading`() {
-        assertEquals(Resource.loading().status, Status.Loading)
+        assertEquals(Resource.Loading.status, Status.Loading)
     }
 
     @Test
     fun `returns error`() {
-        assertEquals(Resource.error("", null).status, Status.Error)
+        assertEquals(Resource.Error("", null).status, Status.Error)
     }
 
     @Test
     fun `returns success`() {
-        assertEquals(Resource.success(1).status, Status.Success)
+        assertEquals(Resource.Success(1).status, Status.Success)
     }
 }
