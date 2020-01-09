@@ -5,8 +5,6 @@ import com.joshualorett.nebula.shared.Status.*
 /**
  * A data class that holds a value with its current [Status].
  * @param status the current status of the resource.
- * @param data the data this resource holds
- * @param message the error message.
  * Created by Joshua on 1/8/2020.
  */
 sealed class Resource<out T>(val status: Status) {
