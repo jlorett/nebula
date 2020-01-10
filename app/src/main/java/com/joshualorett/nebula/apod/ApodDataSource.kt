@@ -1,5 +1,6 @@
 package com.joshualorett.nebula.apod
 
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import java.util.*
 
@@ -8,5 +9,5 @@ import java.util.*
  * Created by Joshua on 1/5/2020.
  */
 interface ApodDataSource {
-    suspend fun getApod(date: Date): Response<Apod>
+    suspend fun getApod(date: Date): Flow<Response<Apod>>
 }

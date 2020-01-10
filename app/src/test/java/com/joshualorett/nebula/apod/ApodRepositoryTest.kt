@@ -3,6 +3,8 @@ package com.joshualorett.nebula.apod
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.shared.Status.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
@@ -34,8 +36,8 @@ class ApodRepositoryTest {
         val mockApod = Apod("2000-01-01", "apod", "testing",
             "jpg", "v1", "https://example.com",
             "https://example.com/hd")
-        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApod))
-        val resource = repository.getApod(testDate)
+        `when`(apodDataSource.getApod(testDate)).thenReturn(flowOf(Response.success(mockApod)))
+        val resource = repository.getApod(testDate).first()
         assertEquals(Resource.Success(mockApod), resource)
         assertTrue(resource.status == Success)
     }
@@ -43,8 +45,8 @@ class ApodRepositoryTest {
     @Test
     fun `returns unsuccessful resource`() = runBlockingTest {
         val errorResponse: Response<Apod> = Response.error(500, "Error".toResponseBody())
-        `when`(apodDataSource.getApod(testDate)).thenReturn(errorResponse)
-        val resource = repository.getApod(testDate)
+        `when`(apodDataSource.getApod(testDate)).thenReturn(flowOf(errorResponse))
+        val resource = repository.getApod(testDate).first()
         assertTrue(resource.status == Error)
     }
 }

@@ -1,6 +1,10 @@
 package com.joshualorett.nebula.apod
 
 import com.joshualorett.nebula.shared.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.switchMap
 import java.util.*
 
 /**
@@ -8,18 +12,19 @@ import java.util.*
  * Created by Joshua on 1/8/2020.
  */
 class ApodRepository(private val apodDataSource: ApodDataSource) {
-    suspend fun getApod(date: Date): Resource<Apod> {
+    suspend fun getApod(date: Date): Flow<Resource<Apod>> {
         Resource.Loading
-        val response = apodDataSource.getApod(date)
-        return if(response.isSuccessful) {
-            val apod = response.body()
-            if(apod == null) {
-                Resource.Error("Empty body")
+        return apodDataSource.getApod(date).map { response ->
+            if(response.isSuccessful) {
+                val apod = response.body()
+                if(apod == null) {
+                    Resource.Error<Apod>("Empty body")
+                } else {
+                    Resource.Success(apod)
+                }
             } else {
-                Resource.Success(apod)
+                Resource.Error(response.errorBody().toString())
             }
-        } else {
-            Resource.Error(response.errorBody().toString())
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.joshualorett.nebula.apod
 
 import com.joshualorett.nebula.RetrofitServiceDelegate
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import java.util.*
 
@@ -12,11 +14,15 @@ class ApodNetworkDataSource(private val retrofitServiceDelegate: RetrofitService
     // The first APOD was 1995-06-16, month is 0 based.
     private val earliestDate: Date = Date(1995, 5, 16)
 
-    override suspend fun getApod(date: Date): Response<Apod> {
-        if(date.before(earliestDate)) {
+    override suspend fun getApod(date: Date): Flow<Response<Apod>> {
+        if (date.before(earliestDate)) {
             throw IllegalArgumentException("Date can't be before 1995-06-16")
         } else {
-            return retrofitServiceDelegate.create(ApodService::class.java).getApod(key, date.toString())
+            return flow {
+                val response = retrofitServiceDelegate.create(ApodService::class.java)
+                    .getApod(key, date.toString())
+                emit(response)
+            }
         }
     }
 }
