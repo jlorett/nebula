@@ -10,17 +10,20 @@ import org.junit.Assert.*
  */
 class ResourceTest {
     @Test
-    fun `returns loading`() {
-        assertEquals(Resource.Loading.status, Status.Loading)
+    fun `loading not successful`() {
+        val resource = Resource.Loading
+        assertFalse(resource.successful())
     }
 
     @Test
-    fun `returns error`() {
-        assertEquals(Resource.Error("", null).status, Status.Error)
+    fun `error not successful`() {
+        val resource = Resource.Error(null, 1)
+        assertFalse(resource.successful())
     }
 
     @Test
-    fun `returns success`() {
-        assertEquals(Resource.Success(1).status, Status.Success)
+    fun `success is successful`() {
+        val resource = Resource.Success(1)
+        assertTrue(resource.successful())
     }
 }

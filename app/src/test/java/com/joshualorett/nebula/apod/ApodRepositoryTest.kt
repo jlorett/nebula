@@ -1,7 +1,6 @@
 package com.joshualorett.nebula.apod
 
 import com.joshualorett.nebula.shared.Resource
-import com.joshualorett.nebula.shared.Status.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -39,7 +38,7 @@ class ApodRepositoryTest {
         `when`(apodDataSource.getApod(testDate)).thenReturn(flowOf(Response.success(mockApod)))
         val resource = repository.getApod(testDate).first()
         assertEquals(Resource.Success(mockApod), resource)
-        assertTrue(resource.status == Success)
+        assertTrue(resource is Resource.Success)
     }
 
     @Test
@@ -47,6 +46,6 @@ class ApodRepositoryTest {
         val errorResponse: Response<Apod> = Response.error(500, "Error".toResponseBody())
         `when`(apodDataSource.getApod(testDate)).thenReturn(flowOf(errorResponse))
         val resource = repository.getApod(testDate).first()
-        assertTrue(resource.status == Error)
+        assertTrue(resource is Resource.Error)
     }
 }
