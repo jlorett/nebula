@@ -6,7 +6,7 @@ package com.joshualorett.nebula.shared
  */
 sealed class Resource<out T> {
     data class Success<out T>(val data: T): Resource<T>()
-    data class Error<out T>(val message: String? = null, val data: T? = null) : Resource<T>()
+    data class Error(val message: String? = null) : Resource<Nothing>()
     object Loading : Resource<Nothing>()
 
     fun successful() : Boolean {

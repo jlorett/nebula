@@ -23,7 +23,7 @@ import java.util.*
 class ApodRepositoryTest {
     private lateinit var repository: ApodRepository
     private val apodDataSource = mock(ApodDataSource::class.java)
-    private val testDate = Date(2000, 0, 1)
+    private val testDate = Date(2000-1900, 0, 1)
 
     @Before
     fun setUp() {
@@ -46,6 +46,12 @@ class ApodRepositoryTest {
         val errorResponse: Response<Apod> = Response.error(500, "Error".toResponseBody())
         `when`(apodDataSource.getApod(testDate)).thenReturn(flowOf(errorResponse))
         val resource = repository.getApod(testDate).first()
+        assertTrue(resource is Resource.Error)
+    }
+
+    @Test
+    fun `returns error if date too early`() = runBlockingTest {
+        val resource = repository.getApod(Date(1995-1900, 0, 15)).first()
         assertTrue(resource is Resource.Error)
     }
 }

@@ -32,11 +32,6 @@ class ApodNetworkDataSourceTest {
         apodDataSource = ApodNetworkDataSource(mockRetrofitServiceDelegate, testKey)
     }
 
-    @Test(expected = IllegalArgumentException::class)
-    fun `throw exception if date is before first apod`() = runBlockingTest {
-        apodDataSource.getApod(Date(1995, 0, 15))
-    }
-
     @Test
     fun `api returns successful response`() = runBlockingTest {
         val mockApod = Apod("2000-01-01", "apod", "testing",

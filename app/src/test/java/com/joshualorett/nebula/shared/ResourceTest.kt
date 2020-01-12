@@ -17,7 +17,7 @@ class ResourceTest {
 
     @Test
     fun `error not successful`() {
-        val resource = Resource.Error(null, 1)
+        val resource = Resource.Error(null)
         assertFalse(resource.successful())
     }
 
