@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val dataSource = ApodNetworkDataSource(NasaRetrofitClient, "")
+        val dataSource = ApodNetworkDataSource(NasaRetrofitClient, getString(R.string.key))
         val repo = ApodRepository(dataSource)
 
         val viewModel = ViewModelProviders.of(this,
