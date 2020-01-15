@@ -29,7 +29,9 @@ class MainActivity : AppCompatActivity() {
             status.text = error
         })
         viewModel.loading.observe(this, Observer { loading ->
-            status.text = "Loading"
+            if(loading) {
+                status.text = "Loading"
+            }
         })
     }
 }

@@ -5,6 +5,7 @@ import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -24,18 +25,28 @@ class TodayViewModel(private val apodRepository: ApodRepository, private val tod
 
     init {
         viewModelScope.launch {
-            _loading.value = true
-            apodRepository.getApod(todaysDate).collect { resource ->
+            apodRepository.getApod(todaysDate)
+                .onStart { emit(Resource.Loading) }
+                .collect { resource ->
                 when(resource) {
-                    is Resource.Success -> _apod.value = resource.data
-                    is Resource.Error -> _error.value = resource.message ?: "Error fetching the picture of the day."
-                    is Resource.Loading -> _loading.value = true
+                    is Resource.Success -> {
+                        _apod.value = resource.data
+                        _loading.value = false
+                    }
+                    is Resource.Error -> {
+                        _error.value = resource.message ?: "Error fetching the picture of the day."
+                        _loading.value = false
+                    }
+                    is Resource.Loading -> {
+                        _loading.value = true
+                    }
                 }
             }
         }
     }
 
-    class TodayViewModelFactory(private val apodRepository: ApodRepository, private val todaysDate: Date = Date(System.currentTimeMillis())): ViewModelProvider.Factory {
+    class TodayViewModelFactory(private val apodRepository: ApodRepository,
+                                private val todaysDate: Date = Date(System.currentTimeMillis())): ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return TodayViewModel(apodRepository, todaysDate) as T
         }
