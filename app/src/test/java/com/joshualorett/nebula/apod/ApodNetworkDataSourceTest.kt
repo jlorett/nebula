@@ -12,7 +12,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import retrofit2.Response
-import java.util.*
+import java.time.LocalDate
 
 /**
  * Test [ApodNetworkDataSource].
@@ -21,7 +21,7 @@ import java.util.*
 @ExperimentalCoroutinesApi
 class ApodNetworkDataSourceTest {
     private val testKey = "testKey"
-    private val testDate = Date(2000, 0, 1)
+    private val testDate = LocalDate.of(2000, 1, 1)
     private val mockRetrofitServiceDelegate = mock(RetrofitServiceDelegate::class.java)
     private val mockService = mock(ApodService::class.java)
     private lateinit var apodDataSource: ApodDataSource

@@ -7,13 +7,13 @@ import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import java.util.*
+import java.time.LocalDate
 
 /**
  * [ViewModel] show today's Astronomy Picture of the Day.
  * Created by Joshua on 1/11/2020.
  */
-class TodayViewModel(private val apodRepository: ApodRepository, private val todaysDate: Date): ViewModel() {
+class TodayViewModel(private val apodRepository: ApodRepository, private val todaysDate: LocalDate): ViewModel() {
     private val _apod: MutableLiveData<Apod> = MutableLiveData()
     val apod: LiveData<Apod> = _apod
 
@@ -46,7 +46,7 @@ class TodayViewModel(private val apodRepository: ApodRepository, private val tod
     }
 
     class TodayViewModelFactory(private val apodRepository: ApodRepository,
-                                private val todaysDate: Date = Date(System.currentTimeMillis())): ViewModelProvider.Factory {
+                                private val todaysDate: LocalDate = LocalDate.now()): ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return TodayViewModel(apodRepository, todaysDate) as T
         }

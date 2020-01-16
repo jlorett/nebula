@@ -18,6 +18,7 @@ import org.junit.Rule
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import retrofit2.Response
+import java.time.LocalDate
 import java.util.*
 
 /**
@@ -35,7 +36,7 @@ class TodayViewModelTest {
     val test = InstantTaskExecutorRule()
 
     private lateinit var viewModel: TodayViewModel
-    private val testDate = Date(2000-1900, 0, 1)
+    private val testDate = LocalDate.of(2000, 1, 1)
 
     @Test
     fun `loading state hit`() = coroutineRule.dispatcher.runBlockingTest {

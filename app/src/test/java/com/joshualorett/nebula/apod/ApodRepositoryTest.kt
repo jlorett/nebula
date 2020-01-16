@@ -13,7 +13,7 @@ import org.junit.Assert.*
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import retrofit2.Response
-import java.util.*
+import java.time.LocalDate
 
 /**
  * Test [ApodRepository].
@@ -23,7 +23,7 @@ import java.util.*
 class ApodRepositoryTest {
     private lateinit var repository: ApodRepository
     private val apodDataSource = mock(ApodDataSource::class.java)
-    private val testDate = Date(2000-1900, 0, 1)
+    private val testDate = LocalDate.of(2000, 1, 1)
 
     @Before
     fun setUp() {
@@ -51,7 +51,7 @@ class ApodRepositoryTest {
 
     @Test
     fun `returns error if date too early`() = runBlockingTest {
-        val resource = repository.getApod(Date(1995-1900, 0, 15)).first()
+        val resource = repository.getApod(LocalDate.of(1995, 1, 15)).first()
         assertTrue(resource is Resource.Error)
     }
 }
