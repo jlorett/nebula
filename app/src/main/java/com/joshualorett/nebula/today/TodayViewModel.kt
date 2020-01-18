@@ -4,8 +4,6 @@ import androidx.lifecycle.*
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.Resource
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -25,21 +23,19 @@ class TodayViewModel(private val apodRepository: ApodRepository, private val tod
 
     init {
         viewModelScope.launch {
-            apodRepository.getApod(todaysDate)
-                .onStart { emit(Resource.Loading) }
-                .collect { resource ->
-                when(resource) {
-                    is Resource.Success -> {
-                        _apod.value = resource.data
-                        _loading.value = false
-                    }
-                    is Resource.Error -> {
-                        _error.value = resource.message ?: "Error fetching the picture of the day."
-                        _loading.value = false
-                    }
-                    is Resource.Loading -> {
-                        _loading.value = true
-                    }
+            _loading.value = true
+            val resource = apodRepository.getApod(todaysDate)
+            when(resource) {
+                is Resource.Success -> {
+                    _apod.value = resource.data
+                    _loading.value = false
+                }
+                is Resource.Error -> {
+                    _error.value = resource.message ?: "Error fetching the picture of the day."
+                    _loading.value = false
+                }
+                is Resource.Loading -> {
+                    _loading.value = true
                 }
             }
         }

@@ -1,8 +1,6 @@
 package com.joshualorett.nebula.apod
 
 import com.joshualorett.nebula.RetrofitServiceDelegate
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import java.time.LocalDate
 
@@ -11,12 +9,10 @@ import java.time.LocalDate
  * Created by Joshua on 1/5/2020.
  */
 class ApodNetworkDataSource(private val retrofitServiceDelegate: RetrofitServiceDelegate, private val key: String): ApodDataSource {
-    override suspend fun getApod(date: LocalDate): Flow<Response<Apod>> {
-        return flow {
-            val dateStr = date.toString()
-            val response = retrofitServiceDelegate.create(ApodService::class.java)
-                .getApod(key, dateStr)
-            emit(response)
-        }
+    override suspend fun getApod(date: LocalDate): Response<ApodResponse> {
+        val dateStr = date.toString()
+        val response = retrofitServiceDelegate.create(ApodService::class.java)
+            .getApod(key, dateStr)
+        return response
     }
 }

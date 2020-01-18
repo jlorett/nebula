@@ -12,5 +12,5 @@ import retrofit2.http.Query
  */
 interface ApodService {
     @GET("planetary/apod")
-    suspend fun getApod(@Query("api_key") key: String, @Query("date") date: String): Response<Apod>
+    suspend fun getApod(@Query("api_key") key: String, @Query("date") date: String): Response<ApodResponse>
 }

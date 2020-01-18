@@ -2,7 +2,6 @@ package com.joshualorett.nebula.apod
 
 import com.joshualorett.nebula.RetrofitServiceDelegate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.*
@@ -34,20 +33,20 @@ class ApodNetworkDataSourceTest {
 
     @Test
     fun `api returns successful response`() = runBlockingTest {
-        val mockApod = Apod("2000-01-01", "apod", "testing",
+        val mockApodResponse = ApodResponse(0,"2000-01-01", "apod", "testing",
             "jpg", "v1", "https://example.com",
             "https://example.com/hd")
-        val success: Response<Apod> = Response.success(mockApod)
+        val success: Response<ApodResponse> = Response.success(mockApodResponse)
         `when`(mockService.getApod(anyString(), anyString())).thenReturn(success)
-        val result = apodDataSource.getApod(testDate).first()
+        val result = apodDataSource.getApod(testDate)
         assertTrue(result.isSuccessful)
     }
 
     @Test
     fun `api error returns unsuccessful response`() = runBlockingTest {
-        val error: Response<Apod> = Response.error(500, "Error".toResponseBody())
+        val error: Response<ApodResponse> = Response.error(500, "Error".toResponseBody())
         `when`(mockService.getApod(anyString(), anyString())).thenReturn(error)
-        val result = apodDataSource.getApod(testDate).first()
+        val result = apodDataSource.getApod(testDate)
         assertFalse(result.isSuccessful)
     }
 }

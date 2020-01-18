@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.joshualorett.nebula.apod.ApodDatabaseProvider
 import com.joshualorett.nebula.apod.ApodNetworkDataSource
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.today.TodayViewModel
@@ -16,7 +17,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val dataSource = ApodNetworkDataSource(NasaRetrofitClient, getString(R.string.key))
-        val repo = ApodRepository(dataSource)
+        val apodDao = ApodDatabaseProvider.getDatabase(applicationContext).apodDao()
+        val repo = ApodRepository(dataSource, apodDao)
 
         val viewModel = ViewModelProviders.of(this,
             TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
