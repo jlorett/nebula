@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Nebula</string>
+    <string name="main_picture_desc">Picture of the day.</string>
 </resources>

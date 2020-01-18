@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.joshualorett.nebula.apod.ApodDatabaseProvider
 import com.joshualorett.nebula.apod.ApodNetworkDataSource
 import com.joshualorett.nebula.apod.ApodRepository
@@ -23,16 +25,21 @@ class MainActivity : AppCompatActivity() {
         val viewModel = ViewModelProviders.of(this,
             TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
         viewModel.apod.observe(this, Observer { apod ->
-            status.text = """${apod.title}
-                |${apod.explanation}
-            """.trimMargin()
+            pictureTitle.text = apod.title
+            pictureDescription.text = apod.explanation
+            Glide.with(this)
+                .load(apod.url)
+                .transition(withCrossFade())
+                .into(picture)
         })
         viewModel.error.observe(this, Observer { error ->
-            status.text = error
+            pictureTitle.text = "Error"
+            pictureDescription.text = error
         })
         viewModel.loading.observe(this, Observer { loading ->
             if(loading) {
-                status.text = "Loading"
+                pictureTitle.text = "Loading"
+                pictureDescription.text = ""
             }
         })
     }
