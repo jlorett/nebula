@@ -11,8 +11,7 @@ import java.time.LocalDate
 class ApodNetworkDataSource(private val retrofitServiceDelegate: RetrofitServiceDelegate, private val key: String): ApodDataSource {
     override suspend fun getApod(date: LocalDate): Response<ApodResponse> {
         val dateStr = date.toString()
-        val response = retrofitServiceDelegate.create(ApodService::class.java)
+        return retrofitServiceDelegate.create(ApodService::class.java)
             .getApod(key, dateStr)
-        return response
     }
 }

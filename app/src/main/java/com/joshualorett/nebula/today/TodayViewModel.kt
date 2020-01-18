@@ -24,8 +24,7 @@ class TodayViewModel(private val apodRepository: ApodRepository, private val tod
     init {
         viewModelScope.launch {
             _loading.value = true
-            val resource = apodRepository.getApod(todaysDate)
-            when(resource) {
+            when(val resource = apodRepository.getApod(todaysDate)) {
                 is Resource.Success -> {
                     _apod.value = resource.data
                     _loading.value = false
