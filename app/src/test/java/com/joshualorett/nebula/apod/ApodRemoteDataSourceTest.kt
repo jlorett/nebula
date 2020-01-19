@@ -14,11 +14,11 @@ import retrofit2.Response
 import java.time.LocalDate
 
 /**
- * Test [ApodNetworkDataSource].
+ * Test [ApodRemoteDataSource].
  * Created by Joshua on 1/5/2020.
  */
 @ExperimentalCoroutinesApi
-class ApodNetworkDataSourceTest {
+class ApodRemoteDataSourceTest {
     private val testKey = "testKey"
     private val testDate = LocalDate.of(2000, 1, 1)
     private val mockRetrofitServiceDelegate = mock(RetrofitServiceDelegate::class.java)
@@ -28,7 +28,7 @@ class ApodNetworkDataSourceTest {
     @Before
     fun setup() {
         `when`(mockRetrofitServiceDelegate.create(ApodService::class.java)).thenReturn(mockService)
-        apodDataSource = ApodNetworkDataSource(mockRetrofitServiceDelegate, testKey)
+        apodDataSource = ApodRemoteDataSource(mockRetrofitServiceDelegate, testKey)
     }
 
     @Test
