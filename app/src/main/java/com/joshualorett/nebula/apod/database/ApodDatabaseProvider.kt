@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.apod
+package com.joshualorett.nebula.apod.database
 
 import android.content.Context
 import androidx.room.Room
@@ -11,7 +11,7 @@ object ApodDatabaseProvider {
     private lateinit var apodDatabase: ApodDatabase
 
     fun getDatabase(applicationContext: Context): ApodDatabase {
-        if(!::apodDatabase.isInitialized) {
+        if(!ApodDatabaseProvider::apodDatabase.isInitialized) {
             apodDatabase = Room.databaseBuilder(
                 applicationContext,
                 ApodDatabase::class.java, "apod"

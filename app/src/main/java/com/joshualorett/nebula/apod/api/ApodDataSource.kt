@@ -1,5 +1,6 @@
-package com.joshualorett.nebula.apod
+package com.joshualorett.nebula.apod.api
 
+import com.joshualorett.nebula.apod.api.ApodResponse
 import retrofit2.Response
 import java.time.LocalDate
 

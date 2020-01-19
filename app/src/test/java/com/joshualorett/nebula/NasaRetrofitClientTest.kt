@@ -1,6 +1,6 @@
 package com.joshualorett.nebula
 
-import com.joshualorett.nebula.apod.ApodService
+import com.joshualorett.nebula.apod.api.ApodService
 import org.junit.Test
 
 import org.junit.Assert.*

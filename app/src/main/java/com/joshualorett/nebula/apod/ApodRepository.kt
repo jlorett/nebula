@@ -1,5 +1,7 @@
 package com.joshualorett.nebula.apod
 
+import com.joshualorett.nebula.apod.api.ApodDataSource
+import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.shared.Resource
 import java.time.LocalDate
 

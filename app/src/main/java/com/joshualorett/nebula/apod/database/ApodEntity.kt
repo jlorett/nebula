@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.apod
+package com.joshualorett.nebula.apod.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

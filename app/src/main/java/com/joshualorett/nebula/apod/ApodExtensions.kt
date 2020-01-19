@@ -1,5 +1,8 @@
 package com.joshualorett.nebula.apod
 
+import com.joshualorett.nebula.apod.api.ApodResponse
+import com.joshualorett.nebula.apod.database.ApodEntity
+
 /**
  * Extensions for [ApodResponse].
  * Created by Joshua on 1/16/2020.
@@ -17,5 +20,13 @@ fun ApodEntity.toApod(): Apod {
 
 // Convert an Apod to an ApodEntity.
 fun Apod.toEntity(): ApodEntity {
-    return ApodEntity(this.id, this.date, this.title, this.explanation, this.url, this.hdurl, this.copyright)
+    return ApodEntity(
+        this.id,
+        this.date,
+        this.title,
+        this.explanation,
+        this.url,
+        this.hdurl,
+        this.copyright
+    )
 }

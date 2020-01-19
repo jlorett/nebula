@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.apod
+package com.joshualorett.nebula.apod.api
 
 import retrofit2.Response
 import retrofit2.http.GET

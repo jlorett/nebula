@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.apod
+package com.joshualorett.nebula.apod.api
 
 /**
  * Astronomy Picture of the Day from [Nasa's Astronomy Picture of the Day](https://apod.nasa.gov/apod/astropix.html).

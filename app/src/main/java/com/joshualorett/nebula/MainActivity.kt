@@ -6,8 +6,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
-import com.joshualorett.nebula.apod.ApodDatabaseProvider
-import com.joshualorett.nebula.apod.ApodRemoteDataSource
+import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
+import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.today.TodayViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -18,7 +18,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val dataSource = ApodRemoteDataSource(NasaRetrofitClient, getString(R.string.key))
+        val dataSource = ApodRemoteDataSource(
+            NasaRetrofitClient,
+            getString(R.string.key)
+        )
         val apodDao = ApodDatabaseProvider.getDatabase(applicationContext).apodDao()
         val repo = ApodRepository(dataSource, apodDao)
 

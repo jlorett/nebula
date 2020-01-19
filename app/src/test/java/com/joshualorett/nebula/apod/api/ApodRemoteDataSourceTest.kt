@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.apod
+package com.joshualorett.nebula.apod.api
 
 import com.joshualorett.nebula.RetrofitServiceDelegate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,14 +28,19 @@ class ApodRemoteDataSourceTest {
     @Before
     fun setup() {
         `when`(mockRetrofitServiceDelegate.create(ApodService::class.java)).thenReturn(mockService)
-        apodDataSource = ApodRemoteDataSource(mockRetrofitServiceDelegate, testKey)
+        apodDataSource = ApodRemoteDataSource(
+            mockRetrofitServiceDelegate,
+            testKey
+        )
     }
 
     @Test
     fun `api returns successful response`() = runBlockingTest {
-        val mockApodResponse = ApodResponse(0,"2000-01-01", "apod", "testing",
+        val mockApodResponse = ApodResponse(
+            0, "2000-01-01", "apod", "testing",
             "jpg", "v1", "https://example.com",
-            "https://example.com/hd")
+            "https://example.com/hd"
+        )
         val success: Response<ApodResponse> = Response.success(mockApodResponse)
         `when`(mockService.getApod(anyString(), anyString())).thenReturn(success)
         val result = apodDataSource.getApod(testDate)

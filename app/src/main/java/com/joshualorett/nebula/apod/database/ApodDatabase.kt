@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.apod
+package com.joshualorett.nebula.apod.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

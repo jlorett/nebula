@@ -1,5 +1,8 @@
 package com.joshualorett.nebula.apod
 
+import com.joshualorett.nebula.apod.api.ApodDataSource
+import com.joshualorett.nebula.apod.api.ApodResponse
+import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -23,9 +26,11 @@ class ApodRepositoryTest {
     private val apodDataSource = mock(ApodDataSource::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
     private val testDate = LocalDate.of(2000, 1, 1)
-    private val mockApodResponse = ApodResponse(0,"2000-01-01", "apod", "testing",
+    private val mockApodResponse = ApodResponse(
+        0, "2000-01-01", "apod", "testing",
         "jpg", "v1", "https://example.com",
-        "https://example.com/hd")
+        "https://example.com/hd"
+    )
 
     @Before
     fun setUp() {
