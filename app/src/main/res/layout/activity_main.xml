@@ -1,36 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     tools:context=".MainActivity">
-
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/todayContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <ImageView
-            android:id="@+id/picture"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/main_picture_desc"/>
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/picture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/main_picture_desc"/>
 
-        <TextView
-            android:id="@+id/pictureTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/space_l"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            tools:text="@string/sample_title" />
+            <TextView
+                android:id="@+id/pictureTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/space_l"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                tools:text="@string/sample_title" />
 
-        <TextView
-            android:id="@+id/pictureDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/space_l"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            tools:text="@string/sample_description"/>
-    </LinearLayout>
-</ScrollView>
+            <TextView
+                android:id="@+id/pictureDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/space_l"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                tools:text="@string/sample_description"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/videoLinkBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/videoLinkBtnText"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_margin="@dimen/space_l"
+        android:contentDescription="@string/video_link_btn_desc"
+        app:layout_anchor="@id/todayContainer"
+        app:layout_anchorGravity="bottom|end"
+        app:iconTint="@color/colorPrimaryDark"
+        app:iconTintMode="src_in"
+        app:icon="@drawable/ic_play_arrow_black_24dp"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,5 +1,7 @@
 package com.joshualorett.nebula
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
@@ -9,6 +11,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.ApodRepository
+import com.joshualorett.nebula.shared.OneShotEventObserver
 import com.joshualorett.nebula.today.TodayViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -28,12 +31,18 @@ class MainActivity : AppCompatActivity() {
         val viewModel = ViewModelProviders.of(this,
             TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
         viewModel.apod.observe(this, Observer { apod ->
+            val isPhoto = apod.mediaType == "image"
             pictureTitle.text = apod.title
             pictureDescription.text = apod.explanation
-            Glide.with(this)
-                .load(apod.url)
-                .transition(withCrossFade())
-                .into(picture)
+            if(isPhoto) {
+                videoLinkBtn.hide()
+                Glide.with(this)
+                    .load(apod.url)
+                    .transition(withCrossFade())
+                    .into(picture)
+            } else {
+                videoLinkBtn.show()
+            }
         })
         viewModel.error.observe(this, Observer { error ->
             pictureTitle.text = "Error"
@@ -45,5 +54,19 @@ class MainActivity : AppCompatActivity() {
                 pictureDescription.text = ""
             }
         })
+        viewModel.navigateVideoLink.observe(this, OneShotEventObserver { url ->
+            url?.let {
+                navigateToLink(it)
+            }
+        })
+
+        videoLinkBtn.setOnClickListener { view ->
+            viewModel.videoLinkClicked()
+        }
+    }
+
+    private fun navigateToLink(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 }

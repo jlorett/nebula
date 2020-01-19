@@ -39,7 +39,7 @@ class TodayViewModelTest {
     private val testDate = LocalDate.of(2000, 1, 1)
     private val mockApodResponse = ApodResponse(
         0, "2000-01-01", "apod", "testing",
-        "jpg", "v1", "https://example.com",
+        "image", "v1", "https://example.com",
         "https://example.com/hd"
     )
 
@@ -80,5 +80,35 @@ class TodayViewModelTest {
         val apodRepo = ApodRepository(mockDataSource, mockApodDao)
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
         assertTrue(viewModel.loading.value == false)
+    }
+
+    @Test
+    fun `observe when video links clicked`() = coroutineRule.dispatcher.runBlockingTest {
+        val videoApod = ApodResponse(
+            0, "2000-01-01", "apod", "testing", "video",
+            "v1", "https://example.com",null)
+        `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(videoApod.toApod().toEntity())
+        `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(videoApod))
+        `when`(mockApodDao.insertApod(videoApod.toApod().toEntity())).thenReturn(1L)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao)
+        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
+        viewModel.videoLinkClicked()
+        assertEquals("https://example.com", viewModel.navigateVideoLink.value?.peekContent())
+    }
+
+    @Test
+    fun `don't observe when non-video links clicked`() = coroutineRule.dispatcher.runBlockingTest {
+        val videoApod = ApodResponse(
+            0, "2000-01-01", "apod", "testing", "image",
+            "v1", "https://example.com","https://example.com/hd")
+        `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(videoApod.toApod().toEntity())
+        `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(videoApod))
+        `when`(mockApodDao.insertApod(videoApod.toApod().toEntity())).thenReturn(1L)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao)
+        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
+        viewModel.videoLinkClicked()
+        assertNull(viewModel.navigateVideoLink.value?.peekContent())
     }
 }

@@ -3,6 +3,7 @@ package com.joshualorett.nebula.today
 import androidx.lifecycle.*
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
+import com.joshualorett.nebula.shared.OneShotEvent
 import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -21,6 +22,9 @@ class TodayViewModel(private val apodRepository: ApodRepository, private val tod
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
 
+    private val _navigateVideoLink: MutableLiveData<OneShotEvent<String?>> = MutableLiveData()
+    val navigateVideoLink: LiveData<OneShotEvent<String?>> = _navigateVideoLink
+
     init {
         viewModelScope.launch {
             _loading.value = true
@@ -37,6 +41,13 @@ class TodayViewModel(private val apodRepository: ApodRepository, private val tod
                     _loading.value = true
                 }
             }
+        }
+    }
+
+    fun videoLinkClicked() {
+        val currentApod = _apod.value
+        if(currentApod?.mediaType == "video") {
+            _navigateVideoLink.value = OneShotEvent(currentApod.url)
         }
     }
 
