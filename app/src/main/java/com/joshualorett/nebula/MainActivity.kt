@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         videoLinkBtn.setOnClickListener { view ->
             viewModel.videoLinkClicked()
         }
+        videoLinkBtn.hide()
     }
 
     private fun navigateToLink(url: String) {
