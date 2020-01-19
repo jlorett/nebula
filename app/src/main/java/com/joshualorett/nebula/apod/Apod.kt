@@ -5,4 +5,5 @@ package com.joshualorett.nebula.apod
  * Created by Joshua on 1/4/2020.
  */
 data class Apod(val id: Long, val date: String, val title: String, val explanation: String,
-                val url: String, val hdurl: String? = null, val copyright: String? = null)
+                val mediaType: String, val url: String, val hdurl: String? = null,
+                val copyright: String? = null)
