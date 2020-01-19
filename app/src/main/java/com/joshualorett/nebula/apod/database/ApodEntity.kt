@@ -15,6 +15,6 @@ data class ApodEntity(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "explanation") val explanation: String,
     @ColumnInfo(name = "url") val url: String,
-    @ColumnInfo(name = "hdurl") val hdurl: String,
+    @ColumnInfo(name = "hdurl") val hdurl: String?,
     @ColumnInfo(name = "copyright") val copyright: String?
 )
