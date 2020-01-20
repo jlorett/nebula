@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
                 copyright.visibility = View.GONE
             } else {
                 copyright.visibility = View.VISIBLE
-                val copyrightText = getString(R.string.copyright, apod.copyright)
+                val copyrightText = getString(R.string.today_copyright, apod.copyright)
                 copyright.text = Html.fromHtml(copyrightText, Html.FROM_HTML_MODE_LEGACY)
             }
             if(isPhoto) {
@@ -56,12 +56,12 @@ class MainActivity : AppCompatActivity() {
             }
         })
         viewModel.error.observe(this, Observer { error ->
-            pictureTitle.text = "Error"
+            pictureTitle.text = getString(R.string.today_error)
             pictureDescription.text = error
         })
         viewModel.loading.observe(this, Observer { loading ->
             if(loading) {
-                pictureTitle.text = "Loading"
+                pictureTitle.text = getString(R.string.today_loading)
                 pictureDescription.text = ""
             }
         })

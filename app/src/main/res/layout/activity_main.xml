@@ -18,7 +18,7 @@
                 android:id="@+id/picture"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/main_picture_desc"/>
+                android:contentDescription="@string/today_picture_desc"/>
 
             <TextView
                 android:id="@+id/pictureTitle"
@@ -59,10 +59,10 @@
         android:id="@+id/videoLinkBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/videoLinkBtnText"
+        android:text="@string/today_video_btn_text"
         android:textColor="@color/colorPrimaryDark"
         android:layout_margin="@dimen/space_l"
-        android:contentDescription="@string/video_link_btn_desc"
+        android:contentDescription="@string/today_video_btn_desc"
         app:layout_anchor="@id/todayContainer"
         app:layout_anchorGravity="bottom|end"
         app:iconTint="@color/colorPrimaryDark"
