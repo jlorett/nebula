@@ -3,4 +3,5 @@
     <string name="main_picture_desc">Picture of the day.</string>
     <string name="videoLinkBtnText">Watch</string>
     <string name="video_link_btn_desc">Watch video link.</string>
+    <string name="copyright">&lt;b>Copyright&lt;/b>&lt;br/>%1$s</string>
 </resources>

@@ -4,6 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
@@ -34,13 +36,22 @@ class MainActivity : AppCompatActivity() {
             val isPhoto = apod.mediaType == "image"
             pictureTitle.text = apod.title
             pictureDescription.text = apod.explanation
+            if(apod.copyright == null) {
+                copyright.visibility = View.GONE
+            } else {
+                copyright.visibility = View.VISIBLE
+                val copyrightText = getString(R.string.copyright, apod.copyright)
+                copyright.text = Html.fromHtml(copyrightText, Html.FROM_HTML_MODE_LEGACY)
+            }
             if(isPhoto) {
+                extraLinkSpace.visibility = View.GONE
                 videoLinkBtn.hide()
                 Glide.with(this)
                     .load(apod.url)
                     .transition(withCrossFade())
                     .into(picture)
             } else {
+                extraLinkSpace.visibility = View.VISIBLE
                 videoLinkBtn.show()
             }
         })
