@@ -8,6 +8,16 @@
         <item name="colorSecondary">@color/colorAccent</item>
         <item name="colorSurface">@color/colorPrimary</item>
         <item name="android:colorBackground">@color/background</item>
+        <item name="android:textViewStyle">@style/AppTheme.TextView.Body</item>
     </style>
 
+    <style name="AppTheme.TextView.Body" parent="Widget.MaterialComponents.TextView">
+        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+    </style>
+
+    <style name="AppTheme.TextView.Header" parent="Widget.MaterialComponents.TextView">
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Headline</item>
+    </style>
 </resources>

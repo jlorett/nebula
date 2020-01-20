@@ -86,3 +86,6 @@ lint/reports/
 
 # Nasa Key
 **/strings_nasa_api_key.xml
+
+# Font Certs
+**/font_certs.xml

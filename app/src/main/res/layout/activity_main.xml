@@ -24,10 +24,10 @@
                 android:id="@+id/pictureTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_l"
                 android:layout_marginStart="@dimen/space_l"
+                android:layout_marginTop="@dimen/space_l"
                 android:layout_marginEnd="@dimen/space_l"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                style="@style/AppTheme.TextView.Header"
                 tools:text="@string/sample_title" />
 
             <TextView
@@ -35,14 +35,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/space_l"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                tools:text="@string/sample_description"/>
+                tools:text="@string/sample_description" />
 
             <TextView
                 android:id="@+id/copyright"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 android:padding="@dimen/space_l"
                 android:visibility="gone"
                 tools:text="Copyright - Test"/>
