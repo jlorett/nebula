@@ -43,13 +43,8 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/space_l"
                 android:visibility="gone"
+                tools:visibility="visible"
                 tools:text="Copyright - Test"/>
-
-            <Space
-                android:id="@+id/extraLinkSpace"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/today_container_bottom_space"
-                android:visibility="gone"/>
         </LinearLayout>
     </ScrollView>
 

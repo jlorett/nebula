@@ -44,14 +44,12 @@ class MainActivity : AppCompatActivity() {
                 copyright.text = Html.fromHtml(copyrightText, Html.FROM_HTML_MODE_LEGACY)
             }
             if(isPhoto) {
-                extraLinkSpace.visibility = View.GONE
                 videoLinkBtn.hide()
                 Glide.with(this)
                     .load(apod.url)
                     .transition(withCrossFade())
                     .into(picture)
             } else {
-                extraLinkSpace.visibility = View.VISIBLE
                 videoLinkBtn.show()
             }
         })
