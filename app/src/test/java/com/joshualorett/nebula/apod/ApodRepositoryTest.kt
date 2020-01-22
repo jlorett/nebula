@@ -91,4 +91,18 @@ class ApodRepositoryTest {
         repository.getApod(testDate)
         verify(mockApodDao).deleteAll()
     }
+
+    @Test
+    fun `gets apod from database by id`() = runBlockingTest {
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
+        val cachedApod = repository.getCachedApod(mockApodResponse.id) as Resource.Success<Apod>
+        assertEquals(mockApodResponse.toApod(), cachedApod.data)
+    }
+
+    @Test
+    fun `errors getting apod from database by id`() = runBlockingTest {
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(null)
+        val resource = repository.getCachedApod(mockApodResponse.id)
+        assertTrue(resource is Resource.Error)
+    }
 }

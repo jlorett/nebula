@@ -13,6 +13,10 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
     // The first APOD was 1995-06-16, month is 0 based.
     private val earliestDate: LocalDate = LocalDate.of(1995, 6, 16)
 
+    /***
+     * Fetch [Apod] by date. This will attempt to get it from the database first and if not found,
+     * will fetch from the api.
+     */
     suspend fun getApod(date: LocalDate): Resource<Apod> {
         if (date.isBefore(earliestDate)) {
             return Resource.Error("Date can't be before 1995-06-16.")
@@ -25,6 +29,18 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
             } else {
                 Resource.Error("Error getting apod with status ${response.code()}.")
             }
+        } else {
+            Resource.Success(cachedApod)
+        }
+    }
+
+    /***
+     * This will fetch an [Apod] from the database by its id.
+     */
+    suspend fun getCachedApod(id: Long): Resource<Apod> {
+        val cachedApod = apodDao.loadById(id)?.toApod()
+        return if (cachedApod == null) {
+            Resource.Error("Apod not found in database.")
         } else {
             Resource.Success(cachedApod)
         }
