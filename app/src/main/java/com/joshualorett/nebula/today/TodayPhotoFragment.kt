@@ -19,6 +19,7 @@ import com.joshualorett.nebula.R
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
+import com.joshualorett.nebula.picture.PictureFragment
 import com.joshualorett.nebula.shared.OneShotEventObserver
 import kotlinx.android.synthetic.main.fragment_today_photo.*
 
@@ -82,11 +83,21 @@ class TodayPhotoFragment : Fragment() {
                 navigateToLink(it)
             }
         })
+        viewModel.navigateFullPicture.observe(this, OneShotEventObserver { id ->
+            requireFragmentManager().beginTransaction()
+                .add(android.R.id.content, PictureFragment.getInstance(id), PictureFragment::class.java.simpleName)
+                .addToBackStack(PictureFragment::class.java.simpleName)
+                .commit()
+        })
 
         videoLinkBtn.setOnClickListener { view ->
             viewModel.videoLinkClicked()
         }
         videoLinkBtn.hide()
+
+        picture.setOnClickListener {
+            viewModel.onPhotoClicked()
+        }
     }
 
     private fun navigateToLink(url: String) {

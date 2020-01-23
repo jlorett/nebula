@@ -25,6 +25,9 @@ class TodayViewModel(private val apodRepository: ApodRepository, private val tod
     private val _navigateVideoLink: MutableLiveData<OneShotEvent<String?>> = MutableLiveData()
     val navigateVideoLink: LiveData<OneShotEvent<String?>> = _navigateVideoLink
 
+    private val _navigateFullPicture: MutableLiveData<OneShotEvent<Long>> = MutableLiveData()
+    val navigateFullPicture: LiveData<OneShotEvent<Long>> = _navigateFullPicture
+
     init {
         viewModelScope.launch {
             _loading.value = true
@@ -48,6 +51,13 @@ class TodayViewModel(private val apodRepository: ApodRepository, private val tod
         val currentApod = _apod.value
         if(currentApod?.mediaType == "video") {
             _navigateVideoLink.value = OneShotEvent(currentApod.url)
+        }
+    }
+
+    fun onPhotoClicked() {
+        val apod = _apod.value
+        if(apod != null) {
+            _navigateFullPicture.value = OneShotEvent(apod.id)
         }
     }
 
