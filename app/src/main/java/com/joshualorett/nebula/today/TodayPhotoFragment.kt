@@ -52,7 +52,7 @@ class TodayPhotoFragment : Fragment() {
             pictureTitle.text = apod.title
             pictureDescription.text = apod.explanation
             if(apod.copyright == null) {
-                copyright.visibility = View.GONE
+                copyright.visibility = View.INVISIBLE
             } else {
                 copyright.visibility = View.VISIBLE
                 val copyrightText = getString(R.string.today_copyright, apod.copyright)
