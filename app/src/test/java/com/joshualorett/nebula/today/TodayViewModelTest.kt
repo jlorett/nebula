@@ -2,6 +2,7 @@ package com.joshualorett.nebula.today
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.joshualorett.nebula.TestCoroutineRule
+import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.apod.*
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.api.ApodResponse
@@ -37,11 +38,7 @@ class TodayViewModelTest {
     private val mockDataSource = mock(ApodDataSource::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
     private val testDate = LocalDate.of(2000, 1, 1)
-    private val mockApodResponse = ApodResponse(
-        0, "2000-01-01", "apod", "testing",
-        "image", "v1", "https://example.com",
-        "https://example.com/hd"
-    )
+    private val mockApodResponse = TestData.apodResponse
 
     @Test
     fun `success state hit`() = coroutineRule.dispatcher.runBlockingTest {

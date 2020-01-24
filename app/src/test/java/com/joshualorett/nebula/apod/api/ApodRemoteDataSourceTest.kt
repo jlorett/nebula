@@ -1,6 +1,7 @@
 package com.joshualorett.nebula.apod.api
 
 import com.joshualorett.nebula.RetrofitServiceDelegate
+import com.joshualorett.nebula.TestData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -36,11 +37,7 @@ class ApodRemoteDataSourceTest {
 
     @Test
     fun `api returns successful response`() = runBlockingTest {
-        val mockApodResponse = ApodResponse(
-            0, "2000-01-01", "apod", "testing",
-            "jpg", "v1", "https://example.com",
-            "https://example.com/hd"
-        )
+        val mockApodResponse = TestData.apodResponse
         val success: Response<ApodResponse> = Response.success(mockApodResponse)
         `when`(mockService.getApod(anyString(), anyString())).thenReturn(success)
         val result = apodDataSource.getApod(testDate)

@@ -5,8 +5,8 @@ import com.joshualorett.nebula.TestCoroutineRule
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.database.ApodDao
-import com.joshualorett.nebula.apod.database.ApodEntity
 import com.joshualorett.nebula.apod.toApod
+import com.joshualorett.nebula.TestData
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -34,10 +34,7 @@ class PictureViewModelTest {
     private lateinit var viewModel: PictureViewModel
     private val mockDataSource = mock(ApodDataSource::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
-    private val entity = ApodEntity(
-        1L, "2000-01-01", "apod", "testing",
-        "image", "v1", "https://example.com",
-        "https://example.com/hd")
+    private val entity = TestData.apodEntity
 
     @Test
     fun `gets picture from database`() =  coroutineRule.dispatcher.runBlockingTest {
