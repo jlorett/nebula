@@ -57,10 +57,7 @@ class TodayPhotoFragment : Fragment() {
             pictureDescription.text = error
         })
         viewModel.loading.observe(this, Observer { loading ->
-            if(loading) {
-                pictureTitle.text = getString(R.string.today_loading)
-                pictureDescription.text = ""
-            }
+            todayProgressBar.visibility = if(loading) View.VISIBLE else View.GONE
         })
         viewModel.navigateVideoLink.observe(this, OneShotEventObserver { url ->
             url?.let {
@@ -118,6 +115,7 @@ class TodayPhotoFragment : Fragment() {
                     .thumbnail(
                         Glide.with(this)
                             .load(apod.url)
+                            .transition(DrawableTransitionOptions.withCrossFade())
                             .centerCrop()
                     )
                     .transition(DrawableTransitionOptions.withCrossFade())

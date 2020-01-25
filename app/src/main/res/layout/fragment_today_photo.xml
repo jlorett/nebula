@@ -63,4 +63,11 @@
         app:iconTint="@color/colorPrimaryDark"
         app:iconTintMode="src_in"
         app:icon="@drawable/ic_play_arrow_black_24dp"/>
+
+    <ProgressBar
+        android:id="@+id/todayProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        tools:visibility="visible"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
