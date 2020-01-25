@@ -59,7 +59,6 @@ class PictureFragment : Fragment() {
             Glide.with(this)
                 .load(url)
                 .transform(FullScreen(pictureContainer.width, pictureContainer.height))
-                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(apodPicture)
         })
         viewModel.error.observe(this, Observer { errorMessage ->

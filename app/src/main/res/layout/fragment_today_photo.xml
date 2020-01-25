@@ -2,11 +2,12 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/todayContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".today.TodayPhotoFragment">
     <ScrollView
-        android:id="@+id/todayContainer"
+        android:id="@+id/todayScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
@@ -57,7 +58,7 @@
         android:textColor="@color/colorPrimaryDark"
         android:layout_margin="@dimen/space_l"
         android:contentDescription="@string/today_video_btn_desc"
-        app:layout_anchor="@id/todayContainer"
+        app:layout_anchor="@id/todayScrollContainer"
         app:layout_anchorGravity="bottom|end"
         app:iconTint="@color/colorPrimaryDark"
         app:iconTintMode="src_in"

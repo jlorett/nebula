@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
@@ -16,6 +17,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.joshualorett.nebula.NasaRetrofitClient
 
 import com.joshualorett.nebula.R
+import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
@@ -48,25 +50,7 @@ class TodayPhotoFragment : Fragment() {
         val viewModel = ViewModelProviders.of(this,
             TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
         viewModel.apod.observe(this, Observer { apod ->
-            val isPhoto = apod.mediaType == "image"
-            pictureTitle.text = apod.title
-            pictureDescription.text = apod.explanation
-            if(apod.copyright == null) {
-                copyright.visibility = View.INVISIBLE
-            } else {
-                copyright.visibility = View.VISIBLE
-                val copyrightText = getString(R.string.today_copyright, apod.copyright)
-                copyright.text = Html.fromHtml(copyrightText, Html.FROM_HTML_MODE_LEGACY)
-            }
-            if(isPhoto) {
-                videoLinkBtn.hide()
-                Glide.with(this)
-                    .load(apod.url)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(picture)
-            } else {
-                videoLinkBtn.show()
-            }
+            updateApod(apod)
         })
         viewModel.error.observe(this, Observer { error ->
             pictureTitle.text = getString(R.string.today_error)
@@ -90,11 +74,14 @@ class TodayPhotoFragment : Fragment() {
                 .commit()
         })
 
-        videoLinkBtn.setOnClickListener { view ->
+        videoLinkBtn.setOnClickListener {
             viewModel.videoLinkClicked()
         }
         videoLinkBtn.hide()
 
+        todayContainer.doOnPreDraw {
+            picture.layoutParams.height = it.height/3
+        }
         picture.setOnClickListener {
             viewModel.onPhotoClicked()
         }
@@ -103,5 +90,41 @@ class TodayPhotoFragment : Fragment() {
     private fun navigateToLink(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
+    }
+
+    private fun updateApod(apod: Apod) {
+        val isPhoto = apod.mediaType == "image"
+        pictureTitle.text = apod.title
+        pictureDescription.text = apod.explanation
+        if(apod.copyright == null) {
+            copyright.visibility = View.INVISIBLE
+        } else {
+            copyright.visibility = View.VISIBLE
+            val copyrightText = getString(R.string.today_copyright, apod.copyright)
+            copyright.text = Html.fromHtml(copyrightText, Html.FROM_HTML_MODE_LEGACY)
+        }
+        if(isPhoto) {
+            videoLinkBtn.hide()
+            if(apod.hdurl == null) {
+                Glide.with(this)
+                    .load(apod.url)
+                    .centerCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(picture)
+            } else {
+                Glide.with(this)
+                    .load(apod.hdurl)
+                    .centerCrop()
+                    .thumbnail(
+                        Glide.with(this)
+                            .load(apod.url)
+                            .centerCrop()
+                    )
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(picture)
+            }
+        } else {
+            videoLinkBtn.show()
+        }
     }
 }
