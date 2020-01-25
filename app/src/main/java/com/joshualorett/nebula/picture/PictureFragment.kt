@@ -9,19 +9,23 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.joshualorett.nebula.NasaRetrofitClient
 
 import com.joshualorett.nebula.R
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
+import com.joshualorett.nebula.shared.GlideImageCache
+import com.joshualorett.nebula.shared.ImageCache
 import kotlinx.android.synthetic.main.fragment_picture.*
+import kotlinx.coroutines.Dispatchers
 
 /**
  * A full screen view of an [Apod] picture.
  */
 class PictureFragment : Fragment() {
+    private lateinit var imageCache: ImageCache
+
     companion object {
         private const val apodId = "apodId"
 
@@ -49,7 +53,9 @@ class PictureFragment : Fragment() {
             getString(R.string.key)
         )
         val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
-        val repo = ApodRepository(dataSource, apodDao)
+        imageCache = GlideImageCache(Dispatchers.Default)
+        imageCache.attachApplicationContext(requireContext().applicationContext)
+        val repo = ApodRepository(dataSource, apodDao, imageCache)
 
         val id = arguments?.getLong(apodId) ?: 0L
         val viewModel = ViewModelProviders.of(this, PictureViewModelFactory(repo, id)).get(PictureViewModel::class.java)
@@ -65,5 +71,10 @@ class PictureFragment : Fragment() {
             apodPicture.visibility = View.GONE
             pictureError.text = errorMessage
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        imageCache.detachApplicationContext()
     }
 }

@@ -22,13 +22,17 @@ import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
 import com.joshualorett.nebula.picture.PictureFragment
+import com.joshualorett.nebula.shared.GlideImageCache
+import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
 import kotlinx.android.synthetic.main.fragment_today_photo.*
+import kotlinx.coroutines.Dispatchers
 
 /**
  * A simple [Fragment] subclass.
  */
 class TodayPhotoFragment : Fragment() {
+    private lateinit var imageCache: ImageCache
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +49,9 @@ class TodayPhotoFragment : Fragment() {
             getString(R.string.key)
         )
         val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
-        val repo = ApodRepository(dataSource, apodDao)
+        imageCache = GlideImageCache(Dispatchers.Default)
+        imageCache.attachApplicationContext(requireContext().applicationContext)
+        val repo = ApodRepository(dataSource, apodDao, imageCache)
 
         val viewModel = ViewModelProviders.of(this,
             TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
@@ -83,6 +89,11 @@ class TodayPhotoFragment : Fragment() {
         picture.setOnClickListener {
             viewModel.onPhotoClicked()
         }
+    }
+
+    override fun onDestroy() {
+        imageCache.detachApplicationContext()
+        super.onDestroy()
     }
 
     private fun navigateToLink(url: String) {

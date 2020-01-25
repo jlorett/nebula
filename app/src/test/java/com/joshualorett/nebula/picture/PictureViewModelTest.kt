@@ -7,6 +7,7 @@ import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.apod.toApod
 import com.joshualorett.nebula.TestData
+import com.joshualorett.nebula.shared.ImageCache
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -34,12 +35,13 @@ class PictureViewModelTest {
     private lateinit var viewModel: PictureViewModel
     private val mockDataSource = mock(ApodDataSource::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
+    private val mockImageCache = mock(ImageCache::class.java)
     private val entity = TestData.apodEntity
 
     @Test
     fun `gets picture from database`() =  coroutineRule.dispatcher.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(entity)
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = PictureViewModelFactory(apodRepo, entity.id).create(PictureViewModel::class.java)
         assertEquals(entity.toApod().hdurl, viewModel.picture.value)
     }
@@ -47,7 +49,7 @@ class PictureViewModelTest {
     @Test
     fun `error if database fetch fails`() =  coroutineRule.dispatcher.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(null)
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = PictureViewModelFactory(apodRepo, entity.id).create(PictureViewModel::class.java)
         assertNotNull(viewModel.error.value)
     }

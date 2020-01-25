@@ -1,9 +1,11 @@
 package com.joshualorett.nebula.apod
 
+import android.content.Context
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.api.ApodResponse
 import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.TestData
+import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -26,12 +28,13 @@ class ApodRepositoryTest {
     private lateinit var repository: ApodRepository
     private val apodDataSource = mock(ApodDataSource::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
+    private val mockImageCache = mock(ImageCache::class.java)
     private val testDate = LocalDate.of(2000, 1, 1)
     private val mockApodResponse = TestData.apodResponse
 
     @Before
     fun setUp() {
-        repository = ApodRepository(apodDataSource, mockApodDao)
+        repository = ApodRepository(apodDataSource, mockApodDao, mockImageCache)
     }
 
     @Test
@@ -87,6 +90,18 @@ class ApodRepositoryTest {
         `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
         repository.getApod(testDate)
         verify(mockApodDao).deleteAll()
+    }
+
+    @Test
+    fun `clears cache`() = runBlockingTest {
+        `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
+        `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
+        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        mockImageCache.attachApplicationContext(mock(Context::class.java))
+        repository.getApod(testDate)
+        mockImageCache.detachApplicationContext()
+        verify(mockImageCache).cleanCache()
     }
 
     @Test

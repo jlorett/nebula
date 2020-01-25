@@ -1,5 +1,6 @@
 package com.joshualorett.nebula.today
 
+import android.media.Image
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.joshualorett.nebula.TestCoroutineRule
 import com.joshualorett.nebula.TestData
@@ -7,6 +8,7 @@ import com.joshualorett.nebula.apod.*
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.api.ApodResponse
 import com.joshualorett.nebula.apod.database.ApodDao
+import com.joshualorett.nebula.shared.ImageCache
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -37,6 +39,7 @@ class TodayViewModelTest {
     private lateinit var viewModel: TodayViewModel
     private val mockDataSource = mock(ApodDataSource::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
+    private val mockImageCache = mock(ImageCache::class.java)
     private val testDate = LocalDate.of(2000, 1, 1)
     private val mockApodResponse = TestData.apodResponse
 
@@ -46,7 +49,7 @@ class TodayViewModelTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
         `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
         assertEquals(mockApodResponse.toApod(), viewModel.apod.value)
     }
@@ -56,7 +59,7 @@ class TodayViewModelTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
         assertTrue(viewModel.loading.value == false)
     }
@@ -65,7 +68,7 @@ class TodayViewModelTest {
     fun `error state hit`() = coroutineRule.dispatcher.runBlockingTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         `when`(mockDataSource.getApod(testDate)).thenReturn(Response.error(500, "Error".toResponseBody()))
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
         assertEquals(viewModel.error.value, "Error getting apod with status 500.")
     }
@@ -74,7 +77,7 @@ class TodayViewModelTest {
     fun `error state turns off loading`() = coroutineRule.dispatcher.runBlockingTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         `when`(mockDataSource.getApod(testDate)).thenReturn(Response.error(500, "Error".toResponseBody()))
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
         assertTrue(viewModel.loading.value == false)
     }
@@ -88,7 +91,7 @@ class TodayViewModelTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(videoApod.toApod().toEntity())
         `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(videoApod))
         `when`(mockApodDao.insertApod(videoApod.toApod().toEntity())).thenReturn(1L)
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
         viewModel.videoLinkClicked()
         assertEquals("https://example.com", viewModel.navigateVideoLink.value?.peekContent())
@@ -103,7 +106,7 @@ class TodayViewModelTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(videoApod.toApod().toEntity())
         `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(videoApod))
         `when`(mockApodDao.insertApod(videoApod.toApod().toEntity())).thenReturn(1L)
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
         viewModel.videoLinkClicked()
         assertNull(viewModel.navigateVideoLink.value?.peekContent())

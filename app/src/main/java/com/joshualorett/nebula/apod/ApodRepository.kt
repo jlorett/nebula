@@ -2,6 +2,7 @@ package com.joshualorett.nebula.apod
 
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.database.ApodDao
+import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import java.time.LocalDate
 
@@ -9,7 +10,8 @@ import java.time.LocalDate
  * Single point of access to fetch an [Apod] from the ui.
  * Created by Joshua on 1/8/2020.
  */
-class ApodRepository(private val apodDataSource: ApodDataSource, private val apodDao: ApodDao) {
+class ApodRepository(private val apodDataSource: ApodDataSource, private val apodDao: ApodDao,
+                     private val imageCache: ImageCache) {
     // The first APOD was 1995-06-16, month is 0 based.
     private val earliestDate: LocalDate = LocalDate.of(1995, 6, 16)
 
@@ -53,8 +55,7 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
             if (networkApod == null) {
                 Resource.Error("Empty network body.")
             } else {
-                // Only keep one apod in cache at a time
-                apodDao.deleteAll()
+                clearOldResources()
                 return cacheApod(networkApod)
             }
         } else {
@@ -66,9 +67,17 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
         val id = apodDao.insertApod(apod.toEntity())
         val cachedApod = apodDao.loadById(id)?.toApod()
         return if (cachedApod == null) {
-            Resource.Error("Error loading apod from cache.")
+            Resource.Error("Error loading apod from database.")
         } else {
             Resource.Success(cachedApod)
         }
+    }
+
+    /***
+     * Clear out old resources since we only store one apod at a time.
+     */
+    private suspend fun clearOldResources() {
+        apodDao.deleteAll()
+        imageCache.cleanCache()
     }
 }
