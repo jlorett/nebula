@@ -84,7 +84,7 @@ class TodayPhotoFragment : Fragment() {
 
         todayContainer.doOnPreDraw {
             val isPortrait = it.height >= it.width
-            picture.layoutParams.height = if(isPortrait) it.height/3 else it.height
+            picture.layoutParams.height = if(isPortrait) it.width / 4 * 3 else it.height
         }
         picture.setOnClickListener {
             viewModel.onPhotoClicked()
