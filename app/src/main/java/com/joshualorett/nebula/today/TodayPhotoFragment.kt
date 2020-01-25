@@ -77,7 +77,8 @@ class TodayPhotoFragment : Fragment() {
         videoLinkBtn.hide()
 
         todayContainer.doOnPreDraw {
-            picture.layoutParams.height = it.height/3
+            val isPortrait = it.height >= it.width
+            picture.layoutParams.height = if(isPortrait) it.height/3 else it.height
         }
         picture.setOnClickListener {
             viewModel.onPhotoClicked()
