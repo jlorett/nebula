@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/todayPhotoFragment">
+
+    <fragment
+        android:id="@+id/todayPhotoFragment"
+        android:name="com.joshualorett.nebula.today.TodayPhotoFragment"
+        android:label="fragment_today_photo"
+        tools:layout="@layout/fragment_today_photo" >
+        <action
+            android:id="@+id/action_todayPhotoFragment_to_pictureFragment"
+            app:destination="@+id/pictureFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pictureFragment"
+        android:name="com.joshualorett.nebula.picture.PictureFragment"
+        android:label="fragment_picture"
+        tools:layout="@layout/fragment_picture" >
+        <argument
+            android:name="id"
+            app:argType="long"
+            android:defaultValue="0L" />
+    </fragment>
+</navigation>

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.joshualorett.nebula.NasaRetrofitClient
@@ -81,10 +82,8 @@ class TodayPhotoFragment : Fragment() {
             }
         })
         viewModel.navigateFullPicture.observe(this, OneShotEventObserver { id ->
-            requireFragmentManager().beginTransaction()
-                .replace(android.R.id.content, PictureFragment.getInstance(id), PictureFragment::class.java.simpleName)
-                .addToBackStack(null)
-                .commit()
+            val action = TodayPhotoFragmentDirections.actionTodayPhotoFragmentToPictureFragment(id)
+            requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
         })
 
         videoLinkBtn.setOnClickListener {

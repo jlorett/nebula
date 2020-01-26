@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.joshualorett.nebula.NasaRetrofitClient
 
@@ -27,18 +28,7 @@ import kotlinx.coroutines.Dispatchers
  */
 class PictureFragment : Fragment() {
     private lateinit var imageCache: ImageCache
-
-    companion object {
-        private const val apodId = "apodId"
-
-        fun getInstance(id: Long): PictureFragment {
-            val fragment = PictureFragment()
-            val args = Bundle()
-            args.putLong(apodId, id)
-            fragment.arguments = args
-            return fragment
-        }
-    }
+    private val args: PictureFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,7 +58,7 @@ class PictureFragment : Fragment() {
             requireActivity().onBackPressed()
         }
 
-        val id = arguments?.getLong(apodId) ?: 0L
+        val id = args.id
         val viewModel = ViewModelProviders.of(this, PictureViewModelFactory(repo, id)).get(PictureViewModel::class.java)
         viewModel.picture.observe(this, Observer { url ->
             pictureError.visibility = View.GONE
