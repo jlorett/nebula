@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -25,14 +26,21 @@ import com.joshualorett.nebula.picture.PictureFragment
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
+import kotlinx.android.synthetic.main.fragment_picture.*
 import kotlinx.android.synthetic.main.fragment_today_photo.*
 import kotlinx.coroutines.Dispatchers
 
 /**
- * A simple [Fragment] subclass.
+ * Displays Today's [Apod].
  */
 class TodayPhotoFragment : Fragment() {
     private lateinit var imageCache: ImageCache
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        imageCache = GlideImageCache(Dispatchers.Default)
+        imageCache.attachApplicationContext(requireContext().applicationContext)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,13 +52,15 @@ class TodayPhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val appCompatActivity = requireActivity() as AppCompatActivity
+        appCompatActivity.setSupportActionBar(pictureToolbar)
+
         val dataSource = ApodRemoteDataSource(
             NasaRetrofitClient,
             getString(R.string.key)
         )
         val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
-        imageCache = GlideImageCache(Dispatchers.Default)
-        imageCache.attachApplicationContext(requireContext().applicationContext)
         val repo = ApodRepository(dataSource, apodDao, imageCache)
 
         val viewModel = ViewModelProviders.of(this,
@@ -72,8 +82,8 @@ class TodayPhotoFragment : Fragment() {
         })
         viewModel.navigateFullPicture.observe(this, OneShotEventObserver { id ->
             requireFragmentManager().beginTransaction()
-                .add(android.R.id.content, PictureFragment.getInstance(id), PictureFragment::class.java.simpleName)
-                .addToBackStack(PictureFragment::class.java.simpleName)
+                .replace(android.R.id.content, PictureFragment.getInstance(id), PictureFragment::class.java.simpleName)
+                .addToBackStack(null)
                 .commit()
         })
 

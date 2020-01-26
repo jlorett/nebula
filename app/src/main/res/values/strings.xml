@@ -6,4 +6,5 @@
     <string name="today_copyright">&lt;b>Copyright&lt;/b>&lt;br/>%1$s</string>
     <string name="today_error">Error</string>
     <string name="today_loading">Loading</string>
+    <string name="picture_desc">Full screen picture.</string>
 </resources>

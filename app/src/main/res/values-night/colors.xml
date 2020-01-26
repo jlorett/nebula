@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#282f41</color>
     <color name="colorAccent">#F1689D</color>
     <color name="background">#1f2331</color>
+    <color name="pictureColorPrimary">#000000</color>
+    <color name="pictureBackground">#000000</color>
+    <color name="pictureStatusBar">#000000</color>
+    <color name="pictureTextColor">#FFFFFF</color>
 </resources>

@@ -19,11 +19,11 @@ class FullScreen(private val screenWidth: Int, private val screenHeight: Int): B
         val isPortrait = screenHeight > screenWidth
         val ratio: Float = if (isPortrait) outWidth/outHeight.toFloat() else outHeight/outWidth.toFloat()
         return if (isPortrait) {
-            val newWidth = (ratio * outHeight).toInt()
-            Bitmap.createScaledBitmap(toTransform, newWidth, outHeight, true)
-        } else {
             val newHeight = (ratio * outWidth).toInt()
-            Bitmap.createScaledBitmap(toTransform, outWidth, newHeight, true)
+            Bitmap.createScaledBitmap(toTransform, screenWidth, newHeight, true)
+        } else {
+            val newWidth = (ratio * outHeight).toInt()
+            Bitmap.createScaledBitmap(toTransform, screenWidth, screenHeight, true)
         }
     }
 
