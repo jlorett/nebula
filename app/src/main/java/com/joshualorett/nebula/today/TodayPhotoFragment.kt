@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -23,7 +23,6 @@ import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
-import com.joshualorett.nebula.picture.PictureFragment
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
@@ -64,8 +63,7 @@ class TodayPhotoFragment : Fragment() {
         val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
         val repo = ApodRepository(dataSource, apodDao, imageCache)
 
-        val viewModel = ViewModelProviders.of(this,
-            TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
+        val viewModel = ViewModelProvider(this, TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
         viewModel.apod.observe(this, Observer { apod ->
             updateApod(apod)
         })
