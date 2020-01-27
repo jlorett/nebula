@@ -1,17 +1,28 @@
 package com.joshualorett.nebula.picture
 
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.request.target.CustomViewTarget
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
+import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.joshualorett.nebula.NasaRetrofitClient
 
 import com.joshualorett.nebula.R
@@ -22,6 +33,7 @@ import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import kotlinx.android.synthetic.main.fragment_picture.*
 import kotlinx.coroutines.Dispatchers
+import java.io.File
 
 /**
  * A full screen view of an [Apod] picture.
@@ -64,9 +76,16 @@ class PictureFragment : Fragment() {
             pictureError.visibility = View.GONE
             apodPicture.visibility = View.VISIBLE
             Glide.with(this)
-                .load(url)
-                .centerInside()
-                .into(apodPicture)
+                .download(GlideUrl(url))
+                .into(object: CustomViewTarget<SubsamplingScaleImageView, File>(apodPicture) {
+                    override fun onLoadFailed(errorDrawable: Drawable?) {}
+
+                    override fun onResourceCleared(placeholder: Drawable?) {}
+
+                    override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                        apodPicture.setImage(ImageSource.uri(Uri.fromFile(resource)))
+                    }
+                })
         })
         viewModel.error.observe(this, Observer { errorMessage ->
             apodPicture.visibility = View.GONE
