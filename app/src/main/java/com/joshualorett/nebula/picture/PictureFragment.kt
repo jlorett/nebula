@@ -74,7 +74,11 @@ class PictureFragment : Fragment() {
             Glide.with(this)
                 .download(GlideUrl(url))
                 .into(object: CustomViewTarget<SubsamplingScaleImageView, File>(apodPicture) {
-                    override fun onLoadFailed(errorDrawable: Drawable?) {}
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        apodPicture.visibility = View.GONE
+                        pictureError.visibility = View.VISIBLE
+                        pictureError.text = getString(R.string.picture_error)
+                    }
 
                     override fun onResourceCleared(placeholder: Drawable?) {}
 
