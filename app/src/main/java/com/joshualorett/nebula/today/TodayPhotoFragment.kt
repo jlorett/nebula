@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.joshualorett.nebula.NasaRetrofitClient
 
@@ -121,25 +122,16 @@ class TodayPhotoFragment : Fragment() {
         }
         if(isPhoto) {
             videoLinkBtn.hide()
-            if(apod.hdurl == null) {
+            apod.hdurl?.let {
                 Glide.with(this)
-                    .load(apod.url)
-                    .centerCrop()
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(picture)
-            } else {
-                Glide.with(this)
-                    .load(apod.hdurl)
-                    .centerCrop()
-                    .thumbnail(
-                        Glide.with(this)
-                            .load(apod.url)
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .centerCrop()
-                    )
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(picture)
+                    .download(GlideUrl(apod.hdurl))
+                    .preload()
             }
+            Glide.with(this)
+                .load(apod.url)
+                .centerCrop()
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(picture)
         } else {
             videoLinkBtn.show()
         }
