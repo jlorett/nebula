@@ -71,6 +71,7 @@ class TodayPhotoFragment : Fragment() {
         viewModel.error.observe(this, Observer { error ->
             pictureTitle.text = getString(R.string.today_error)
             pictureDescription.text = error
+            picture.visibility = View.GONE
         })
         viewModel.loading.observe(this, Observer { loading ->
             todayProgressBar.visibility = if(loading) View.VISIBLE else View.GONE
