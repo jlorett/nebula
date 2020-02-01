@@ -11,8 +11,8 @@ import com.joshualorett.nebula.apod.database.ApodEntity
 object TestData {
     val apodEntity = ApodEntity(
         1L, "2000-01-01", "apod", "testing",
-        "image", "v1", "https://example.com",
-        "https://example.com/hd"
+        "image", "https://example.com","https://example.com/hd",
+        "tester"
     )
 
     val apodResponse = ApodResponse(
