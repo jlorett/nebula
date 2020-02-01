@@ -1,24 +1,19 @@
 package com.joshualorett.nebula.today
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.joshualorett.nebula.TestCoroutineRule
 import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.ViewModelTest
-import com.joshualorett.nebula.apod.*
+import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.api.ApodResponse
 import com.joshualorett.nebula.apod.database.ApodDao
+import com.joshualorett.nebula.apod.toApod
+import com.joshualorett.nebula.apod.toEntity
 import com.joshualorett.nebula.shared.ImageCache
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import okhttp3.Protocol
-import okhttp3.Request
-import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.Test
-
 import org.junit.Assert.*
-import org.junit.Rule
+import org.junit.Test
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.Mockito.*
 import retrofit2.Response
