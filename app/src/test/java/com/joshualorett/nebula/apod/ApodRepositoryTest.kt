@@ -49,7 +49,16 @@ class ApodRepositoryTest {
     }
 
     @Test
+    fun `returns error on null data`() = runBlockingTest {
+        `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
+        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(null))
+        val resource = repository.getApod(testDate)
+        assertTrue(resource is Resource.Error)
+    }
+
+    @Test
     fun `returns unsuccessful resource on network error`() = runBlockingTest {
+        `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         val errorResponse: Response<ApodResponse> = Response.error(500, "Error".toResponseBody())
         `when`(apodDataSource.getApod(testDate)).thenReturn(errorResponse)
         val resource = repository.getApod(testDate)
@@ -116,5 +125,13 @@ class ApodRepositoryTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(null)
         val resource = repository.getCachedApod(mockApodResponse.id)
         assertTrue(resource is Resource.Error)
+    }
+
+    @Test
+    fun `gets cached apod by date`() = runBlockingTest {
+        val entity = TestData.apodEntity
+        `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(entity)
+        val resource = repository.getApod(testDate) as Resource.Success<Apod>
+        assertEquals(resource.data, entity.toApod())
     }
 }
