@@ -47,7 +47,7 @@ class PictureFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        apodPicture.setDoubleTapZoomScale(1f)
+        apodPicture.setDoubleTapZoomScale(1.2f)
         val dataSource = ApodRemoteDataSource(
             NasaRetrofitClient,
             getString(R.string.key)
