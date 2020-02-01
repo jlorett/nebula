@@ -7,6 +7,7 @@ import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.apod.toApod
 import com.joshualorett.nebula.TestData
+import com.joshualorett.nebula.apod.database.ApodEntity
 import com.joshualorett.nebula.shared.ImageCache
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,6 +50,19 @@ class PictureViewModelTest {
     @Test
     fun `error if database fetch fails`() =  coroutineRule.dispatcher.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(null)
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        viewModel = PictureViewModelFactory(apodRepo, entity.id).create(PictureViewModel::class.java)
+        assertNotNull(viewModel.error.value)
+    }
+
+    @Test
+    fun `error if url is empty`() =  coroutineRule.dispatcher.runBlockingTest {
+        val entityEmptyUrl = ApodEntity(
+            1L, "2000-01-01", "apod", "testing",
+            "image", "", "",
+            "https://example.com/hd"
+        )
+        `when`(mockApodDao.loadById(entity.id)).thenReturn(entityEmptyUrl)
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = PictureViewModelFactory(apodRepo, entity.id).create(PictureViewModel::class.java)
         assertNotNull(viewModel.error.value)
