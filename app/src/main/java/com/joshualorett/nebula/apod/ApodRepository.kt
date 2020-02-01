@@ -25,12 +25,7 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
         }
         val cachedApod = apodDao.loadByDate(date.toString())?.toApod()
         return if (cachedApod == null) {
-            val response = apodDataSource.getApod(date)
-            if (response.isSuccessful) {
-                getApodByDataSource(date)
-            } else {
-                Resource.Error("Error getting apod with status ${response.code()}.")
-            }
+            getApodByDataSource(date)
         } else {
             Resource.Success(cachedApod)
         }
