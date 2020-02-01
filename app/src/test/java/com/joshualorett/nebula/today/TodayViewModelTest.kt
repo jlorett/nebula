@@ -3,6 +3,7 @@ package com.joshualorett.nebula.today
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.joshualorett.nebula.TestCoroutineRule
 import com.joshualorett.nebula.TestData
+import com.joshualorett.nebula.ViewModelTest
 import com.joshualorett.nebula.apod.*
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.api.ApodResponse
@@ -28,15 +29,7 @@ import java.time.LocalDate
  * Created by Joshua on 1/12/2020.
  */
 @ExperimentalCoroutinesApi
-class TodayViewModelTest {
-    // Overrides Dispatchers.Main used in Coroutines
-    @get:Rule
-    val coroutineRule = TestCoroutineRule()
-
-    // Executes tasks in the Architecture Components in the same thread
-    @get:Rule
-    val test = InstantTaskExecutorRule()
-
+class TodayViewModelTest: ViewModelTest() {
     private lateinit var viewModel: TodayViewModel
     private val mockDataSource = mock(ApodDataSource::class.java)
     private val mockApodDao = mock(ApodDao::class.java)

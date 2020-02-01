@@ -1,12 +1,11 @@
 package com.joshualorett.nebula.picture
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.joshualorett.nebula.TestCoroutineRule
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.apod.toApod
 import com.joshualorett.nebula.TestData
+import com.joshualorett.nebula.ViewModelTest
 import com.joshualorett.nebula.apod.database.ApodEntity
 import com.joshualorett.nebula.shared.ImageCache
 import junit.framework.TestCase.assertEquals
@@ -15,7 +14,6 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 
-import org.junit.Rule
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 
@@ -24,15 +22,7 @@ import org.mockito.Mockito.mock
  * Created by Joshua on 1/23/2020.
  */
 @ExperimentalCoroutinesApi
-class PictureViewModelTest {
-    // Overrides Dispatchers.Main used in Coroutines
-    @get:Rule
-    val coroutineRule = TestCoroutineRule()
-
-    // Executes tasks in the Architecture Components in the same thread
-    @get:Rule
-    val test = InstantTaskExecutorRule()
-
+class PictureViewModelTest: ViewModelTest() {
     private lateinit var viewModel: PictureViewModel
     private val mockDataSource = mock(ApodDataSource::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
