@@ -9,20 +9,27 @@ import org.junit.Test
  */
 class OneShotEventTest {
     @Test
-    fun getHasBeenHandled() {
+    fun `getHasBeenHandled`() {
         val event = OneShotEvent(Unit)
         event.getContentIfNotHandled()
         assertTrue(event.hasBeenHandled)
     }
 
     @Test
-    fun getContentIfNotHandled() {
+    fun `getContentIfNotHandled`() {
         val event = OneShotEvent("Test")
-        assertEquals("Test", event.getContentIfNotHandled());
+        assertEquals("Test", event.getContentIfNotHandled())
     }
 
     @Test
-    fun peekContent() {
+    fun `doesn't getContentIfNotHandled`() {
+        val event = OneShotEvent("Test")
+        event.getContentIfNotHandled()
+        assertNull(event.getContentIfNotHandled())
+    }
+
+    @Test
+    fun `peekContent`() {
         val event = OneShotEvent("Test")
         event.getContentIfNotHandled()
         assertEquals("Test", event.peekContent())
