@@ -19,7 +19,7 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
      * Fetch [Apod] by date. This will attempt to get it from the database first and if not found,
      * will fetch from the api.
      */
-    suspend fun getApod(date: LocalDate): Resource<Apod> {
+    suspend fun getApod(date: LocalDate): Resource<Apod, String> {
         if (date.isBefore(earliestDate)) {
             return Resource.Error("Date can't be before 1995-06-16.")
         }
@@ -34,7 +34,7 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
     /***
      * This will fetch an [Apod] from the database by its id.
      */
-    suspend fun getCachedApod(id: Long): Resource<Apod> {
+    suspend fun getCachedApod(id: Long): Resource<Apod, String> {
         val cachedApod = apodDao.loadById(id)?.toApod()
         return if (cachedApod == null) {
             Resource.Error("Apod not found in database.")
@@ -43,7 +43,7 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
         }
     }
 
-    private suspend fun getApodByDataSource(date: LocalDate): Resource<Apod> {
+    private suspend fun getApodByDataSource(date: LocalDate): Resource<Apod, String> {
         val response = apodDataSource.getApod(date)
         return if (response.isSuccessful) {
             val networkApod = response.body()?.toApod()
@@ -58,7 +58,7 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
         }
     }
 
-    private suspend fun cacheApod(apod: Apod): Resource<Apod> {
+    private suspend fun cacheApod(apod: Apod): Resource<Apod, String> {
         val id = apodDao.insertApod(apod.toEntity())
         val cachedApod = apodDao.loadById(id)?.toApod()
         return if (cachedApod == null) {

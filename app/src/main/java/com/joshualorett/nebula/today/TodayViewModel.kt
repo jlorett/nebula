@@ -36,12 +36,9 @@ class TodayViewModel(private val apodRepository: ApodRepository, private val tod
                     _apod.value = resource.data
                     _loading.value = false
                 }
-                is Resource.Error -> {
-                    _error.value = resource.message ?: "Error fetching the picture of the day."
+                is Resource.Error<String> -> {
+                    _error.value = resource.data
                     _loading.value = false
-                }
-                is Resource.Loading -> {
-                    _loading.value = true
                 }
             }
         }

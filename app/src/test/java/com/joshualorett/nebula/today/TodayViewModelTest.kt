@@ -1,6 +1,5 @@
 package com.joshualorett.nebula.today
 
-import android.media.Image
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.joshualorett.nebula.TestCoroutineRule
 import com.joshualorett.nebula.TestData
@@ -11,14 +10,16 @@ import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.shared.ImageCache
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.Rule
 import org.mockito.ArgumentMatchers.anyLong
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.*
 import retrofit2.Response
 import java.time.LocalDate
 
@@ -42,6 +43,23 @@ class TodayViewModelTest {
     private val mockImageCache = mock(ImageCache::class.java)
     private val testDate = LocalDate.of(2000, 1, 1)
     private val mockApodResponse = TestData.apodResponse
+
+    @Test
+    fun `factory creates ViewModel`() = coroutineRule.dispatcher.runBlockingTest {
+        `when`(mockApodDao.loadByDate(anyString())).thenReturn(mockApodResponse.toApod().toEntity())
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        assertNotNull(TodayViewModel.TodayViewModelFactory(apodRepo).create(TodayViewModel::class.java))
+    }
+
+    @Test
+    fun `factory passes date`() = coroutineRule.dispatcher.runBlockingTest {
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
+        `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
+        `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
+        verify(mockApodDao).loadByDate(testDate.toString())
+    }
 
     @Test
     fun `success state hit`() = coroutineRule.dispatcher.runBlockingTest {
@@ -110,5 +128,27 @@ class TodayViewModelTest {
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
         viewModel.videoLinkClicked()
         assertNull(viewModel.navigateVideoLink.value?.peekContent())
+    }
+
+    @Test
+    fun `observe photo clicked`() = coroutineRule.dispatcher.runBlockingTest {
+        `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
+        `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
+        `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
+        viewModel.onPhotoClicked()
+        assertEquals(viewModel.navigateFullPicture.value?.peekContent(), mockApodResponse.id)
+    }
+
+    @Test
+    fun `don't observe photo clicked on null apods`() = coroutineRule.dispatcher.runBlockingTest {
+        `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
+        `when`(mockDataSource.getApod(testDate)).thenReturn(Response.error(500, "Error".toResponseBody()))
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
+        viewModel.onPhotoClicked()
+        assertNull(viewModel.navigateFullPicture.value?.peekContent())
     }
 }
