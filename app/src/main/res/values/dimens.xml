@@ -3,5 +3,6 @@
     <dimen name="space_s">4dp</dimen>
     <dimen name="space_m">8dp</dimen>
     <dimen name="space_l">16dp</dimen>
+    <dimen name="space_xl">24dp</dimen>
     <dimen name="today_container_bottom_space">56dp</dimen>
 </resources>
