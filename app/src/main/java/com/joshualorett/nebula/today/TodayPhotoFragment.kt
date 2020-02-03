@@ -1,6 +1,5 @@
 package com.joshualorett.nebula.today
 
-
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -30,6 +29,8 @@ import com.joshualorett.nebula.shared.OneShotEventObserver
 import kotlinx.android.synthetic.main.fragment_picture.*
 import kotlinx.android.synthetic.main.fragment_today_photo.*
 import kotlinx.coroutines.Dispatchers
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
  * Displays Today's [Apod].
@@ -114,7 +115,7 @@ class TodayPhotoFragment : Fragment() {
 
     private fun updateApod(apod: Apod) {
         val isPhoto = apod.mediaType == "image"
-        todayDate.text = apod.date
+        todayDate.text = getFormattedDate(apod.date)
         pictureTitle.text = apod.title
         pictureDescription.text = apod.explanation
         if(apod.copyright == null) {
@@ -141,6 +142,15 @@ class TodayPhotoFragment : Fragment() {
             todayToolbar.title = getString(R.string.app_name)
             todayCollapsingToolbar.isTitleEnabled = false
             videoLinkBtn.show()
+        }
+    }
+
+    private fun getFormattedDate(date: String): String {
+        return try {
+            val formatter = DateTimeFormatter.ofPattern("yyyy MMMM dd")
+            LocalDate.parse(date).format(formatter)
+        } catch (e: Exception) {
+            date
         }
     }
 }
