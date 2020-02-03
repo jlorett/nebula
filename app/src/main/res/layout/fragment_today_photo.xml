@@ -10,7 +10,6 @@
         android:id="@+id/todayAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
@@ -18,6 +17,7 @@
             android:id="@+id/todayCollapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
             app:collapsedTitleTextAppearance="@style/AppTheme.TextView.Header"
             app:expandedTitleTextAppearance="@style/AppTheme.TextView.Header"
             app:title="@string/app_name"
@@ -34,7 +34,8 @@
                 android:id="@+id/todayToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"/>
+                app:titleTextAppearance="@style/AppTheme.TextView.AppBarTitle"
+                app:layout_collapseMode="pin" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.core.widget.NestedScrollView

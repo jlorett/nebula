@@ -20,4 +20,8 @@
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Headline</item>
     </style>
+
+    <style name="AppTheme.TextView.AppBarTitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
 </resources>

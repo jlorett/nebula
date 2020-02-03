@@ -30,6 +30,7 @@ import com.joshualorett.nebula.shared.OneShotEventObserver
 import kotlinx.android.synthetic.main.fragment_picture.*
 import kotlinx.android.synthetic.main.fragment_today_photo.*
 import kotlinx.coroutines.Dispatchers
+import java.time.LocalDate
 
 /**
  * Displays Today's [Apod].
@@ -136,6 +137,9 @@ class TodayPhotoFragment : Fragment() {
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(picture)
         } else {
+            picture.visibility = View.GONE
+            todayToolbar.title = getString(R.string.app_name)
+            todayCollapsingToolbar.isTitleEnabled = false
             videoLinkBtn.show()
         }
     }
