@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Nebula</string>
     <string name="today_picture_desc">Picture of the day.</string>
-    <string name="today_video_btn_text">Watch</string>
-    <string name="today_video_btn_desc">Watch video link.</string>
+    <string name="today_video_btn_text">Play</string>
+    <string name="today_video_btn_desc">Play video link.</string>
     <string name="today_copyright">&lt;b>Copyright&lt;/b>&lt;br/>%1$s</string>
     <string name="today_error">Error</string>
     <string name="today_loading">Loading</string>
