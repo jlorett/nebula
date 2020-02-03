@@ -30,7 +30,6 @@ import com.joshualorett.nebula.shared.OneShotEventObserver
 import kotlinx.android.synthetic.main.fragment_picture.*
 import kotlinx.android.synthetic.main.fragment_today_photo.*
 import kotlinx.coroutines.Dispatchers
-import java.time.LocalDate
 
 /**
  * Displays Today's [Apod].
@@ -115,6 +114,7 @@ class TodayPhotoFragment : Fragment() {
 
     private fun updateApod(apod: Apod) {
         val isPhoto = apod.mediaType == "image"
+        todayDate.text = apod.date
         pictureTitle.text = apod.title
         pictureDescription.text = apod.explanation
         if(apod.copyright == null) {
