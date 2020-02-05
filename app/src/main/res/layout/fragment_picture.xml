@@ -36,7 +36,6 @@
         android:id="@+id/pictureError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textColor="@color/pictureTextColor"
         android:layout_gravity="center"
         android:visibility="gone"
@@ -44,6 +43,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        style="@style/AppTheme.TextView.Header"
         tools:text="Error"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
