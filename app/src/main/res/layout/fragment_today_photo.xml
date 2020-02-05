@@ -24,7 +24,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
             <ImageView
-                android:id="@+id/picture"
+                android:id="@+id/todayPicture"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/today_picture_desc"
@@ -59,7 +59,7 @@
                 tools:text="2000 January 01"/>
 
             <TextView
-                android:id="@+id/pictureTitle"
+                android:id="@+id/todayTitle"
                 android:layout_marginTop="@dimen/space_s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,14 +67,14 @@
                 tools:text="@string/sample_title" />
 
             <TextView
-                android:id="@+id/pictureDescription"
+                android:id="@+id/todayDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_m"
                 tools:text="@string/sample_description" />
 
             <TextView
-                android:id="@+id/copyright"
+                android:id="@+id/todayCopyright"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_m"
@@ -85,7 +85,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/videoLinkBtn"
+        android:id="@+id/todayVideoLinkBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/today_video_btn_text"

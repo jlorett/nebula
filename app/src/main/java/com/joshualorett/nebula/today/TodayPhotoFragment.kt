@@ -72,9 +72,9 @@ class TodayPhotoFragment : Fragment() {
             updateApod(apod)
         })
         viewModel.error.observe(this, Observer { error ->
-            pictureTitle.text = getString(R.string.today_error)
-            pictureDescription.text = error
-            picture.visibility = View.GONE
+            todayTitle.text = getString(R.string.today_error)
+            todayDescription.text = error
+            todayPicture.visibility = View.GONE
         })
         viewModel.loading.observe(this, Observer { loading ->
             todayProgressBar.visibility = if(loading) View.VISIBLE else View.GONE
@@ -89,16 +89,16 @@ class TodayPhotoFragment : Fragment() {
             requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
         })
 
-        videoLinkBtn.setOnClickListener {
+        todayVideoLinkBtn.setOnClickListener {
             viewModel.videoLinkClicked()
         }
-        videoLinkBtn.hide()
+        todayVideoLinkBtn.hide()
 
         todayContainer.doOnPreDraw {
             val isPortrait = it.height >= it.width
-            picture.layoutParams.height = if(isPortrait) it.width / 4 * 3 else it.height
+            todayPicture.layoutParams.height = if(isPortrait) it.width / 4 * 3 else it.height
         }
-        picture.setOnClickListener {
+        todayPicture.setOnClickListener {
             viewModel.onPhotoClicked()
         }
     }
@@ -116,17 +116,17 @@ class TodayPhotoFragment : Fragment() {
     private fun updateApod(apod: Apod) {
         val isPhoto = apod.mediaType == "image"
         todayDate.text = getFormattedDate(apod.date)
-        pictureTitle.text = apod.title
-        pictureDescription.text = apod.explanation
+        todayTitle.text = apod.title
+        todayDescription.text = apod.explanation
         if(apod.copyright == null) {
-            copyright.visibility = View.INVISIBLE
+            todayCopyright.visibility = View.INVISIBLE
         } else {
-            copyright.visibility = View.VISIBLE
+            todayCopyright.visibility = View.VISIBLE
             val copyrightText = getString(R.string.today_copyright, apod.copyright)
-            copyright.text = Html.fromHtml(copyrightText, Html.FROM_HTML_MODE_LEGACY)
+            todayCopyright.text = Html.fromHtml(copyrightText, Html.FROM_HTML_MODE_LEGACY)
         }
         if(isPhoto) {
-            videoLinkBtn.hide()
+            todayVideoLinkBtn.hide()
             apod.hdurl?.let {
                 Glide.with(this)
                     .download(GlideUrl(apod.hdurl))
@@ -136,12 +136,12 @@ class TodayPhotoFragment : Fragment() {
                 .load(apod.url)
                 .centerCrop()
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .into(picture)
+                .into(todayPicture)
         } else {
-            picture.visibility = View.GONE
+            todayPicture.visibility = View.GONE
             todayToolbar.title = getString(R.string.app_name)
             todayCollapsingToolbar.isTitleEnabled = false
-            videoLinkBtn.show()
+            todayVideoLinkBtn.show()
         }
     }
 
