@@ -49,6 +49,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/space_l"
             android:paddingEnd="@dimen/space_l"
+            android:paddingBottom="@dimen/space_xl"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/todayDate"
@@ -77,7 +78,7 @@
                 android:id="@+id/todayCopyright"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
+                android:layout_marginTop="@dimen/space_l"
                 android:visibility="invisible"
                 tools:visibility="visible"
                 tools:text="Copyright - Test"/>
