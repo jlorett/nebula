@@ -1,6 +1,7 @@
 package com.joshualorett.nebula.today
 
 import androidx.lifecycle.*
+import androidx.work.*
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.OneShotEvent
@@ -12,7 +13,8 @@ import java.time.LocalDate
  * [ViewModel] show today's Astronomy Picture of the Day.
  * Created by Joshua on 1/11/2020.
  */
-class TodayViewModel(private val apodRepository: ApodRepository, private val todaysDate: LocalDate): ViewModel() {
+class TodayViewModel(private val apodRepository: ApodRepository,
+                     private val todaysDate: LocalDate): ViewModel() {
     private val _apod: MutableLiveData<Apod> = MutableLiveData()
     val apod: LiveData<Apod> = _apod
 
