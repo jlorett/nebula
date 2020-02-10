@@ -22,7 +22,7 @@
             app:expandedTitleTextAppearance="@style/AppTheme.TextView.Header"
             app:title="@string/app_name"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
             <ImageView
                 android:id="@+id/todayPicture"
                 android:layout_width="match_parent"
