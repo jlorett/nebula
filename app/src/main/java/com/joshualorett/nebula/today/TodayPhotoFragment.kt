@@ -22,6 +22,7 @@ import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
+import com.joshualorett.nebula.apod.hasImage
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
@@ -109,7 +110,6 @@ class TodayPhotoFragment : Fragment() {
     }
 
     private fun updateApod(apod: Apod) {
-        val isPhoto = apod.mediaType == "image"
         todayDate.text = getFormattedDate(apod.date)
         todayTitle.text = apod.title
         todayDescription.text = apod.explanation
@@ -120,7 +120,7 @@ class TodayPhotoFragment : Fragment() {
             val copyrightText = getString(R.string.today_copyright, apod.copyright)
             todayCopyright.text = Html.fromHtml(copyrightText, Html.FROM_HTML_MODE_LEGACY)
         }
-        if(isPhoto) {
+        if(apod.hasImage()) {
             todayVideoLinkBtn.hide()
             Glide.with(this)
                 .load(apod.hdurl ?: apod.url)

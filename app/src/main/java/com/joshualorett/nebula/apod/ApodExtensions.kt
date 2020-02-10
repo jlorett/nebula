@@ -25,3 +25,7 @@ fun Apod.toEntity(): ApodEntity {
     return ApodEntity(this.id, this.date, this.title, this.explanation, this.mediaType, this.url,
         this.hdurl, this.copyright)
 }
+
+fun Apod.hasImage(): Boolean {
+    return this.mediaType == "image"
+}

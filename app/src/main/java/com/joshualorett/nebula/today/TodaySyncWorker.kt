@@ -10,6 +10,7 @@ import com.joshualorett.nebula.R
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
+import com.joshualorett.nebula.apod.hasImage
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.Dispatchers
@@ -40,9 +41,11 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
                 resource.successful() -> {
                     retryAttempt = 0
                     val apod = (resource as Resource.Success).data
-                    Glide.with(applicationContext)
-                        .download(GlideUrl(apod.hdurl ?: apod.url))
-                        .submit()
+                    if(apod.hasImage()) {
+                        Glide.with(applicationContext)
+                            .download(GlideUrl(apod.hdurl ?: apod.url))
+                            .submit()
+                    }
                     Result.success()
                 }
                 retryAttempt >= maxRetryAttempts -> {

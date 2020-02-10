@@ -26,29 +26,47 @@ class ApodTest {
     fun `apodResponse converts to apod`() {
         val apodResponse = ApodResponse(
             0, "2000-01-01", "apod", "testing",
-            "jpg", "v1", "https://example.com",
+            "image", "v1", "https://example.com",
             "https://example.com/hd"
         )
         val expected = Apod(0, "2000-01-01", "apod", "testing",
-            "jpg", "https://example.com", "https://example.com/hd")
+            "image", "https://example.com", "https://example.com/hd")
         assertEquals(expected, apodResponse.toApod())
     }
 
     @Test
     fun `apodEntity converts to apod`() {
         val apodEntity = ApodEntity(1, "2000-01-01", "apod", "testing",
-            "jpg", "https://example.com", "https://example.com/hd", "tester")
+            "image", "https://example.com", "https://example.com/hd", "tester")
         val expected = Apod(1, "2000-01-01", "apod", "testing",
-            "jpg", "https://example.com", "https://example.com/hd", "tester")
+            "image", "https://example.com", "https://example.com/hd", "tester")
         assertEquals(expected, apodEntity.toApod())
     }
 
     @Test
     fun `apod converts to apodEntity`() {
         val apod = Apod(0, "2000-01-01", "apod", "testing",
-            "jpg", "https://example.com", "https://example.com/hd", "tester")
+            "image", "https://example.com", "https://example.com/hd", "tester")
         val expected = ApodEntity(0, "2000-01-01", "apod", "testing",
-            "jpg", "https://example.com", "https://example.com/hd", "tester")
+            "image", "https://example.com", "https://example.com/hd", "tester")
         assertEquals(expected, apod.toEntity())
+    }
+
+    @Test
+    fun `apod has image`() {
+        val apod = Apod(
+            0, "2000-01-01", "apod", "testing",
+            "image", "https://example.com", "https://example.com/hd", "tester"
+        )
+        assertTrue(apod.hasImage())
+    }
+
+    @Test
+    fun `apod doesn't have image for videos`() {
+        val apod = Apod(
+            0, "2000-01-01", "apod", "testing",
+            "video", "https://example.com", "https://example.com/hd", "tester"
+        )
+        assertFalse(apod.hasImage())
     }
 }
