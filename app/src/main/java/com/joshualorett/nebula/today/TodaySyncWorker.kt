@@ -3,12 +3,15 @@ package com.joshualorett.nebula.today
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
 import com.joshualorett.nebula.NasaRetrofitClient
 import com.joshualorett.nebula.R
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
 import com.joshualorett.nebula.shared.GlideImageCache
+import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -36,6 +39,10 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
             when {
                 resource.successful() -> {
                     retryAttempt = 0
+                    val apod = (resource as Resource.Success).data
+                    Glide.with(applicationContext)
+                        .download(GlideUrl(apod.hdurl ?: apod.url))
+                        .submit()
                     Result.success()
                 }
                 retryAttempt >= maxRetryAttempts -> {

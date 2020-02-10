@@ -15,7 +15,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.joshualorett.nebula.NasaRetrofitClient
 import com.joshualorett.nebula.R
@@ -123,13 +122,8 @@ class TodayPhotoFragment : Fragment() {
         }
         if(isPhoto) {
             todayVideoLinkBtn.hide()
-            apod.hdurl?.let {
-                Glide.with(this)
-                    .download(GlideUrl(apod.hdurl))
-                    .preload()
-            }
             Glide.with(this)
-                .load(apod.url)
+                .load(apod.hdurl ?: apod.url)
                 .centerCrop()
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(todayPicture)
