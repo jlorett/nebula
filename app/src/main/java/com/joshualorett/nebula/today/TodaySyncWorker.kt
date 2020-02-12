@@ -43,7 +43,8 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
                     val apod = (resource as Resource.Success).data
                     if(apod.hasImage()) {
                         Glide.with(applicationContext)
-                            .download(GlideUrl(apod.hdurl ?: apod.url))
+                            .asFile()
+                            .load(GlideUrl(apod.hdurl ?: apod.url))
                             .submit()
                     }
                     Result.success()

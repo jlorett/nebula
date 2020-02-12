@@ -70,7 +70,8 @@ class PictureFragment : Fragment() {
             pictureError.visibility = View.GONE
             apodPicture.visibility = View.VISIBLE
             Glide.with(this)
-                .download(GlideUrl(url))
+                .asFile()
+                .load(GlideUrl(url))
                 .into(object: CustomViewTarget<SubsamplingScaleImageView, File>(apodPicture) {
                     override fun onLoadFailed(errorDrawable: Drawable?) {
                         apodPicture.visibility = View.GONE
