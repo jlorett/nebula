@@ -15,8 +15,10 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito.*
 import retrofit2.Response
+import java.io.IOException
 import java.time.LocalDate
 
 /**
@@ -61,6 +63,16 @@ class ApodRepositoryTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         val errorResponse: Response<ApodResponse> = Response.error(500, "Error".toResponseBody())
         `when`(apodDataSource.getApod(testDate)).thenReturn(errorResponse)
+        val resource = repository.getApod(testDate)
+        assertTrue(resource is Resource.Error)
+    }
+
+    @Test
+    fun `returns unsuccessful resource on exception`() = runBlockingTest {
+        `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
+        given(apodDataSource.getApod(testDate)).willAnswer {
+            throw IOException()
+        }
         val resource = repository.getApod(testDate)
         assertTrue(resource is Resource.Error)
     }
