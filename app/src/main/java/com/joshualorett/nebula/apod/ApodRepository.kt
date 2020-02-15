@@ -4,6 +4,7 @@ import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
+import java.io.IOException
 import java.time.LocalDate
 
 /**
@@ -44,17 +45,21 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
     }
 
     private suspend fun getApodByDataSource(date: LocalDate): Resource<Apod, String> {
-        val response = apodDataSource.getApod(date)
-        return if (response.isSuccessful) {
-            val networkApod = response.body()?.toApod()
-            if (networkApod == null) {
-                Resource.Error("Empty network body.")
+        try {
+            val response = apodDataSource.getApod(date)
+            return if (response.isSuccessful) {
+                val networkApod = response.body()?.toApod()
+                if (networkApod == null) {
+                    Resource.Error("Empty network body.")
+                } else {
+                    clearOldResources()
+                    return cacheApod(networkApod)
+                }
             } else {
-                clearOldResources()
-                return cacheApod(networkApod)
+                Resource.Error("Error getting apod with status ${response.code()}.")
             }
-        } else {
-            Resource.Error("Error getting apod with status ${response.code()}.")
+        } catch (e: IOException) {
+            return Resource.Error("Your network is unavailable. Check your data or wifi connection.")
         }
     }
 
