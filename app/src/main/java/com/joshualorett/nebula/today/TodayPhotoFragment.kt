@@ -68,6 +68,8 @@ class TodayPhotoFragment : Fragment() {
             updateApod(apod)
         })
         viewModel.error.observe(this, Observer { error ->
+            todayToolbar.title = getString(R.string.app_name)
+            todayCollapsingToolbar.isTitleEnabled = false
             todayTitle.text = getString(R.string.today_error)
             todayDescription.text = error
             todayPicture.visibility = View.GONE
