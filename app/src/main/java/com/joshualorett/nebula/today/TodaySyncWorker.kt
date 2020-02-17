@@ -23,7 +23,6 @@ import java.time.LocalDate
  */
 class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWorker(context, params) {
     private val maxRetryAttempts = 2
-    private var retryAttempt = 0
 
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
@@ -39,7 +38,6 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
             imageCache.detachApplicationContext()
             when {
                 resource.successful() -> {
-                    retryAttempt = 0
                     val apod = (resource as Resource.Success).data
                     if(apod.hasImage()) {
                         Glide.with(applicationContext)
@@ -49,12 +47,10 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
                     }
                     Result.success()
                 }
-                retryAttempt >= maxRetryAttempts -> {
-                    retryAttempt.inc()
+                runAttemptCount < maxRetryAttempts -> {
                     Result.retry()
                 }
                 else -> {
-                    retryAttempt = 0
                     Result.failure()
                 }
             }
