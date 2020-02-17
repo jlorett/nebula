@@ -78,6 +78,6 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
      */
     private suspend fun clearOldResources() {
         apodDao.deleteAll()
-        imageCache.cleanCache()
+        imageCache.clear()
     }
 }

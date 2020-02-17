@@ -2,17 +2,19 @@ package com.joshualorett.nebula.shared
 
 import android.content.Context
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 /**
- * Image cache utilities.
+ * Cache image urls.
  * Created by Joshua on 1/25/2020.
  */
 interface ImageCache {
     fun attachApplicationContext(appContext: Context)
     fun detachApplicationContext()
-    suspend fun cleanCache()
+    suspend fun cache(url: String): Boolean
+    suspend fun clear()
 }
 
 class GlideImageCache(private val dispatcher: CoroutineDispatcher): ImageCache {
@@ -26,11 +28,25 @@ class GlideImageCache(private val dispatcher: CoroutineDispatcher): ImageCache {
         this.appContext = null
     }
 
-    override suspend fun cleanCache() {
+    override suspend fun clear() {
         withContext(dispatcher) {
             appContext?.let {
                 Glide.get(it).clearDiskCache()
             }
+        }
+    }
+
+    override suspend fun cache(url: String): Boolean = withContext(dispatcher) {
+        val ctx = appContext ?: return@withContext false
+        val imageFuture = Glide.with(ctx)
+            .downloadOnly()
+            .load(GlideUrl(url))
+            .submit()
+        try {
+            val cacheResult = imageFuture.get()
+            cacheResult != null
+        } catch (e: Exception) {
+           false
         }
     }
 }

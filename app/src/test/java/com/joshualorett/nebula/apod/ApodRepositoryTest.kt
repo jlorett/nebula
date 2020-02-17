@@ -122,7 +122,7 @@ class ApodRepositoryTest {
         mockImageCache.attachApplicationContext(mock(Context::class.java))
         repository.getApod(testDate)
         mockImageCache.detachApplicationContext()
-        verify(mockImageCache).cleanCache()
+        verify(mockImageCache).clear()
     }
 
     @Test
