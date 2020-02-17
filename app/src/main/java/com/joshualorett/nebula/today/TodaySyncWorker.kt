@@ -3,15 +3,15 @@ package com.joshualorett.nebula.today
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
 import com.joshualorett.nebula.NasaRetrofitClient
 import com.joshualorett.nebula.R
+import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
 import com.joshualorett.nebula.apod.hasImage
 import com.joshualorett.nebula.shared.GlideImageCache
+import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,26 +26,18 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
 
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
-            val imageCache = GlideImageCache(Dispatchers.Default)
+            val imageCache = GlideImageCache(Dispatchers.IO)
             imageCache.attachApplicationContext(applicationContext)
-            val dataSource = ApodRemoteDataSource(
-                NasaRetrofitClient,
-                applicationContext.getString(R.string.key)
-            )
-            val apodDao = ApodDatabaseProvider.getDatabase(applicationContext).apodDao()
-            val apodRepository = ApodRepository(dataSource, apodDao, imageCache)
-            val resource = apodRepository.getApod(LocalDate.now())
-            imageCache.detachApplicationContext()
+           val resource = getApod(imageCache)
             when {
                 resource.successful() -> {
                     val apod = (resource as Resource.Success).data
                     if(apod.hasImage()) {
-                        Glide.with(applicationContext)
-                            .asFile()
-                            .load(GlideUrl(apod.hdurl ?: apod.url))
-                            .submit()
+                        val cacheSuccessful = imageCache.cache(apod.hdurl ?: apod.url)
+                        if(cacheSuccessful) Result.success() else Result.failure()
+                    } else {
+                        Result.success()
                     }
-                    Result.success()
                 }
                 runAttemptCount < maxRetryAttempts -> {
                     Result.retry()
@@ -53,7 +45,20 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
                 else -> {
                     Result.failure()
                 }
+            }.also {
+                imageCache.detachApplicationContext()
             }
         }
+    }
+
+    private suspend fun getApod(imageCache: ImageCache): Resource<Apod, String> = withContext(Dispatchers.IO) {
+        val dataSource = ApodRemoteDataSource(
+            NasaRetrofitClient,
+            applicationContext.getString(R.string.key)
+        )
+        val apodDao = ApodDatabaseProvider.getDatabase(applicationContext).apodDao()
+        val apodRepository = ApodRepository(dataSource, apodDao, imageCache)
+        val resource = apodRepository.getApod(LocalDate.now())
+        resource
     }
 }
