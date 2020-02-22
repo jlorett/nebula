@@ -56,11 +56,8 @@ class PictureFragment : Fragment() {
         imageCache.attachApplicationContext(requireContext().applicationContext)
         val repo = ApodRepository(dataSource, apodDao, imageCache)
 
-        val appCompatActivity = requireActivity() as AppCompatActivity
-        appCompatActivity.setSupportActionBar(pictureToolbar)
-        appCompatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        appCompatActivity.supportActionBar?.setDisplayShowTitleEnabled(false)
-        pictureToolbar?.setNavigationOnClickListener {
+        pictureToolbar.title = ""
+        pictureToolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
         }
 
