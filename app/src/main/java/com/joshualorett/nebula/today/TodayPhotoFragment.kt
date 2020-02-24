@@ -4,10 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Html
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import android.view.*
+import android.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
@@ -26,7 +24,6 @@ import com.joshualorett.nebula.apod.hasImage
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
-import kotlinx.android.synthetic.main.fragment_picture.*
 import kotlinx.android.synthetic.main.fragment_today_photo.*
 import kotlinx.coroutines.Dispatchers
 import java.time.LocalDate
@@ -55,8 +52,21 @@ class TodayPhotoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         todayCollapsingToolbar.setExpandedTitleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
-        val appCompatActivity = requireActivity() as AppCompatActivity
-        appCompatActivity.setSupportActionBar(pictureToolbar)
+        todayToolbar.inflateMenu(R.menu.today)
+        todayToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
+            androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                return when(item?.itemId) {
+                    R.id.action_settings -> {
+                        navigateToSettings()
+                        true
+                    }
+                    else -> {
+                        false
+                    }
+                }
+            }
+        })
         val dataSource = ApodRemoteDataSource(
             NasaRetrofitClient,
             getString(R.string.key)
@@ -109,6 +119,11 @@ class TodayPhotoFragment : Fragment() {
     private fun navigateToLink(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
+    }
+
+    private fun navigateToSettings() {
+        val action = TodayPhotoFragmentDirections.actionTodayPhotoFragmentToSettingsContainerFragment()
+        requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
     }
 
     private fun updateApod(apod: Apod) {

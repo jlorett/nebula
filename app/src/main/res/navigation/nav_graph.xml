@@ -18,6 +18,15 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@+id/todayPhotoFragment" />
+        <action
+            android:id="@+id/action_todayPhotoFragment_to_settingsContainerFragment"
+            app:destination="@id/settingsContainerFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/pictureFragment" />
     </fragment>
     <fragment
         android:id="@+id/pictureFragment"
@@ -28,5 +37,10 @@
             android:name="id"
             app:argType="long"
             android:defaultValue="0L" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsContainerFragment"
+        android:name="com.joshualorett.nebula.settings.SettingsContainerFragment"
+        android:label="SettingsContainerFragment" >
     </fragment>
 </navigation>
