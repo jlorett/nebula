@@ -89,7 +89,7 @@ dependencies {
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 
     // Work Manager
-    implementation "androidx.work:work-runtime-ktx:2.3.1"
+    implementation "androidx.work:work-runtime-ktx:2.3.2"
 
     // LeakCanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.1'
