@@ -3,6 +3,6 @@
     <PreferenceCategory android:title="@string/settings_header_about">
         <Preference
             android:title="@string/settings_about"
-            android:key="pref_key_about"/>
+            android:key="@string/settings_key_about"/>
     </PreferenceCategory>
 </PreferenceScreen>

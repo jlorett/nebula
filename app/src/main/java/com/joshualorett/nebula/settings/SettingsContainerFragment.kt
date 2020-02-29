@@ -36,7 +36,7 @@ class SettingsContainerFragment : Fragment() {
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-            val aboutPref = findPreference<Preference>("pref_key_about")
+            val aboutPref = findPreference<Preference>(getString(R.string.settings_key_about))
             aboutPref?.let {
                 val version = requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0).versionName
                 it.summary = version
