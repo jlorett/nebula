@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/settings_header_data">
+        <SwitchPreferenceCompat
+            android:key="@string/settings_key_sync"
+            android:title="@string/sync"
+            android:summary="@string/sync_summary"
+            app:defaultValue="true"/>
+        <SwitchPreferenceCompat
+            android:key="@string/settings_key_over_wifi"
+            android:title="@string/over_wifi"
+            app:defaultValue="false"
+            app:isPreferenceVisible="false"/>
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_header_about">
         <Preference
             android:title="@string/settings_about"

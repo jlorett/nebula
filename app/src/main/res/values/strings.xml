@@ -11,4 +11,8 @@
     <string name="settings_about">Nebula by Joshua Lorett</string>
     <string name="settings">Settings</string>
     <string name="settings_header_about">About</string>
+    <string name="settings_header_data">Data</string>
+    <string name="sync">Sync</string>
+    <string name="sync_summary">Fetch the latest picture in the background.</string>
+    <string name="over_wifi">Sync data only over Wi-Fi</string>
 </resources>
