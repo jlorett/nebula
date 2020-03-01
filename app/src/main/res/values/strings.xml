@@ -14,5 +14,5 @@
     <string name="settings_header_data">Data</string>
     <string name="sync">Sync</string>
     <string name="sync_summary">Fetch the latest picture in the background.</string>
-    <string name="over_wifi">Sync data only over Wi-Fi</string>
+    <string name="over_wifi">Only sync over Wi-Fi</string>
 </resources>
