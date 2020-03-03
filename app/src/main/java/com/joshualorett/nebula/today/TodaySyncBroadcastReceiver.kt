@@ -18,7 +18,7 @@ class TodaySyncBroadcastReceiver: BroadcastReceiver() {
             val overWifi = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getString(R.string.settings_key_over_wifi), false)
             val syncWorkManager = WorkManager.getInstance(context)
             val workConstraints = Constraints.Builder()
-                .setRequiredNetworkType(if(overWifi) NetworkType.METERED else NetworkType.UNMETERED)
+                .setRequiredNetworkType(if(overWifi) NetworkType.UNMETERED else NetworkType.METERED)
                 .build()
             val workRequest = OneTimeWorkRequestBuilder<TodaySyncWorker>()
                 .setConstraints(workConstraints)
