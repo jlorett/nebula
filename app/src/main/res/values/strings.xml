@@ -14,5 +14,6 @@
     <string name="settings_header_data">Data</string>
     <string name="sync">Sync</string>
     <string name="sync_summary">Fetch the latest picture in the background</string>
-    <string name="unmetered">Only sync on an unmetered network connection</string>
+    <string name="unmetered">Unmetered Only</string>
+    <string name="unmetered_summary">Sync data only over an unmetered network connection</string>
 </resources>

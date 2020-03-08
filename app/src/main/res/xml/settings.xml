@@ -9,7 +9,8 @@
             app:defaultValue="true"/>
         <SwitchPreferenceCompat
             android:key="@string/settings_key_unmetered"
-            android:summary="@string/unmetered"
+            android:title="@string/unmetered"
+            android:summary="@string/unmetered_summary"
             app:defaultValue="false"
             app:isPreferenceVisible="false"/>
     </PreferenceCategory>
