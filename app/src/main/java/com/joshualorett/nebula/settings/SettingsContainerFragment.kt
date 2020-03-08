@@ -35,10 +35,10 @@ class SettingsContainerFragment : Fragment() {
 
     class SettingsFragment : PreferenceFragmentCompat() {
         private var syncPreference: SwitchPreferenceCompat? = null
-        private var wifiPreference: SwitchPreferenceCompat? = null
+        private var unmeteredPreference: SwitchPreferenceCompat? = null
 
         private lateinit var syncKey: String
-        private lateinit var wifiKey: String
+        private lateinit var unmeteredKey: String
 
         private val listener: SharedPreferences.OnSharedPreferenceChangeListener =
             SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -49,7 +49,7 @@ class SettingsContainerFragment : Fragment() {
                         } else {
                             SyncManager.cancelRecurringSyncAlarm(requireContext())
                         }
-                        updateWifiState()
+                        updateUnmeteredState()
                     }
                 }
             }
@@ -58,16 +58,16 @@ class SettingsContainerFragment : Fragment() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.settings, rootKey)
             syncKey = getString(R.string.settings_key_sync)
-            wifiKey = getString(R.string.settings_key_over_wifi)
+            unmeteredKey = getString(R.string.settings_key_unmetered)
 
             syncPreference = findPreference(syncKey)
             syncPreference?.setOnPreferenceClickListener {
                 syncPreference?.isChecked = syncPreference?.isChecked ?: false
-                updateWifiState()
+                updateUnmeteredState()
                 true
             }
-            wifiPreference = findPreference(wifiKey)
-            updateWifiState()
+            unmeteredPreference = findPreference(unmeteredKey)
+            updateUnmeteredState()
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -89,12 +89,12 @@ class SettingsContainerFragment : Fragment() {
             preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
         }
 
-        private fun updateWifiState() {
+        private fun updateUnmeteredState() {
             val syncOn = syncPreference?.isChecked == true
             if(!syncOn) {
-                wifiPreference?.isChecked = false
+                unmeteredPreference?.isChecked = false
             }
-            wifiPreference?.isVisible = syncOn
+            unmeteredPreference?.isVisible = syncOn
         }
     }
 }

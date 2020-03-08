@@ -8,8 +8,8 @@
             android:summary="@string/sync_summary"
             app:defaultValue="true"/>
         <SwitchPreferenceCompat
-            android:key="@string/settings_key_over_wifi"
-            android:title="@string/over_wifi"
+            android:key="@string/settings_key_unmetered"
+            android:summary="@string/unmetered"
             app:defaultValue="false"
             app:isPreferenceVisible="false"/>
     </PreferenceCategory>
