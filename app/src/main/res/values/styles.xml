@@ -8,10 +8,10 @@
         <item name="colorSecondary">@color/colorAccent</item>
         <item name="colorSurface">@color/colorPrimary</item>
         <item name="android:colorBackground">@color/background</item>
-        <item name="android:textViewStyle">@style/AppTheme.TextView.Body</item>
+        <item name="android:textViewStyle">@style/AppTheme.TextView.Body1</item>
     </style>
 
-    <style name="AppTheme.TextView.Body" parent="TextAppearance.MaterialComponents.Body1">
+    <style name="AppTheme.TextView.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="fontFamily">@font/open_sans</item>
     </style>
 
