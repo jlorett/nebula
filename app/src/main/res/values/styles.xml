@@ -16,10 +16,10 @@
     </style>
 
     <style name="AppTheme.TextView.Header" parent="TextAppearance.MaterialComponents.Headline5">
-        <item name="fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/space_mono</item>
     </style>
 
     <style name="AppTheme.TextView.Overline" parent="TextAppearance.MaterialComponents.Overline">
-        <item name="fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/space_mono</item>
     </style>
 </resources>
