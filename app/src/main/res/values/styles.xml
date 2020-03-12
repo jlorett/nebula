@@ -15,7 +15,11 @@
         <item name="fontFamily">@font/open_sans</item>
     </style>
 
-    <style name="AppTheme.TextView.Header" parent="TextAppearance.MaterialComponents.Headline5">
+    <style name="AppTheme.TextView.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontFamily">@font/space_mono</item>
+    </style>
+
+    <style name="AppTheme.TextView.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="fontFamily">@font/space_mono</item>
     </style>
 

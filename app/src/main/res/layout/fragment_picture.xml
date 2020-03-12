@@ -31,6 +31,7 @@
             android:id="@+id/pictureToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:titleTextAppearance="@style/AppTheme.TextView.Headline6"
             app:navigationIcon="?attr/homeAsUpIndicator"/>
     </com.google.android.material.appbar.AppBarLayout>
     <TextView
@@ -44,7 +45,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/AppTheme.TextView.Header"
+        style="@style/AppTheme.TextView.Headline5"
         tools:text="Error"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

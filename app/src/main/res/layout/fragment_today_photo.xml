@@ -18,8 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:collapsedTitleTextAppearance="@style/AppTheme.TextView.Header"
-            app:expandedTitleTextAppearance="@style/AppTheme.TextView.Header"
+            app:collapsedTitleTextAppearance="@style/AppTheme.TextView.Headline6"
+            app:expandedTitleTextAppearance="@style/AppTheme.TextView.Headline6"
             app:title="@string/app_name"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -64,7 +64,7 @@
                 android:layout_marginTop="@dimen/space_s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/AppTheme.TextView.Header"
+                style="@style/AppTheme.TextView.Headline5"
                 tools:text="@string/sample_title" />
 
             <TextView
