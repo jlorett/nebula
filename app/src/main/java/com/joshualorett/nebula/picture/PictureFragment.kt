@@ -5,9 +5,10 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -46,6 +47,25 @@ class PictureFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        pictureToolbar.title = ""
+        pictureToolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
+        pictureToolbar.inflateMenu(R.menu.picture)
+        pictureToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
+            androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                return when(item?.itemId) {
+                    R.id.action_share_image -> {
+                        shareImage()
+                        true
+                    }
+                    else -> {
+                        false
+                    }
+                }
+            }
+        })
         apodPicture.setDoubleTapZoomScale(1.2f)
         val dataSource = ApodRemoteDataSource(
             NasaRetrofitClient,
@@ -55,11 +75,6 @@ class PictureFragment : Fragment() {
         imageCache = GlideImageCache(Dispatchers.Default)
         imageCache.attachApplicationContext(requireContext().applicationContext)
         val repo = ApodRepository(dataSource, apodDao, imageCache)
-
-        pictureToolbar.title = ""
-        pictureToolbar.setNavigationOnClickListener {
-            requireActivity().onBackPressed()
-        }
 
         val id = args.id
         val viewModel = ViewModelProvider(this, PictureViewModelFactory(repo, id)).get(PictureViewModel::class.java)
@@ -92,5 +107,9 @@ class PictureFragment : Fragment() {
     override fun onDestroy() {
         imageCache.detachApplicationContext()
         super.onDestroy()
+    }
+
+    private fun shareImage() {
+
     }
 }

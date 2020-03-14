@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_share_image"
+        android:title="@string/share"
+        android:icon="@drawable/ic_share_24dp"
+        android:iconTint="@color/iconTintOnPrimary"
+        android:iconTintMode="src_in"
+        android:contentDescription="@string/share_image_content_description"
+        app:showAsAction="always"/>
+</menu>
