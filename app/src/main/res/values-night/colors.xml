@@ -6,4 +6,5 @@
     <color name="background">#1f2331</color>
     <color name="pictureBackground">#1f2331</color>
     <color name="pictureTextColor">#FFFFFF</color>
+    <color name="iconTintOnPrimary">#FFFFFF</color>
 </resources>
