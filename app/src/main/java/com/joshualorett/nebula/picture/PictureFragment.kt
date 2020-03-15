@@ -1,6 +1,7 @@
 package com.joshualorett.nebula.picture
 
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +10,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toolbar
+import androidx.core.app.ShareCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -30,12 +33,14 @@ import kotlinx.android.synthetic.main.fragment_picture.*
 import kotlinx.coroutines.Dispatchers
 import java.io.File
 
+
 /**
  * A full screen view of an [Apod] picture.
  */
 class PictureFragment : Fragment() {
     private lateinit var imageCache: ImageCache
     private val args: PictureFragmentArgs by navArgs()
+    private var imageUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,7 +99,10 @@ class PictureFragment : Fragment() {
                     override fun onResourceCleared(placeholder: Drawable?) {}
 
                     override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                        apodPicture.setImage(ImageSource.uri(Uri.fromFile(resource)))
+                        imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", resource)
+                        imageUri?.let {
+                            apodPicture.setImage(ImageSource.uri(it))
+                        }
                     }
                 })
         })
@@ -105,11 +113,21 @@ class PictureFragment : Fragment() {
     }
 
     override fun onDestroy() {
+        imageUri = null
         imageCache.detachApplicationContext()
         super.onDestroy()
     }
 
     private fun shareImage() {
+        imageUri?.let { img ->
+            val shareIntent = ShareCompat.IntentBuilder.from(requireActivity())
+                .setStream(img)
+                .setType("image/jpg")
+                .intent
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
+            val chooser = Intent.createChooser(shareIntent, resources.getText(R.string.share))
+            startActivity(chooser)
+        }
     }
 }
