@@ -11,6 +11,6 @@ import androidx.core.content.FileProvider
  */
 class ImageFileProvider : FileProvider() {
     override fun getType(uri: Uri): String? {
-        return "image/jpg"
+        return "image/*"
     }
 }
