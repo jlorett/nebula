@@ -10,7 +10,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.joshualorett.nebula.R
-import com.joshualorett.nebula.today.SyncManager
+import com.joshualorett.nebula.today.TodaySyncManager
 import kotlinx.android.synthetic.main.fragment_settings_container.*
 
 class SettingsContainerFragment : Fragment() {
@@ -45,9 +45,9 @@ class SettingsContainerFragment : Fragment() {
                 when(key) {
                     syncKey -> {
                         if(syncPreference?.isChecked == true) {
-                            SyncManager.setRecurringSyncAlarm(requireContext())
+                            TodaySyncManager.setRecurringSyncAlarm(requireContext())
                         } else {
-                            SyncManager.cancelRecurringSyncAlarm(requireContext())
+                            TodaySyncManager.cancelRecurringSyncAlarm(requireContext())
                         }
                         updateUnmeteredState()
                     }

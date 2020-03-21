@@ -11,7 +11,7 @@ import java.util.*
  * Manage when the [TodaySyncWorker] gets called.
  * Created by Joshua on 2/28/2020.
  */
-object SyncManager {
+object TodaySyncManager {
     private const val requestCode = 9
 
     fun setRecurringSyncAlarm(context: Context) {

@@ -3,7 +3,7 @@ package com.joshualorett.nebula
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import com.joshualorett.nebula.today.SyncManager
+import com.joshualorett.nebula.today.TodaySyncManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         if(savedInstanceState == null) {
             val syncKey = getString(R.string.settings_key_sync)
             if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(syncKey, true)) {
-                SyncManager.setRecurringSyncAlarm(this)
+                TodaySyncManager.setRecurringSyncAlarm(this)
             }
         }
     }
