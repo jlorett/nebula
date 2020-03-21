@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toolbar
 import androidx.core.app.ShareCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -71,7 +72,8 @@ class PictureFragment : Fragment() {
                 }
             }
         })
-        apodPicture.setDoubleTapZoomScale(1.2f)
+        apodPicture.setDoubleTapZoomScale(1.4f)
+        apodPicture.setDoubleTapZoomDuration(resources.getInteger(android.R.integer.config_shortAnimTime))
         val dataSource = ApodRemoteDataSource(
             NasaRetrofitClient,
             getString(R.string.key)
