@@ -83,7 +83,7 @@ class PictureFragment : Fragment() {
 
         val id = args.id
         val viewModel = ViewModelProvider(this, PictureViewModelFactory(repo, id)).get(PictureViewModel::class.java)
-        viewModel.picture.observe(this, Observer { url ->
+        viewModel.picture.observe(viewLifecycleOwner, Observer { url ->
             pictureError.visibility = View.GONE
             apodPicture.visibility = View.VISIBLE
             Glide.with(this)
@@ -106,7 +106,7 @@ class PictureFragment : Fragment() {
                     }
                 })
         })
-        viewModel.error.observe(this, Observer { errorMessage ->
+        viewModel.error.observe(viewLifecycleOwner, Observer { errorMessage ->
             apodPicture.visibility = View.GONE
             pictureError.text = errorMessage
         })

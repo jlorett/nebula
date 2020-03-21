@@ -74,25 +74,25 @@ class TodayPhotoFragment : Fragment() {
         val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
         val repo = ApodRepository(dataSource, apodDao, imageCache)
         val viewModel = ViewModelProvider(this, TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
-        viewModel.apod.observe(this, Observer { apod ->
+        viewModel.apod.observe(viewLifecycleOwner, Observer { apod ->
             updateApod(apod)
         })
-        viewModel.error.observe(this, Observer { error ->
+        viewModel.error.observe(viewLifecycleOwner, Observer { error ->
             todayToolbar.title = getString(R.string.app_name)
             todayCollapsingToolbar.isTitleEnabled = false
             todayTitle.text = getString(R.string.today_error)
             todayDescription.text = error
             todayPicture.visibility = View.GONE
         })
-        viewModel.loading.observe(this, Observer { loading ->
+        viewModel.loading.observe(viewLifecycleOwner, Observer { loading ->
             todayProgressBar.visibility = if(loading) View.VISIBLE else View.GONE
         })
-        viewModel.navigateVideoLink.observe(this, OneShotEventObserver { url ->
+        viewModel.navigateVideoLink.observe(viewLifecycleOwner, OneShotEventObserver { url ->
             url?.let {
                 navigateToLink(it)
             }
         })
-        viewModel.navigateFullPicture.observe(this, OneShotEventObserver { id ->
+        viewModel.navigateFullPicture.observe(viewLifecycleOwner, OneShotEventObserver { id ->
             val action = TodayPhotoFragmentDirections.actionTodayPhotoFragmentToPictureFragment(id)
             requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
         })
