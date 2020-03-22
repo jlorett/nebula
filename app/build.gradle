@@ -89,7 +89,7 @@ dependencies {
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 
     // Work Manager
-    implementation "androidx.work:work-runtime-ktx:2.3.2"
+    implementation "androidx.work:work-runtime-ktx:2.3.4"
 
     // LeakCanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.1'
@@ -99,7 +99,7 @@ dependencies {
     testImplementation "org.mockito:mockito-core:3.2.0"
     testImplementation 'androidx.test:core:1.2.0'
     testImplementation "androidx.arch.core:core-testing:2.1.0"
-    androidTestImplementation "androidx.work:work-testing:2.3.2"
+    androidTestImplementation "androidx.work:work-testing:2.3.4"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
