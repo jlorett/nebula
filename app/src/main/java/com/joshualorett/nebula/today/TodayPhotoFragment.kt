@@ -134,8 +134,7 @@ class TodayPhotoFragment : Fragment() {
             todayCopyright.visibility = View.INVISIBLE
         } else {
             todayCopyright.visibility = View.VISIBLE
-            val copyrightText = getString(R.string.today_copyright, apod.copyright)
-            todayCopyright.text = Html.fromHtml(copyrightText, Html.FROM_HTML_MODE_LEGACY)
+            todayCopyright.text = getString(R.string.today_copyright, apod.copyright)
         }
         if(apod.hasImage()) {
             todayVideoLinkBtn.hide()
