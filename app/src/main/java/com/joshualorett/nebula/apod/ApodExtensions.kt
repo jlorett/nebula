@@ -2,6 +2,8 @@ package com.joshualorett.nebula.apod
 
 import com.joshualorett.nebula.apod.api.ApodResponse
 import com.joshualorett.nebula.apod.database.ApodEntity
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
  * Extensions for [ApodResponse].
@@ -28,4 +30,17 @@ fun Apod.toEntity(): ApodEntity {
 
 fun Apod.hasImage(): Boolean {
     return this.mediaType == "image"
+}
+
+/***
+ * Attempts to format the date based on the provided pattern. On failure, it will return the
+ * unformatted date.
+ */
+fun Apod.formattedDate(pattern: String): String {
+    return try {
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        LocalDate.parse(date).format(formatter)
+    } catch (e: Exception) {
+        date
+    }
 }

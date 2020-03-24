@@ -20,6 +20,7 @@ import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
+import com.joshualorett.nebula.apod.formattedDate
 import com.joshualorett.nebula.apod.hasImage
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
@@ -127,7 +128,7 @@ class TodayPhotoFragment : Fragment() {
     }
 
     private fun updateApod(apod: Apod) {
-        todayDate.text = getFormattedDate(apod.date)
+        todayDate.text = apod.formattedDate("yyyy MMMM dd")
         todayTitle.text = apod.title
         todayDescription.text = apod.explanation
         if(apod.copyright == null) {
@@ -148,15 +149,6 @@ class TodayPhotoFragment : Fragment() {
             todayToolbar.title = getString(R.string.app_name)
             todayCollapsingToolbar.isTitleEnabled = false
             todayVideoLinkBtn.show()
-        }
-    }
-
-    private fun getFormattedDate(date: String): String {
-        return try {
-            val formatter = DateTimeFormatter.ofPattern("yyyy MMMM dd")
-            LocalDate.parse(date).format(formatter)
-        } catch (e: Exception) {
-            date
         }
     }
 }
