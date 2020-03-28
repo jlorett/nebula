@@ -139,4 +139,35 @@ class TodayViewModelTest: ViewModelTest() {
         viewModel.onPhotoClicked()
         assertNull(viewModel.navigateFullPicture.value?.peekContent())
     }
+
+    @Test
+    fun `refresh updates data`() = coroutineRule.dispatcher.runBlockingTest {
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
+        `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
+        `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
+        val refreshedApodResponse = ApodResponse(
+            0, "2000-02-01", "apodRefreshed", "testingRefresh",
+            "image", "v1", "https://exampleRefresh.com",
+            "https://exampleRefresh.com/hd"
+        )
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(refreshedApodResponse.toApod().toEntity())
+        `when`(mockApodDao.insertApod(refreshedApodResponse.toApod().toEntity())).thenReturn(99L)
+        `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(refreshedApodResponse))
+        viewModel.refresh()
+        assertEquals(refreshedApodResponse.toApod(), viewModel.apod.value)
+    }
+
+    @Test
+    fun `refresh doesn't update data on error`() = coroutineRule.dispatcher.runBlockingTest {
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
+        `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
+        `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo, testDate).create(TodayViewModel::class.java)
+        `when`(mockDataSource.getApod(testDate)).thenReturn(Response.error(500, "Error".toResponseBody()))
+        viewModel.refresh()
+        assertEquals(mockApodResponse.toApod(), viewModel.apod.value)
+    }
 }

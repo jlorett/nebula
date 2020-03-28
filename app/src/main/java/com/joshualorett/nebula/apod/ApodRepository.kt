@@ -33,6 +33,16 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
     }
 
     /***
+     * Fetch a fresh [Apod] by date. This will always attempt to fetch the apod from the api.
+     */
+    suspend fun getFreshApod(date: LocalDate): Resource<Apod, String> {
+        if (date.isBefore(earliestDate)) {
+            return Resource.Error("Date can't be before 1995-06-16.")
+        }
+        return getApodByDataSource(date)
+    }
+
+    /***
      * This will fetch an [Apod] from the database by its id.
      */
     suspend fun getCachedApod(id: Long): Resource<Apod, String> {

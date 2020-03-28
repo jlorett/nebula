@@ -3,7 +3,6 @@ package com.joshualorett.nebula.today
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Html
 import android.view.*
 import android.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -27,8 +26,6 @@ import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
 import kotlinx.android.synthetic.main.fragment_today_photo.*
 import kotlinx.coroutines.Dispatchers
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 /**
  * Displays Today's [Apod].
@@ -52,22 +49,6 @@ class TodayPhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        todayCollapsingToolbar.setExpandedTitleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
-        todayToolbar.inflateMenu(R.menu.today)
-        todayToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
-            androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
-            override fun onMenuItemClick(item: MenuItem?): Boolean {
-                return when(item?.itemId) {
-                    R.id.action_settings -> {
-                        navigateToSettings()
-                        true
-                    }
-                    else -> {
-                        false
-                    }
-                }
-            }
-        })
         val dataSource = ApodRemoteDataSource(
             NasaRetrofitClient,
             getString(R.string.key)
@@ -98,6 +79,26 @@ class TodayPhotoFragment : Fragment() {
             requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
         })
 
+        todayCollapsingToolbar.setExpandedTitleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+        todayToolbar.inflateMenu(R.menu.today)
+        todayToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
+            androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                return when(item?.itemId) {
+                    R.id.action_refresh -> {
+                        viewModel.refresh()
+                        true
+                    }
+                    R.id.action_settings -> {
+                        navigateToSettings()
+                        true
+                    }
+                    else -> {
+                        false
+                    }
+                }
+            }
+        })
         todayVideoLinkBtn.setOnClickListener {
             viewModel.videoLinkClicked()
         }

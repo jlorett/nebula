@@ -19,4 +19,5 @@
     <string name="share">Share</string>
     <string name="share_image_content_description">Share image</string>
     <string name="share_image_clip_data">Astronomy picture of the day</string>
+    <string name="refresh">Refresh</string>
 </resources>

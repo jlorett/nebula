@@ -1,7 +1,6 @@
 package com.joshualorett.nebula.today
 
 import androidx.lifecycle.*
-import androidx.work.*
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.OneShotEvent
@@ -57,6 +56,22 @@ class TodayViewModel(private val apodRepository: ApodRepository,
         val apod = _apod.value
         if(apod != null) {
             _navigateFullPicture.value = OneShotEvent(apod.id)
+        }
+    }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _loading.value = true
+            when(val resource = apodRepository.getFreshApod(todaysDate)) {
+                is Resource.Success -> {
+                    _apod.value = resource.data
+                    _loading.value = false
+                }
+                is Resource.Error<String> -> {
+                    _error.value = resource.data
+                    _loading.value = false
+                }
+            }
         }
     }
 
