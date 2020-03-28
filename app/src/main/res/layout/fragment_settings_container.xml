@@ -7,9 +7,6 @@
         android:id="@+id/settingsAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:expandedTitleTextAppearance="@style/AppTheme.TextView.Headline5"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -17,7 +14,7 @@
             android:id="@+id/settingsToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleTextAppearance="@style/AppTheme.TextView.Headline6"
+            style="@style/Widget.App.Toolbar"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:title="@string/settings"/>
     </com.google.android.material.appbar.AppBarLayout>

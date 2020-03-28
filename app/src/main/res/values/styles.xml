@@ -1,29 +1,23 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorSecondary">@color/colorAccent</item>
-        <item name="colorSurface">@color/colorPrimary</item>
-        <item name="android:colorBackground">@color/background</item>
-        <item name="android:textViewStyle">@style/AppTheme.TextView.Body1</item>
-    </style>
-
-    <style name="AppTheme.TextView.Body1" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="fontFamily">@font/open_sans</item>
-    </style>
-
-    <style name="AppTheme.TextView.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
-        <item name="fontFamily">@font/space_mono</item>
-    </style>
-
-    <style name="AppTheme.TextView.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="fontFamily">@font/space_mono</item>
-    </style>
-
-    <style name="AppTheme.TextView.Overline" parent="TextAppearance.MaterialComponents.Overline">
-        <item name="fontFamily">@font/space_mono</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorPrimarySurface">@color/colorPrimary</item>
+        <item name="colorOnPrimarySurface">@color/colorOnPrimarySurface</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:colorControlNormal">@color/colorControlNormal</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:toolbarStyle">@style/Widget.App.Toolbar</item>
+        <item name="android:textViewStyle">@style/Widget.App.TextView</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.App.Body1</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.App.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.App.Headline6</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.App.Overline</item>
     </style>
 </resources>

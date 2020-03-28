@@ -9,19 +9,17 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/todayAppBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        android:layout_height="wrap_content">
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/todayCollapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:collapsedTitleTextAppearance="@style/AppTheme.TextView.Headline6"
-            app:expandedTitleTextAppearance="@style/AppTheme.TextView.Headline6"
+            app:expandedTitleTextAppearance="@style/TextAppearance.App.CollapsingToolbar.Expanded"
+            app:collapsedTitleTextAppearance="@style/TextAppearance.App.CollapsingToolbar.Collapsed"
             app:title="@string/app_name"
             app:contentScrim="?attr/colorPrimary"
+            app:statusBarScrim="?attr/colorPrimaryDark"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
             <ImageView
                 android:id="@+id/todayPicture"
@@ -34,7 +32,8 @@
                 android:id="@+id/todayToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:titleTextAppearance="@style/AppTheme.TextView.Headline6"
+                android:elevation="0dp"
+                app:titleTextAppearance="@style/TextAppearance.App.Headline6"
                 app:layout_collapseMode="pin" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -57,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_xl"
-                style="@style/AppTheme.TextView.Overline"
+                style="@style/TextAppearance.App.Overline"
                 tools:text="2000 January 01"/>
 
             <TextView
@@ -65,7 +64,7 @@
                 android:layout_marginTop="@dimen/space_s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/AppTheme.TextView.Headline5"
+                style="@style/TextAppearance.App.Headline5"
                 tools:text="@string/sample_title" />
 
             <TextView
@@ -91,14 +90,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/today_video_btn_text"
-        android:textColor="@color/colorPrimaryDark"
         android:layout_margin="@dimen/space_l"
         android:contentDescription="@string/today_video_btn_desc"
         app:layout_anchor="@id/todayScrollContainer"
         app:layout_anchorGravity="bottom|end"
-        app:iconTint="@color/colorPrimaryDark"
-        app:iconTintMode="src_in"
-        app:icon="@drawable/ic_play_arrow_black_24dp"/>
+        app:icon="@drawable/ic_play_arrow_24dp"/>
 
     <ProgressBar
         android:id="@+id/todayProgressBar"
