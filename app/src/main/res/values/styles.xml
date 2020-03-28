@@ -9,7 +9,6 @@
         <item name="colorOnSecondary">@color/colorOnSecondary</item>
         <item name="colorSurface">@color/colorSurface</item>
         <item name="colorPrimarySurface">@color/colorPrimary</item>
-        <item name="colorOnPrimarySurface">@color/colorOnPrimarySurface</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="android:colorControlNormal">@color/colorControlNormal</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
