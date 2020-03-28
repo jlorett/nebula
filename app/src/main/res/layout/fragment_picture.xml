@@ -22,8 +22,6 @@
         android:layout_height="wrap_content"
         app:elevation="0dp"
         android:background="@android:color/transparent"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -31,7 +29,7 @@
             android:id="@+id/pictureToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleTextAppearance="@style/AppTheme.TextView.Headline6"
+            style="@style/Widget.App.Toolbar.Picture"
             app:navigationIcon="?attr/homeAsUpIndicator"/>
     </com.google.android.material.appbar.AppBarLayout>
     <TextView
@@ -45,7 +43,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/AppTheme.TextView.Headline5"
+        style="@style/TextAppearance.App.Headline5"
         tools:text="Error"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
