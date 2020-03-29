@@ -29,7 +29,7 @@
             android:id="@+id/pictureToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.App.Toolbar.Picture"
+            style="@style/Widget.App.Picture.Toolbar"
             app:navigationIcon="?attr/homeAsUpIndicator"/>
     </com.google.android.material.appbar.AppBarLayout>
     <TextView
