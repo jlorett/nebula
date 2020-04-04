@@ -118,8 +118,12 @@ class TodayPhotoFragment : Fragment() {
         todayPicture.setOnClickListener {
             viewModel.onPhotoClicked()
         }
-        todaySwipeRefreshLayout.setOnRefreshListener {
-            viewModel.refresh()
+        todaySwipeRefreshLayout.apply {
+            setColorSchemeResources(R.color.colorSecondary)
+            setProgressBackgroundColorSchemeResource(R.color.colorSurface)
+            setOnRefreshListener {
+                viewModel.refresh()
+            }
         }
     }
 
