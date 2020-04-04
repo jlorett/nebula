@@ -3,7 +3,10 @@ package com.joshualorett.nebula.today
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
@@ -67,7 +70,11 @@ class TodayPhotoFragment : Fragment() {
             todayPicture.visibility = View.GONE
         })
         viewModel.loading.observe(viewLifecycleOwner, Observer { loading ->
-            todayProgressBar.visibility = if(loading) View.VISIBLE else View.GONE
+            if(loading and !todaySwipeRefreshLayout.isRefreshing) {
+                todaySwipeRefreshLayout.isRefreshing = true
+            } else if (!loading) {
+                todaySwipeRefreshLayout.isRefreshing = false
+            }
         })
         viewModel.navigateVideoLink.observe(viewLifecycleOwner, OneShotEventObserver { url ->
             url?.let {
@@ -110,6 +117,9 @@ class TodayPhotoFragment : Fragment() {
         }
         todayPicture.setOnClickListener {
             viewModel.onPhotoClicked()
+        }
+        todaySwipeRefreshLayout.setOnRefreshListener {
+            viewModel.refresh()
         }
     }
 

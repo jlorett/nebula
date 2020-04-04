@@ -38,53 +38,59 @@
                 app:layout_collapseMode="pin" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/todayScrollContainer"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/todaySwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <LinearLayout
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".today.TodayPhotoFragment">
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/todayScrollContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/space_l"
-            android:paddingEnd="@dimen/space_l"
-            android:paddingBottom="@dimen/space_xl"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/todayDate"
-                android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:fillViewport="true">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xl"
-                style="@style/TextAppearance.App.Overline"
-                tools:text="2000 January 01"/>
+                android:paddingStart="@dimen/space_l"
+                android:paddingEnd="@dimen/space_l"
+                android:paddingBottom="@dimen/space_xl"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/todayDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xl"
+                    style="@style/TextAppearance.App.Overline"
+                    tools:text="2000 January 01"/>
 
-            <TextView
-                android:id="@+id/todayTitle"
-                android:layout_marginTop="@dimen/space_s"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/TextAppearance.App.Headline5"
-                tools:text="@string/sample_title" />
+                <TextView
+                    android:id="@+id/todayTitle"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.App.Headline5"
+                    tools:text="@string/sample_title" />
 
-            <TextView
-                android:id="@+id/todayDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
-                tools:text="@string/sample_description" />
+                <TextView
+                    android:id="@+id/todayDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    tools:text="@string/sample_description" />
 
-            <TextView
-                android:id="@+id/todayCopyright"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_l"
-                android:visibility="invisible"
-                tools:visibility="visible"
-                tools:text="Copyright - Test"/>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                <TextView
+                    android:id="@+id/todayCopyright"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_l"
+                    android:visibility="invisible"
+                    tools:visibility="visible"
+                    tools:text="Copyright - Test"/>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/todayVideoLinkBtn"
@@ -96,11 +102,4 @@
         app:layout_anchor="@id/todayScrollContainer"
         app:layout_anchorGravity="bottom|end"
         app:icon="@drawable/ic_play_arrow_24dp"/>
-
-    <ProgressBar
-        android:id="@+id/todayProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        tools:visibility="visible"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
