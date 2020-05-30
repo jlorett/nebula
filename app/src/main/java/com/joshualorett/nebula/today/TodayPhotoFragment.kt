@@ -24,17 +24,23 @@ import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
 import com.joshualorett.nebula.apod.formattedDate
 import com.joshualorett.nebula.apod.hasImage
+import com.joshualorett.nebula.date.ApodDatePickerFactory
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
 import kotlinx.android.synthetic.main.fragment_today_photo.*
 import kotlinx.coroutines.Dispatchers
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 /**
  * Displays Today's [Apod].
  */
 class TodayPhotoFragment : Fragment() {
     private lateinit var imageCache: ImageCache
+    private lateinit var viewModel: TodayViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +64,7 @@ class TodayPhotoFragment : Fragment() {
         )
         val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
         val repo = ApodRepository(dataSource, apodDao, imageCache)
-        val viewModel = ViewModelProvider(this, TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
+        viewModel = ViewModelProvider(this, TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
         viewModel.apod.observe(viewLifecycleOwner, Observer { apod ->
             updateApod(apod)
         })
@@ -68,6 +74,8 @@ class TodayPhotoFragment : Fragment() {
             todayTitle.text = getString(R.string.today_error)
             todayDescription.text = error
             todayPicture.visibility = View.GONE
+            todayCopyright.text = ""
+            todayCopyright.visibility = View.INVISIBLE
         })
         viewModel.loading.observe(viewLifecycleOwner, Observer { loading ->
             if(loading and !todaySwipeRefreshLayout.isRefreshing) {
@@ -98,6 +106,10 @@ class TodayPhotoFragment : Fragment() {
                     }
                     R.id.action_settings -> {
                         navigateToSettings()
+                        true
+                    }
+                    R.id.action_choose_day -> {
+                        showDatePicker()
                         true
                     }
                     else -> {
@@ -140,6 +152,14 @@ class TodayPhotoFragment : Fragment() {
     private fun navigateToSettings() {
         val action = TodayPhotoFragmentDirections.actionTodayPhotoFragmentToSettingsContainerFragment()
         requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
+    }
+
+    private fun showDatePicker() {
+        val datePicker = ApodDatePickerFactory.create(viewModel.currentDate() ?: LocalDate.now())
+        datePicker.addOnPositiveButtonClickListener { selection: Long ->
+            viewModel.updateDate(Instant.ofEpochMilli(selection).atZone(ZoneId.ofOffset("UTC", ZoneOffset.UTC)).toLocalDate())
+        }
+        datePicker.show(parentFragmentManager, "datePicker")
     }
 
     private fun updateApod(apod: Apod) {
