@@ -12,8 +12,7 @@ import java.time.LocalDate
  * [ViewModel] show today's Astronomy Picture of the Day.
  * Created by Joshua on 1/11/2020.
  */
-class TodayViewModel(private val apodRepository: ApodRepository,
-                     private val todaysDate: LocalDate): ViewModel() {
+class TodayViewModel(private val apodRepository: ApodRepository): ViewModel() {
     private val _apod: MutableLiveData<Apod> = MutableLiveData()
     val apod: LiveData<Apod> = _apod
 
@@ -29,20 +28,16 @@ class TodayViewModel(private val apodRepository: ApodRepository,
     private val _navigateFullPicture: MutableLiveData<OneShotEvent<Long>> = MutableLiveData()
     val navigateFullPicture: LiveData<OneShotEvent<Long>> = _navigateFullPicture
 
+    private val today = LocalDate.now()
+
+    private val _date: MutableLiveData<LocalDate> = MutableLiveData(today)
+
     init {
-        viewModelScope.launch {
-            _loading.value = true
-            when(val resource = apodRepository.getApod(todaysDate)) {
-                is Resource.Success -> {
-                    _apod.value = resource.data
-                    _loading.value = false
-                }
-                is Resource.Error<String> -> {
-                    _error.value = resource.data
-                    _loading.value = false
-                }
-            }
-        }
+        updateDate(_date.value ?: today)
+    }
+
+    fun currentDate(): LocalDate? {
+        return _date.value
     }
 
     fun videoLinkClicked() {
@@ -59,10 +54,11 @@ class TodayViewModel(private val apodRepository: ApodRepository,
         }
     }
 
-    fun refresh() {
+    fun updateDate(date: LocalDate) {
+        _date.value = date
         viewModelScope.launch {
             _loading.value = true
-            when(val resource = apodRepository.getFreshApod(todaysDate)) {
+            when(val resource = apodRepository.getApod(date)) {
                 is Resource.Success -> {
                     _apod.value = resource.data
                     _loading.value = false
@@ -75,10 +71,25 @@ class TodayViewModel(private val apodRepository: ApodRepository,
         }
     }
 
-    class TodayViewModelFactory(private val apodRepository: ApodRepository,
-                                private val todaysDate: LocalDate = LocalDate.now()): ViewModelProvider.Factory {
+    fun refresh() {
+        viewModelScope.launch {
+            _loading.value = true
+            when(val resource = apodRepository.getFreshApod(_date.value ?: today)) {
+                is Resource.Success -> {
+                    _apod.value = resource.data
+                    _loading.value = false
+                }
+                is Resource.Error<String> -> {
+                    _error.value = resource.data
+                    _loading.value = false
+                }
+            }
+        }
+    }
+
+    class TodayViewModelFactory(private val apodRepository: ApodRepository): ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return TodayViewModel(apodRepository, todaysDate) as T
+            return TodayViewModel(apodRepository) as T
         }
     }
 }
