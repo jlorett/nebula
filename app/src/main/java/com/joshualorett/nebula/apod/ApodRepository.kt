@@ -62,7 +62,6 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
                 if (networkApod == null) {
                     Resource.Error("Empty network body.")
                 } else {
-                    clearOldResources()
                     return cacheApod(networkApod)
                 }
             } else {
