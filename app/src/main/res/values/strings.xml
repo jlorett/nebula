@@ -21,6 +21,8 @@
     <string name="share_image_clip_data">Astronomy picture of the day</string>
     <string name="refresh">Refresh</string>
     <string name="select_day">Select Day</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="clear_data">Clear Data</string>
+    <string name="clear_data_summary">Clear the database and image cache</string>
+    <string name="clear">Clear</string>
+    <string name="cancel">Cancel</string>
 </resources>

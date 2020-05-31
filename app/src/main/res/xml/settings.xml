@@ -13,6 +13,10 @@
             android:summary="@string/unmetered_summary"
             app:defaultValue="false"
             app:isPreferenceVisible="false"/>
+        <Preference
+            android:key="@string/settings_key_clear"
+            android:title="@string/clear_data"
+            android:summary="@string/clear_data_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_header_about">
         <Preference
