@@ -2,14 +2,12 @@ package com.joshualorett.nebula.today
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-
 import androidx.work.ListenableWorker
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Test
-
-import org.junit.Assert.*
+import org.junit.Assert.assertThat
 import org.junit.Before
+import org.junit.Test
 
 
 /**

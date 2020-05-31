@@ -73,6 +73,7 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
     }
 
     private suspend fun cacheApod(apod: Apod): Resource<Apod, String> {
+        apodDao.delete(apod.toEntity())
         val id = apodDao.insertApod(apod.toEntity())
         val cachedApod = apodDao.loadById(id)?.toApod()
         return if (cachedApod == null) {
@@ -83,9 +84,9 @@ class ApodRepository(private val apodDataSource: ApodDataSource, private val apo
     }
 
     /***
-     * Clear out old resources since we only store one apod at a time.
+     * Clear out resources.
      */
-    private suspend fun clearOldResources() {
+    suspend fun clearResources() {
         apodDao.deleteAll()
         imageCache.clear()
     }

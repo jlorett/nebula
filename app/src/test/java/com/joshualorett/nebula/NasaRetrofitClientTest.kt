@@ -1,9 +1,8 @@
 package com.joshualorett.nebula
 
 import com.joshualorett.nebula.apod.api.ApodService
-import org.junit.Test
-
 import org.junit.Assert.*
+import org.junit.Test
 
 /**
  * Test [NasaRetrofitClient].

@@ -1,19 +1,18 @@
 package com.joshualorett.nebula.picture
 
+import com.joshualorett.nebula.TestData
+import com.joshualorett.nebula.ViewModelTest
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.database.ApodDao
-import com.joshualorett.nebula.apod.toApod
-import com.joshualorett.nebula.TestData
-import com.joshualorett.nebula.ViewModelTest
 import com.joshualorett.nebula.apod.database.ApodEntity
+import com.joshualorett.nebula.apod.toApod
 import com.joshualorett.nebula.shared.ImageCache
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertNotNull
 import org.junit.Test
-
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 

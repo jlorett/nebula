@@ -1,8 +1,8 @@
 package com.joshualorett.nebula.shared
 
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Test [Resource].

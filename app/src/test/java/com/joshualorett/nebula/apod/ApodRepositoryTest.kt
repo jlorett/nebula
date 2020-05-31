@@ -1,19 +1,19 @@
 package com.joshualorett.nebula.apod
 
 import android.content.Context
+import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.api.ApodResponse
 import com.joshualorett.nebula.apod.database.ApodDao
-import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.*
@@ -110,7 +110,7 @@ class ApodRepositoryTest {
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
         `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
         repository.getApod(testDate)
-        verify(mockApodDao).deleteAll()
+        verify(mockApodDao).delete(mockApodResponse.toApod().toEntity())
     }
 
     @Test
@@ -121,6 +121,7 @@ class ApodRepositoryTest {
         `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
         mockImageCache.attachApplicationContext(mock(Context::class.java))
         repository.getApod(testDate)
+        repository.clearResources()
         mockImageCache.detachApplicationContext()
         verify(mockImageCache).clear()
     }
@@ -193,6 +194,6 @@ class ApodRepositoryTest {
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
         `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
         repository.getFreshApod(testDate)
-        verify(mockApodDao).deleteAll()
+        verify(mockApodDao).delete(mockApodResponse.toApod().toEntity())
     }
 }
