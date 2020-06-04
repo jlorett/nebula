@@ -190,4 +190,30 @@ class TodayViewModelTest: ViewModelTest() {
         viewModel.updateDate(testDate)
         assertEquals(updatedApodResponse.toApod(), viewModel.apod.value)
     }
+
+    @Test
+    fun `refresh clears error`() = coroutineRule.dispatcher.runBlockingTest {
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
+        `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
+        `when`(mockDataSource.getApod(today)).thenReturn(Response.success(mockApodResponse))
+        `when`(mockDataSource.getApod(today)).thenReturn(Response.error(500, "Error".toResponseBody()))
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo).create(TodayViewModel::class.java)
+        `when`(mockDataSource.getApod(today)).thenReturn(Response.success(mockApodResponse))
+        viewModel.refresh()
+        assertNull(viewModel.error.value)
+    }
+
+    @Test
+    fun `update clears error`() = coroutineRule.dispatcher.runBlockingTest {
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
+        `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
+        `when`(mockDataSource.getApod(today)).thenReturn(Response.success(mockApodResponse))
+        `when`(mockDataSource.getApod(today)).thenReturn(Response.error(500, "Error".toResponseBody()))
+        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo).create(TodayViewModel::class.java)
+        `when`(mockDataSource.getApod(today)).thenReturn(Response.success(mockApodResponse))
+        viewModel.updateDate(today)
+        assertNull(viewModel.error.value)
+    }
 }
