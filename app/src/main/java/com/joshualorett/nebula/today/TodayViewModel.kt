@@ -17,7 +17,7 @@ class TodayViewModel(private val apodRepository: ApodRepository): ViewModel() {
     val apod: LiveData<Apod> = _apod
 
     private val _error: MutableLiveData<String> = MutableLiveData()
-    val error: LiveData<String> = _error
+    val error: LiveData<String?> = _error
 
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
@@ -30,7 +30,7 @@ class TodayViewModel(private val apodRepository: ApodRepository): ViewModel() {
 
     private val today = LocalDate.now()
 
-    private val _date: MutableLiveData<LocalDate> = MutableLiveData(today)
+    private val _date: MutableLiveData<LocalDate> = MutableLiveData()
 
     init {
         updateDate(_date.value ?: today)
@@ -56,6 +56,7 @@ class TodayViewModel(private val apodRepository: ApodRepository): ViewModel() {
 
     fun updateDate(date: LocalDate) {
         _date.value = date
+        _error.value = null
         viewModelScope.launch {
             _loading.value = true
             when(val resource = apodRepository.getApod(date)) {
@@ -72,6 +73,7 @@ class TodayViewModel(private val apodRepository: ApodRepository): ViewModel() {
     }
 
     fun refresh() {
+        _error.value = null
         viewModelScope.launch {
             _loading.value = true
             when(val resource = apodRepository.getFreshApod(_date.value ?: today)) {

@@ -64,20 +64,22 @@ class TodayPhotoFragment : Fragment() {
         )
         val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
         val repo = ApodRepository(dataSource, apodDao, imageCache)
-        viewModel = ViewModelProvider(this, TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
+        viewModel = ViewModelProvider(viewModelStore, TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
         viewModel.apod.observe(viewLifecycleOwner, Observer { apod ->
             updateApod(apod)
         })
         viewModel.error.observe(viewLifecycleOwner, Observer { error ->
-            todayToolbar.title = getString(R.string.app_name)
-            todayCollapsingToolbar.isTitleEnabled = false
-            todayTitle.text = getString(R.string.today_error)
-            todayDescription.text = error
-            todayPicture.visibility = View.GONE
-            todayCopyright.text = ""
-            todayCopyright.visibility = View.INVISIBLE
-            todayDate.text = ""
-            todayVideoLinkBtn.hide()
+            error?.let {
+                todayToolbar.title = getString(R.string.app_name)
+                todayCollapsingToolbar.isTitleEnabled = false
+                todayTitle.text = getString(R.string.today_error)
+                todayDescription.text = error
+                todayPicture.visibility = View.GONE
+                todayCopyright.text = ""
+                todayCopyright.visibility = View.INVISIBLE
+                todayDate.text = ""
+                todayVideoLinkBtn.hide()
+            }
         })
         viewModel.loading.observe(viewLifecycleOwner, Observer { loading ->
             if(loading and !todaySwipeRefreshLayout.isRefreshing) {
