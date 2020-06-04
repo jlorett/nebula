@@ -76,6 +76,8 @@ class TodayPhotoFragment : Fragment() {
             todayPicture.visibility = View.GONE
             todayCopyright.text = ""
             todayCopyright.visibility = View.INVISIBLE
+            todayDate.text = ""
+            todayVideoLinkBtn.hide()
         })
         viewModel.loading.observe(viewLifecycleOwner, Observer { loading ->
             if(loading and !todaySwipeRefreshLayout.isRefreshing) {
