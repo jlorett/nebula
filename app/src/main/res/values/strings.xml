@@ -25,4 +25,6 @@
     <string name="clear_data_summary">Clear the database and image cache</string>
     <string name="clear">Clear</string>
     <string name="cancel">Cancel</string>
+    <string name="error_empty_url">Empty url.</string>
+    <string name="error_fetching">Error fetching picture.</string>
 </resources>

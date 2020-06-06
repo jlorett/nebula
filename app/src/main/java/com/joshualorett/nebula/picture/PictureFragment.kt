@@ -1,6 +1,5 @@
 package com.joshualorett.nebula.picture
 
-
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -29,10 +28,10 @@ import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
+import com.joshualorett.nebula.shared.Resource
 import kotlinx.android.synthetic.main.fragment_picture.*
 import kotlinx.coroutines.Dispatchers
 import java.io.File
-
 
 /**
  * A full screen view of an [Apod] picture.
@@ -84,32 +83,20 @@ class PictureFragment : Fragment() {
 
         val id = args.id
         val viewModel = ViewModelProvider(this, PictureViewModelFactory(repo, id)).get(PictureViewModel::class.java)
-        viewModel.picture.observe(viewLifecycleOwner, Observer { url ->
-            pictureError.visibility = View.GONE
-            apodPicture.visibility = View.VISIBLE
-            Glide.with(this)
-                .asFile()
-                .load(GlideUrl(url))
-                .into(object: CustomViewTarget<SubsamplingScaleImageView, File>(apodPicture) {
-                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                        apodPicture.visibility = View.GONE
-                        pictureError.visibility = View.VISIBLE
-                        pictureError.text = getString(R.string.picture_error)
+        viewModel.picture.observe(viewLifecycleOwner, Observer { resource ->
+            when(resource) {
+                is Resource.Success -> {
+                    val url = resource.data.hdurl ?: resource.data.url
+                    if(url.isEmpty()) {
+                        showError(getString(R.string.error_empty_url))
+                    } else {
+                        updateImage(url)
                     }
-
-                    override fun onResourceCleared(placeholder: Drawable?) {}
-
-                    override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                        imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", resource)
-                        imageUri?.let {
-                            apodPicture.setImage(ImageSource.uri(it))
-                        }
-                    }
-                })
-        })
-        viewModel.error.observe(viewLifecycleOwner, Observer { errorMessage ->
-            apodPicture.visibility = View.GONE
-            pictureError.text = errorMessage
+                }
+                is Resource.Error -> {
+                    showError(getString(R.string.error_fetching))
+                }
+            }
         })
     }
 
@@ -130,5 +117,34 @@ class PictureFragment : Fragment() {
             val chooser = Intent.createChooser(shareIntent, resources.getText(R.string.share))
             startActivity(chooser)
         }
+    }
+
+    private fun updateImage(url: String) {
+        pictureError.visibility = View.GONE
+        apodPicture.visibility = View.VISIBLE
+        Glide.with(this)
+            .asFile()
+            .load(GlideUrl(url))
+            .into(object: CustomViewTarget<SubsamplingScaleImageView, File>(apodPicture) {
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    apodPicture.visibility = View.GONE
+                    pictureError.visibility = View.VISIBLE
+                    pictureError.text = getString(R.string.picture_error)
+                }
+
+                override fun onResourceCleared(placeholder: Drawable?) {}
+
+                override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                    imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", resource)
+                    imageUri?.let {
+                        apodPicture.setImage(ImageSource.uri(it))
+                    }
+                }
+            })
+    }
+
+    private fun showError(error: String) {
+        apodPicture.visibility = View.GONE
+        pictureError.text = error
     }
 }
