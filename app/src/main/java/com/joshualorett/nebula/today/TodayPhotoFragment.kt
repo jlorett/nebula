@@ -28,6 +28,7 @@ import com.joshualorett.nebula.date.ApodDatePickerFactory
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
+import com.joshualorett.nebula.shared.Resource
 import kotlinx.android.synthetic.main.fragment_today_photo.*
 import kotlinx.coroutines.Dispatchers
 import java.time.Instant
@@ -65,27 +66,30 @@ class TodayPhotoFragment : Fragment() {
         val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
         val repo = ApodRepository(dataSource, apodDao, imageCache)
         viewModel = ViewModelProvider(viewModelStore, TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
-        viewModel.apod.observe(viewLifecycleOwner, Observer { apod ->
-            updateApod(apod)
-        })
-        viewModel.error.observe(viewLifecycleOwner, Observer { error ->
-            error?.let {
-                todayToolbar.title = getString(R.string.app_name)
-                todayCollapsingToolbar.isTitleEnabled = false
-                todayTitle.text = getString(R.string.today_error)
-                todayDescription.text = error
-                todayPicture.visibility = View.GONE
-                todayCopyright.text = ""
-                todayCopyright.visibility = View.INVISIBLE
-                todayDate.text = ""
-                todayVideoLinkBtn.hide()
-            }
-        })
-        viewModel.loading.observe(viewLifecycleOwner, Observer { loading ->
-            if(loading and !todaySwipeRefreshLayout.isRefreshing) {
-                todaySwipeRefreshLayout.isRefreshing = true
-            } else if (!loading) {
-                todaySwipeRefreshLayout.isRefreshing = false
+        viewModel.apod.observe(viewLifecycleOwner, Observer { resource ->
+            when(resource) {
+                is Resource.Success -> {
+                    todaySwipeRefreshLayout.isRefreshing = false
+                    updateApod(resource.data)
+                }
+                is Resource.Loading -> {
+                    if(!todaySwipeRefreshLayout.isRefreshing) {
+                        todaySwipeRefreshLayout.isRefreshing = true
+                    }
+                }
+                is Resource.Error -> {
+                    val error = resource.error
+                    todaySwipeRefreshLayout.isRefreshing = false
+                    todayToolbar.title = getString(R.string.app_name)
+                    todayCollapsingToolbar.isTitleEnabled = false
+                    todayTitle.text = getString(R.string.today_error)
+                    todayDescription.text = error
+                    todayPicture.visibility = View.GONE
+                    todayCopyright.text = ""
+                    todayCopyright.visibility = View.INVISIBLE
+                    todayDate.text = ""
+                    todayVideoLinkBtn.hide()
+                }
             }
         })
         viewModel.navigateVideoLink.observe(viewLifecycleOwner, OneShotEventObserver { url ->

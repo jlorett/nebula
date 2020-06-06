@@ -5,6 +5,7 @@ import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.OneShotEvent
 import com.joshualorett.nebula.shared.Resource
+import com.joshualorett.nebula.shared.data
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -13,14 +14,8 @@ import java.time.LocalDate
  * Created by Joshua on 1/11/2020.
  */
 class TodayViewModel(private val apodRepository: ApodRepository): ViewModel() {
-    private val _apod: MutableLiveData<Apod> = MutableLiveData()
-    val apod: LiveData<Apod> = _apod
-
-    private val _error: MutableLiveData<String> = MutableLiveData()
-    val error: LiveData<String?> = _error
-
-    private val _loading: MutableLiveData<Boolean> = MutableLiveData()
-    val loading: LiveData<Boolean> = _loading
+    private val _apod: MutableLiveData<Resource<Apod, String>> = MutableLiveData()
+    val apod: LiveData<Resource<Apod, String>> = _apod
 
     private val _navigateVideoLink: MutableLiveData<OneShotEvent<String?>> = MutableLiveData()
     val navigateVideoLink: LiveData<OneShotEvent<String?>> = _navigateVideoLink
@@ -41,14 +36,14 @@ class TodayViewModel(private val apodRepository: ApodRepository): ViewModel() {
     }
 
     fun videoLinkClicked() {
-        val currentApod = _apod.value
+        val currentApod = _apod.value?.data
         if(currentApod?.mediaType == "video") {
             _navigateVideoLink.value = OneShotEvent(currentApod.url)
         }
     }
 
     fun onPhotoClicked() {
-        val apod = _apod.value
+        val apod = _apod.value?.data
         if(apod != null) {
             _navigateFullPicture.value = OneShotEvent(apod.id)
         }
@@ -56,36 +51,16 @@ class TodayViewModel(private val apodRepository: ApodRepository): ViewModel() {
 
     fun updateDate(date: LocalDate) {
         _date.value = date
-        _error.value = null
         viewModelScope.launch {
-            _loading.value = true
-            when(val resource = apodRepository.getApod(date)) {
-                is Resource.Success -> {
-                    _apod.value = resource.data
-                    _loading.value = false
-                }
-                is Resource.Error<String> -> {
-                    _error.value = resource.data
-                    _loading.value = false
-                }
-            }
+            _apod.value = Resource.Loading
+            _apod.value = apodRepository.getApod(date)
         }
     }
 
     fun refresh() {
-        _error.value = null
         viewModelScope.launch {
-            _loading.value = true
-            when(val resource = apodRepository.getFreshApod(_date.value ?: today)) {
-                is Resource.Success -> {
-                    _apod.value = resource.data
-                    _loading.value = false
-                }
-                is Resource.Error<String> -> {
-                    _error.value = resource.data
-                    _loading.value = false
-                }
-            }
+            _apod.value = Resource.Loading
+            _apod.value = apodRepository.getFreshApod(_date.value ?: today)
         }
     }
 

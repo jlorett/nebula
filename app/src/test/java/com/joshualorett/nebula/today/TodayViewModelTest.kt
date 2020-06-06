@@ -9,6 +9,8 @@ import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.apod.toApod
 import com.joshualorett.nebula.apod.toEntity
 import com.joshualorett.nebula.shared.ImageCache
+import com.joshualorett.nebula.shared.data
+import com.joshualorett.nebula.shared.error
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -57,17 +59,7 @@ class TodayViewModelTest: ViewModelTest() {
         `when`(mockDataSource.getApod(today)).thenReturn(Response.success(mockApodResponse))
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo).create(TodayViewModel::class.java)
-        assertEquals(mockApodResponse.toApod(), viewModel.apod.value)
-    }
-
-    @Test
-    fun `success state turns off loading`() = coroutineRule.dispatcher.runBlockingTest {
-        `when`(mockApodDao.loadByDate(today.toString())).thenReturn(null)
-        `when`(mockDataSource.getApod(today)).thenReturn(Response.success(mockApodResponse))
-        `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
-        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo).create(TodayViewModel::class.java)
-        assertTrue(viewModel.loading.value == false)
+        assertEquals(mockApodResponse.toApod(), viewModel.apod.value?.data)
     }
 
     @Test
@@ -76,16 +68,7 @@ class TodayViewModelTest: ViewModelTest() {
         `when`(mockDataSource.getApod(today)).thenReturn(Response.error(500, "Error".toResponseBody()))
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo).create(TodayViewModel::class.java)
-        assertEquals(viewModel.error.value, "Error getting apod with status 500.")
-    }
-
-    @Test
-    fun `error state turns off loading`() = coroutineRule.dispatcher.runBlockingTest {
-        `when`(mockApodDao.loadByDate(today.toString())).thenReturn(null)
-        `when`(mockDataSource.getApod(today)).thenReturn(Response.error(500, "Error".toResponseBody()))
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
-        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo).create(TodayViewModel::class.java)
-        assertTrue(viewModel.loading.value == false)
+        assertEquals(viewModel.apod.value?.error, "Error getting apod with status 500.")
     }
 
     @Test
@@ -156,19 +139,7 @@ class TodayViewModelTest: ViewModelTest() {
         `when`(mockApodDao.insertApod(refreshedApodResponse.toApod().toEntity())).thenReturn(99L)
         `when`(mockDataSource.getApod(today)).thenReturn(Response.success(refreshedApodResponse))
         viewModel.refresh()
-        assertEquals(refreshedApodResponse.toApod(), viewModel.apod.value)
-    }
-
-    @Test
-    fun `refresh doesn't update data on error`() = coroutineRule.dispatcher.runBlockingTest {
-        `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
-        `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
-        `when`(mockDataSource.getApod(today)).thenReturn(Response.success(mockApodResponse))
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
-        viewModel = TodayViewModel.TodayViewModelFactory(apodRepo).create(TodayViewModel::class.java)
-        `when`(mockDataSource.getApod(today)).thenReturn(Response.error(500, "Error".toResponseBody()))
-        viewModel.refresh()
-        assertEquals(mockApodResponse.toApod(), viewModel.apod.value)
+        assertEquals(refreshedApodResponse.toApod(), viewModel.apod.value?.data)
     }
 
     @Test
@@ -188,7 +159,7 @@ class TodayViewModelTest: ViewModelTest() {
         `when`(mockApodDao.insertApod(updatedApodResponse.toApod().toEntity())).thenReturn(99L)
         `when`(mockDataSource.getApod(testDate)).thenReturn(Response.success(updatedApodResponse))
         viewModel.updateDate(testDate)
-        assertEquals(updatedApodResponse.toApod(), viewModel.apod.value)
+        assertEquals(updatedApodResponse.toApod(), viewModel.apod.value?.data)
     }
 
     @Test
@@ -201,7 +172,7 @@ class TodayViewModelTest: ViewModelTest() {
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo).create(TodayViewModel::class.java)
         `when`(mockDataSource.getApod(today)).thenReturn(Response.success(mockApodResponse))
         viewModel.refresh()
-        assertNull(viewModel.error.value)
+        assertNull(viewModel.apod.value?.error)
     }
 
     @Test
@@ -214,6 +185,6 @@ class TodayViewModelTest: ViewModelTest() {
         viewModel = TodayViewModel.TodayViewModelFactory(apodRepo).create(TodayViewModel::class.java)
         `when`(mockDataSource.getApod(today)).thenReturn(Response.success(mockApodResponse))
         viewModel.updateDate(today)
-        assertNull(viewModel.error.value)
+        assertNull(viewModel.apod.value?.error)
     }
 }
