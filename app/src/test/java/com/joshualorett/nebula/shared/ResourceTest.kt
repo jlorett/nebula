@@ -1,7 +1,6 @@
 package com.joshualorett.nebula.shared
 
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
 
 /**
@@ -25,5 +24,31 @@ class ResourceTest {
     fun `success is successful`() {
         val resource = Resource.Success(1)
         assertTrue(resource.successful())
+    }
+
+    @Test
+    fun `returns data`() {
+        val resource = Resource.Success(3)
+        assertEquals(3, resource.data)
+    }
+
+    @Test
+    fun `error null on success`() {
+        val resource = Resource.Success(3)
+        assertNull(resource.error)
+    }
+
+    @Test
+    fun `returns error`() {
+        val exception = IllegalStateException()
+        val resource = Resource.Error(exception)
+        assertEquals(exception, resource.error)
+    }
+
+    @Test
+    fun `data null on error`() {
+        val exception = IllegalStateException()
+        val resource = Resource.Error(exception)
+        assertNull(resource.data)
     }
 }
