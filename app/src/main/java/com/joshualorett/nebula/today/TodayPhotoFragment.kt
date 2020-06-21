@@ -11,41 +11,37 @@ import android.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.joshualorett.nebula.NasaRetrofitClient
 import com.joshualorett.nebula.R
 import com.joshualorett.nebula.apod.Apod
-import com.joshualorett.nebula.apod.ApodRepository
-import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
-import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
 import com.joshualorett.nebula.apod.formattedDate
 import com.joshualorett.nebula.apod.hasImage
 import com.joshualorett.nebula.date.ApodDatePickerFactory
-import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
 import com.joshualorett.nebula.shared.Resource
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_today_photo.*
-import kotlinx.coroutines.Dispatchers
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
+import javax.inject.Inject
 
 /**
  * Displays Today's [Apod].
  */
+@AndroidEntryPoint
 class TodayPhotoFragment : Fragment() {
-    private lateinit var imageCache: ImageCache
-    private lateinit var viewModel: TodayViewModel
+    @Inject lateinit var imageCache: ImageCache
+    private val viewModel: TodayViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        imageCache = GlideImageCache(Dispatchers.Default)
         imageCache.attachApplicationContext(requireContext().applicationContext)
     }
 
@@ -59,13 +55,6 @@ class TodayPhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val dataSource = ApodRemoteDataSource(
-            NasaRetrofitClient,
-            getString(R.string.key)
-        )
-        val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
-        val repo = ApodRepository(dataSource, apodDao, imageCache)
-        viewModel = ViewModelProvider(viewModelStore, TodayViewModel.TodayViewModelFactory(repo)).get(TodayViewModel::class.java)
         viewModel.apod.observe(viewLifecycleOwner, Observer { resource ->
             when(resource) {
                 is Resource.Success -> {

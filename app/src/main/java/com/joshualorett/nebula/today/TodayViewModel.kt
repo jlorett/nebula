@@ -1,5 +1,6 @@
 package com.joshualorett.nebula.today
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
@@ -13,7 +14,7 @@ import java.time.LocalDate
  * [ViewModel] show today's Astronomy Picture of the Day.
  * Created by Joshua on 1/11/2020.
  */
-class TodayViewModel(private val apodRepository: ApodRepository): ViewModel() {
+class TodayViewModel @ViewModelInject constructor(private val apodRepository: ApodRepository): ViewModel() {
     private val _apod: MutableLiveData<Resource<Apod, String>> = MutableLiveData()
     val apod: LiveData<Resource<Apod, String>> = _apod
 
@@ -61,12 +62,6 @@ class TodayViewModel(private val apodRepository: ApodRepository): ViewModel() {
         viewModelScope.launch {
             _apod.value = Resource.Loading
             _apod.value = apodRepository.getFreshApod(_date.value ?: today)
-        }
-    }
-
-    class TodayViewModelFactory(private val apodRepository: ApodRepository): ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return TodayViewModel(apodRepository) as T
         }
     }
 }
