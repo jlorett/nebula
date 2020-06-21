@@ -6,12 +6,13 @@ import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import java.io.IOException
 import java.time.LocalDate
+import javax.inject.Inject
 
 /**
  * Single point of access to fetch an [Apod] from the ui.
  * Created by Joshua on 1/8/2020.
  */
-class ApodRepository(private val apodDataSource: ApodDataSource, private val apodDao: ApodDao,
+class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSource, private val apodDao: ApodDao,
                      private val imageCache: ImageCache) {
     // The first APOD was 1995-06-16.
     private val earliestDate: LocalDate = LocalDate.of(1995, 6, 16)
