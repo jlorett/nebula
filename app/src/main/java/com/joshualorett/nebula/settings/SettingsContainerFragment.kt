@@ -6,21 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
-import com.joshualorett.nebula.NasaRetrofitClient
 import com.joshualorett.nebula.R
-import com.joshualorett.nebula.apod.ApodRepository
-import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
-import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
-import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.today.TodaySyncManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_settings_container.*
-import kotlinx.coroutines.Dispatchers
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsContainerFragment : Fragment() {
 
     override fun onCreateView(
@@ -41,15 +38,13 @@ class SettingsContainerFragment : Fragment() {
             .commit()
     }
 
+    @AndroidEntryPoint
     class SettingsFragment : PreferenceFragmentCompat() {
         private var syncPreference: SwitchPreferenceCompat? = null
         private var unmeteredPreference: SwitchPreferenceCompat? = null
-
         private lateinit var syncKey: String
-        private lateinit var unmeteredKey: String
-
-        private lateinit var imageCache: ImageCache
-        private lateinit var settingsViewModel: SettingsViewModel
+        private val settingsViewModel: SettingsViewModel by viewModels()
+        @Inject lateinit var imageCache: ImageCache
 
         private val listener: SharedPreferences.OnSharedPreferenceChangeListener =
             SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -68,9 +63,8 @@ class SettingsContainerFragment : Fragment() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.settings, rootKey)
             syncKey = getString(R.string.settings_key_sync)
-            unmeteredKey = getString(R.string.settings_key_unmetered)
+            val unmeteredKey = getString(R.string.settings_key_unmetered)
             val clearDataKey = getString(R.string.settings_key_clear)
-
             syncPreference = findPreference(syncKey)
             syncPreference?.setOnPreferenceClickListener {
                 syncPreference?.isChecked = syncPreference?.isChecked ?: false
@@ -93,15 +87,7 @@ class SettingsContainerFragment : Fragment() {
                 val version = requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0).versionName
                 it.summary = version
             }
-            imageCache = GlideImageCache(Dispatchers.Default)
             imageCache.attachApplicationContext(requireContext().applicationContext)
-            val dataSource = ApodRemoteDataSource(
-                NasaRetrofitClient,
-                getString(R.string.key)
-            )
-            val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
-            val apodRepository = ApodRepository(dataSource, apodDao, imageCache)
-            settingsViewModel = ViewModelProvider(viewModelStore, SettingsViewModel.SettingsViewModelFactory(apodRepository)).get(SettingsViewModel::class.java)
         }
 
         override fun onResume() {
