@@ -12,8 +12,8 @@ import android.widget.Toolbar
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
@@ -21,25 +21,23 @@ import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import com.joshualorett.nebula.NasaRetrofitClient
 import com.joshualorett.nebula.R
-import com.joshualorett.nebula.apod.ApodRepository
-import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
-import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
-import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_picture.*
-import kotlinx.coroutines.Dispatchers
 import java.io.File
+import javax.inject.Inject
 
 /**
  * A full screen view of an [Apod] picture.
  */
+@AndroidEntryPoint
 class PictureFragment : Fragment() {
-    private lateinit var imageCache: ImageCache
     private val args: PictureFragmentArgs by navArgs()
     private var imageUri: Uri? = null
+    private val viewModel: PictureViewModel by viewModels()
+    @Inject lateinit var imageCache: ImageCache
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,17 +70,11 @@ class PictureFragment : Fragment() {
         })
         apodPicture.setDoubleTapZoomScale(1.4f)
         apodPicture.setDoubleTapZoomDuration(resources.getInteger(android.R.integer.config_shortAnimTime))
-        val dataSource = ApodRemoteDataSource(
-            NasaRetrofitClient,
-            getString(R.string.key)
-        )
-        val apodDao = ApodDatabaseProvider.getDatabase(requireContext().applicationContext).apodDao()
-        imageCache = GlideImageCache(Dispatchers.Default)
         imageCache.attachApplicationContext(requireContext().applicationContext)
-        val repo = ApodRepository(dataSource, apodDao, imageCache)
-
-        val id = args.id
-        val viewModel = ViewModelProvider(this, PictureViewModelFactory(repo, id)).get(PictureViewModel::class.java)
+        if(savedInstanceState == null) {
+            val id = args.id
+            viewModel.load(id)
+        }
         viewModel.picture.observe(viewLifecycleOwner, Observer { resource ->
             when(resource) {
                 is Resource.Success -> {
