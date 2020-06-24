@@ -5,5 +5,6 @@ Nebula is a showcase of modern Android application design using [Nasa's Astronom
 - Networking with [OkHttp](https://square.github.io/okhttp/) + [Retrofit](https://square.github.io/retrofit/)
 - Image loading with [Glide](https://bumptech.github.io/glide/)
 - Local database persistence with [Room](https://developer.android.com/topic/libraries/architecture/room)
+- Dependency Injection with [Hilt](https://dagger.dev/hilt/)
 - Styled with [Material Components for Android](https://github.com/material-components/material-components-android)
 - Written in [Kotlin](https://kotlinlang.org/)
