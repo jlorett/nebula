@@ -33,7 +33,8 @@ class PictureViewModelTest: ViewModelTest() {
     fun `gets picture from database`() =  coroutineRule.dispatcher.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(entity)
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
-        viewModel = PictureViewModelFactory(apodRepo, entity.id).create(PictureViewModel::class.java)
+        viewModel = PictureViewModel(apodRepo)
+        viewModel.load(entity.id)
         assertEquals(entity.toApod().hdurl, viewModel.picture.value?.data?.hdurl)
     }
 
@@ -41,7 +42,8 @@ class PictureViewModelTest: ViewModelTest() {
     fun `error if database fetch fails`() =  coroutineRule.dispatcher.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(null)
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
-        viewModel = PictureViewModelFactory(apodRepo, entity.id).create(PictureViewModel::class.java)
+        viewModel = PictureViewModel(apodRepo)
+        viewModel.load(entity.id)
         assertNotNull(viewModel.picture.value?.error)
     }
 }
