@@ -152,6 +152,7 @@ class TodayPhotoFragment : Fragment() {
     }
 
     private fun displayApodError(error: String) {
+        prepareErrorAnimation()
         todaySwipeRefreshLayout.isRefreshing = false
         todayToolbar.title = getString(R.string.app_name)
         todayCollapsingToolbar.isTitleEnabled = false
@@ -162,6 +163,25 @@ class TodayPhotoFragment : Fragment() {
         todayCopyright.visibility = View.INVISIBLE
         todayDate.text = ""
         todayVideoLinkBtn.hide()
+        animateError()
+    }
+
+    private fun prepareErrorAnimation() {
+        todayTitle.alpha = 0F
+        todayDescription.alpha = 0F
+    }
+
+    private fun animateError() {
+        val interpolator = LinearOutSlowInInterpolator()
+        val duration = 300L
+        todayTitle.animate()
+            .alpha(1F)
+            .setInterpolator(interpolator)
+            .setDuration(duration)
+        todayDescription.animate()
+            .alpha(1F)
+            .setInterpolator(interpolator)
+            .setDuration(duration)
     }
 
     private fun updateApod(apod: Apod) {
