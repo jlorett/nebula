@@ -69,16 +69,7 @@ class TodayPhotoFragment : Fragment() {
                 }
                 is Resource.Error -> {
                     val error = resource.error
-                    todaySwipeRefreshLayout.isRefreshing = false
-                    todayToolbar.title = getString(R.string.app_name)
-                    todayCollapsingToolbar.isTitleEnabled = false
-                    todayTitle.text = getString(R.string.today_error)
-                    todayDescription.text = error
-                    todayPicture.visibility = View.GONE
-                    todayCopyright.text = ""
-                    todayCopyright.visibility = View.INVISIBLE
-                    todayDate.text = ""
-                    todayVideoLinkBtn.hide()
+                    displayApodError(error)
                 }
             }
         })
@@ -158,6 +149,19 @@ class TodayPhotoFragment : Fragment() {
             viewModel.updateDate(Instant.ofEpochMilli(selection).atZone(ZoneId.ofOffset("UTC", ZoneOffset.UTC)).toLocalDate())
         }
         datePicker.show(parentFragmentManager, "datePicker")
+    }
+
+    private fun displayApodError(error: String) {
+        todaySwipeRefreshLayout.isRefreshing = false
+        todayToolbar.title = getString(R.string.app_name)
+        todayCollapsingToolbar.isTitleEnabled = false
+        todayTitle.text = getString(R.string.today_error)
+        todayDescription.text = error
+        todayPicture.visibility = View.GONE
+        todayCopyright.text = ""
+        todayCopyright.visibility = View.INVISIBLE
+        todayDate.text = ""
+        todayVideoLinkBtn.hide()
     }
 
     private fun updateApod(apod: Apod) {
