@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
@@ -160,6 +161,7 @@ class TodayPhotoFragment : Fragment() {
     }
 
     private fun updateApod(apod: Apod) {
+        prepareApodAnimation()
         todayDate.text = apod.formattedDate("yyyy MMMM dd")
         todayTitle.text = apod.title
         todayDescription.text = apod.explanation
@@ -182,5 +184,34 @@ class TodayPhotoFragment : Fragment() {
             todayCollapsingToolbar.isTitleEnabled = false
             todayVideoLinkBtn.show()
         }
+        animateApod()
+    }
+
+    private fun prepareApodAnimation() {
+        todayDate.alpha = 0F
+        todayTitle.alpha = 0F
+        todayDescription.alpha = 0F
+        todayCopyright.alpha = 0F
+    }
+
+    private fun animateApod() {
+        val interpolator = LinearOutSlowInInterpolator()
+        val duration = 300L
+        todayDate.animate()
+            .alpha(1F)
+            .setInterpolator(interpolator)
+            .setDuration(duration)
+        todayTitle.animate()
+            .alpha(1F)
+            .setInterpolator(interpolator)
+            .setDuration(duration)
+        todayDescription.animate()
+            .alpha(1F)
+            .setInterpolator(interpolator)
+            .setDuration(duration)
+        todayCopyright.animate()
+            .alpha(1F)
+            .setInterpolator(interpolator)
+            .setDuration(duration)
     }
 }
