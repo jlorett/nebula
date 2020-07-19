@@ -58,7 +58,7 @@ class TodayPhotoFragment : Fragment() {
         viewModel.apod.observe(viewLifecycleOwner, Observer { resource ->
             when(resource) {
                 is Resource.Success -> {
-                    updateApod(resource.data)
+                    showApod(resource.data)
                 }
                 is Resource.Loading -> {
                     if(!todaySwipeRefreshLayout.isRefreshing) {
@@ -67,7 +67,7 @@ class TodayPhotoFragment : Fragment() {
                 }
                 is Resource.Error -> {
                     val error = resource.error
-                    displayApodError(error)
+                    showError(error)
                 }
             }
         })
@@ -149,7 +149,7 @@ class TodayPhotoFragment : Fragment() {
         datePicker.show(parentFragmentManager, "datePicker")
     }
 
-    private fun displayApodError(error: String) {
+    private fun showError(error: String) {
         prepareErrorAnimation()
         todaySwipeRefreshLayout.isRefreshing = false
         todayToolbar.title = getString(R.string.app_name)
@@ -164,7 +164,7 @@ class TodayPhotoFragment : Fragment() {
         animateError()
     }
 
-    private fun updateApod(apod: Apod) {
+    private fun showApod(apod: Apod) {
         prepareApodAnimation()
         todaySwipeRefreshLayout.isRefreshing = false
         todayDate.text = apod.formattedDate("yyyy MMMM dd")
