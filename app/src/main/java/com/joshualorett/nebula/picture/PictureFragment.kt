@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
@@ -25,10 +26,11 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.joshualorett.nebula.R
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
+import com.joshualorett.nebula.shared.awaitImageReady
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_picture.*
+import kotlinx.coroutines.launch
 import java.io.File
-import java.lang.Exception
 import javax.inject.Inject
 
 /**
@@ -132,24 +134,15 @@ class PictureFragment : Fragment() {
                     imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", resource)
                     imageUri?.let {
                         apodPicture.alpha = 0F
-                        apodPicture.setOnImageEventListener(object: SubsamplingScaleImageView.OnImageEventListener{
-                            override fun onImageLoaded() {}
-
-                            override fun onReady() {
-                                apodPicture.animate()
+                        lifecycleScope.launch {
+                            apodPicture.run {
+                                awaitImageReady()
+                                animate()
                                     .alpha(1F)
                                     .setInterpolator(LinearOutSlowInInterpolator())
                                     .setDuration(300)
                             }
-
-                            override fun onTileLoadError(e: Exception?) {}
-
-                            override fun onPreviewReleased() {}
-
-                            override fun onImageLoadError(e: Exception?) {}
-
-                            override fun onPreviewLoadError(e: Exception?) {}
-                        })
+                        }
                         apodPicture.setImage(ImageSource.uri(it))
                     }
                 }
