@@ -58,7 +58,6 @@ class TodayPhotoFragment : Fragment() {
         viewModel.apod.observe(viewLifecycleOwner, Observer { resource ->
             when(resource) {
                 is Resource.Success -> {
-                    todaySwipeRefreshLayout.isRefreshing = false
                     updateApod(resource.data)
                 }
                 is Resource.Loading -> {
@@ -167,6 +166,7 @@ class TodayPhotoFragment : Fragment() {
 
     private fun updateApod(apod: Apod) {
         prepareApodAnimation()
+        todaySwipeRefreshLayout.isRefreshing = false
         todayDate.text = apod.formattedDate("yyyy MMMM dd")
         todayTitle.text = apod.title
         todayDescription.text = apod.explanation
