@@ -13,6 +13,7 @@ import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -27,6 +28,7 @@ import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_picture.*
 import java.io.File
+import java.lang.Exception
 import javax.inject.Inject
 
 /**
@@ -129,6 +131,25 @@ class PictureFragment : Fragment() {
                 override fun onResourceReady(resource: File, transition: Transition<in File>?) {
                     imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", resource)
                     imageUri?.let {
+                        apodPicture.alpha = 0F
+                        apodPicture.setOnImageEventListener(object: SubsamplingScaleImageView.OnImageEventListener{
+                            override fun onImageLoaded() {}
+
+                            override fun onReady() {
+                                apodPicture.animate()
+                                    .alpha(1F)
+                                    .setInterpolator(LinearOutSlowInInterpolator())
+                                    .setDuration(300)
+                            }
+
+                            override fun onTileLoadError(e: Exception?) {}
+
+                            override fun onPreviewReleased() {}
+
+                            override fun onImageLoadError(e: Exception?) {}
+
+                            override fun onPreviewLoadError(e: Exception?) {}
+                        })
                         apodPicture.setImage(ImageSource.uri(it))
                     }
                 }
