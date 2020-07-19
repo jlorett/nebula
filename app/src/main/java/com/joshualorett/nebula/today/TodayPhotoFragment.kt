@@ -177,21 +177,29 @@ class TodayPhotoFragment : Fragment() {
             todayCopyright.text = getString(R.string.today_copyright, apod.copyright)
         }
         if(apod.hasImage()) {
-            todayToolbar.title = ""
-            todayPicture.visibility = View.VISIBLE
-            todayCollapsingToolbar.isTitleEnabled = true
-            todayVideoLinkBtn.hide()
-            Glide.with(this)
-                .load(apod.hdurl ?: apod.url)
-                .centerCrop()
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(todayPicture)
+          showImage(apod.hdurl ?: apod.url)
         } else {
-            todayPicture.visibility = View.GONE
-            todayToolbar.title = getString(R.string.app_name)
-            todayCollapsingToolbar.isTitleEnabled = false
-            todayVideoLinkBtn.show()
+            showVideo()
         }
         animateApod()
+    }
+
+    private fun showImage(url: String) {
+        todayToolbar.title = ""
+        todayPicture.visibility = View.VISIBLE
+        todayCollapsingToolbar.isTitleEnabled = true
+        todayVideoLinkBtn.hide()
+        Glide.with(this)
+            .load(url)
+            .centerCrop()
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(todayPicture)
+    }
+
+    private fun showVideo() {
+        todayPicture.visibility = View.GONE
+        todayToolbar.title = getString(R.string.app_name)
+        todayCollapsingToolbar.isTitleEnabled = false
+        todayVideoLinkBtn.show()
     }
 }
