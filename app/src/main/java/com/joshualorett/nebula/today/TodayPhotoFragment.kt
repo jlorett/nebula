@@ -177,6 +177,9 @@ class TodayPhotoFragment : Fragment() {
             todayCopyright.text = getString(R.string.today_copyright, apod.copyright)
         }
         if(apod.hasImage()) {
+            todayToolbar.title = ""
+            todayPicture.visibility = View.VISIBLE
+            todayCollapsingToolbar.isTitleEnabled = true
             todayVideoLinkBtn.hide()
             Glide.with(this)
                 .load(apod.hdurl ?: apod.url)
