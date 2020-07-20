@@ -13,7 +13,6 @@ import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -26,7 +25,6 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.joshualorett.nebula.R
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
-import com.joshualorett.nebula.shared.awaitImageReady
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_picture.*
 import kotlinx.coroutines.launch
@@ -133,15 +131,9 @@ class PictureFragment : Fragment() {
                 override fun onResourceReady(resource: File, transition: Transition<in File>?) {
                     imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", resource)
                     imageUri?.let {
-                        apodPicture.alpha = 0F
+                        preparePictureAnimation()
                         lifecycleScope.launch {
-                            apodPicture.run {
-                                awaitImageReady()
-                                animate()
-                                    .alpha(1F)
-                                    .setInterpolator(LinearOutSlowInInterpolator())
-                                    .setDuration(300)
-                            }
+                            animatePicture()
                         }
                         apodPicture.setImage(ImageSource.uri(it))
                     }
