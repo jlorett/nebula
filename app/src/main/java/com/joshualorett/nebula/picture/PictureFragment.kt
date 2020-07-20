@@ -121,9 +121,7 @@ class PictureFragment : Fragment() {
             .load(GlideUrl(url))
             .into(object: CustomViewTarget<SubsamplingScaleImageView, File>(apodPicture) {
                 override fun onLoadFailed(errorDrawable: Drawable?) {
-                    apodPicture.visibility = View.GONE
-                    pictureError.visibility = View.VISIBLE
-                    pictureError.text = getString(R.string.picture_error)
+                    showError(getString(R.string.picture_error))
                 }
 
                 override fun onResourceCleared(placeholder: Drawable?) {}
@@ -143,6 +141,7 @@ class PictureFragment : Fragment() {
 
     private fun showError(error: String) {
         apodPicture.visibility = View.GONE
+        pictureError.visibility = View.VISIBLE
         pictureError.text = error
     }
 }
