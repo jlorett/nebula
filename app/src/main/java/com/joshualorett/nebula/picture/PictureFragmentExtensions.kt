@@ -22,3 +22,16 @@ suspend fun PictureFragment.animatePicture() {
             .setDuration(300)
     }
 }
+
+fun PictureFragment.prepareErrorAnimation() {
+    pictureError.alpha = 0F
+}
+
+fun PictureFragment.animateError() {
+    val interpolator = LinearOutSlowInInterpolator()
+    val duration = 300L
+    pictureError.animate()
+        .alpha(1F)
+        .setInterpolator(interpolator)
+        .setDuration(duration)
+}

@@ -140,8 +140,10 @@ class PictureFragment : Fragment() {
     }
 
     private fun showError(error: String) {
+        prepareErrorAnimation()
         apodPicture.visibility = View.GONE
         pictureError.visibility = View.VISIBLE
         pictureError.text = error
+        animateError()
     }
 }
