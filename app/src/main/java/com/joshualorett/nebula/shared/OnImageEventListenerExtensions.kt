@@ -2,7 +2,6 @@ package com.joshualorett.nebula.shared
 
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import kotlinx.coroutines.suspendCancellableCoroutine
-import java.lang.Exception
 import kotlin.coroutines.resume
 
 /**
