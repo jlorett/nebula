@@ -1,5 +1,6 @@
 package com.joshualorett.nebula.apod.api
 
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import java.time.LocalDate
 
@@ -8,5 +9,5 @@ import java.time.LocalDate
  * Created by Joshua on 1/5/2020.
  */
 interface ApodDataSource {
-    suspend fun getApod(date: LocalDate): Response<ApodResponse>
+    fun getApod(date: LocalDate): Flow<Response<ApodResponse>>
 }
