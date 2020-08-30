@@ -14,6 +14,7 @@ import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
@@ -58,7 +59,7 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
         )
         val apodDao = ApodDatabaseProvider.getDatabase(applicationContext).apodDao()
         val apodRepository = ApodRepository(dataSource, apodDao, imageCache)
-        val resource = apodRepository.getApod(LocalDate.now())
+        val resource = apodRepository.getApod(LocalDate.now()).single()
         resource
     }
 }
