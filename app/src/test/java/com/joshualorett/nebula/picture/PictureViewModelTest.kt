@@ -1,5 +1,7 @@
 package com.joshualorett.nebula.picture
 
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.ViewModelTest
 import com.joshualorett.nebula.apod.ApodRepository
@@ -11,6 +13,7 @@ import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -27,23 +30,33 @@ class PictureViewModelTest: ViewModelTest() {
     private val mockDataSource = mock(ApodDataSource::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
     private val mockImageCache = mock(ImageCache::class.java)
+    private val lifecycleOwner = mock(LifecycleOwner::class.java)
+    private val lifecycle = mock(Lifecycle::class.java)
     private val entity = TestData.apodEntity
 
     @Test
     fun `gets picture from database`() =  coroutineRule.dispatcher.runBlockingTest {
-        `when`(mockApodDao.loadById(entity.id)).thenReturn(entity)
+        `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(entity))
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        `when`(lifecycle.currentState).thenReturn(Lifecycle.State.RESUMED)
+        `when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
         viewModel = PictureViewModel(apodRepo)
         viewModel.load(entity.id)
-        assertEquals(entity.toApod().hdurl, viewModel.picture.value?.data?.hdurl)
+        viewModel.picture.observe(lifecycleOwner, { result ->
+            assertEquals(entity.toApod().hdurl, result.data?.hdurl)
+        })
     }
 
     @Test
     fun `error if database fetch fails`() =  coroutineRule.dispatcher.runBlockingTest {
-        `when`(mockApodDao.loadById(entity.id)).thenReturn(null)
+        `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(null))
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        `when`(lifecycle.currentState).thenReturn(Lifecycle.State.RESUMED)
+        `when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
         viewModel = PictureViewModel(apodRepo)
         viewModel.load(entity.id)
-        assertNotNull(viewModel.picture.value?.error)
+        viewModel.picture.observe(lifecycleOwner, { result ->
+            assertNotNull(result?.error)
+        })
     }
 }
