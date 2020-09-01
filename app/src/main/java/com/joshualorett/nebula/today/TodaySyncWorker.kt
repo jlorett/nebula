@@ -13,10 +13,8 @@ import com.joshualorett.nebula.apod.hasImage
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
@@ -26,7 +24,6 @@ import java.time.LocalDate
  */
 class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWorker(context, params) {
     private val maxRetryAttempts = 2
-    var dispatcher: CoroutineDispatcher = Dispatchers.IO
 
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
@@ -55,7 +52,7 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
         }
     }
 
-    private suspend fun getApod(imageCache: ImageCache): Resource<Apod, String> = withContext(dispatcher) {
+    private suspend fun getApod(imageCache: ImageCache): Resource<Apod, String> = withContext(Dispatchers.IO) {
         val dataSource = ApodRemoteDataSource(
             NasaRetrofitClient,
             applicationContext.getString(R.string.key)
