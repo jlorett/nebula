@@ -94,7 +94,7 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:2.4.0"
 
     // LeakCanary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
 
     // Hilt
     implementation "com.google.dagger:hilt-android:2.28-alpha"
