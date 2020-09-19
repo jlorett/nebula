@@ -2,7 +2,7 @@ package com.joshualorett.nebula.apod.api
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
-import com.joshualorett.nebula.RetrofitServiceDelegate
+import com.joshualorett.nebula.shared.RetrofitServiceDelegate
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

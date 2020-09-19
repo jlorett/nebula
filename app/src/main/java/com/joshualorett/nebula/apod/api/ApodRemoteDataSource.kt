@@ -1,6 +1,6 @@
 package com.joshualorett.nebula.apod.api
 
-import com.joshualorett.nebula.RetrofitServiceDelegate
+import com.joshualorett.nebula.shared.RetrofitServiceDelegate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response

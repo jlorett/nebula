@@ -1,4 +1,4 @@
-package com.joshualorett.nebula
+package com.joshualorett.nebula.shared
 
 /**
  * Delegates service creation to retrofit instance.

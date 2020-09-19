@@ -1,7 +1,7 @@
 package com.joshualorett.nebula.apod.api
 
-import com.joshualorett.nebula.RetrofitServiceDelegate
 import com.joshualorett.nebula.TestData
+import com.joshualorett.nebula.shared.RetrofitServiceDelegate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
