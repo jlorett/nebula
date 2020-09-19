@@ -1,7 +1,7 @@
 package com.joshualorett.nebula.di
 
 import android.content.Context
-import com.joshualorett.nebula.NasaRetrofitClient
+import com.joshualorett.nebula.apod.api.NasaRetrofitClient
 import com.joshualorett.nebula.R
 import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource

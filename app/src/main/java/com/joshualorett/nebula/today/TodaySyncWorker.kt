@@ -3,7 +3,7 @@ package com.joshualorett.nebula.today
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.joshualorett.nebula.NasaRetrofitClient
+import com.joshualorett.nebula.apod.api.NasaRetrofitClient
 import com.joshualorett.nebula.R
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
