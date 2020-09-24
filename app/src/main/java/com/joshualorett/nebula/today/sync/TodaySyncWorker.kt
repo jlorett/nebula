@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.today
+package com.joshualorett.nebula.today.sync
 
 import android.content.Context
 import androidx.work.CoroutineWorker

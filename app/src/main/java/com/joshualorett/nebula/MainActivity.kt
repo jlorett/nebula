@@ -3,7 +3,7 @@ package com.joshualorett.nebula
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import com.joshualorett.nebula.today.TodaySyncManager
+import com.joshualorett.nebula.today.sync.TodaySyncManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

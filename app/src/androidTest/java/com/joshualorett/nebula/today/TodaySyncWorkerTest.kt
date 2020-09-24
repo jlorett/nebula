@@ -3,6 +3,7 @@ package com.joshualorett.nebula.today
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.work.ListenableWorker
+import com.joshualorett.nebula.today.sync.TodaySyncWorker
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
