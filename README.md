@@ -12,3 +12,16 @@ Nebula is a showcase of modern Android application design using [Nasa's Astronom
 ## Architecture
 
 The architecture is built around [Android Architecture Components](https://developer.android.com/topic/libraries/architecture/). Logic is kept away from Activities and Fragments and moved into [ViewModels](https://developer.android.com/topic/libraries/architecture/viewmodel). Data is then observed using [LiveData](https://developer.android.com/topic/libraries/architecture/livedata) to update the UI. A repository layer is used to fetch data from both a remote API and local database cache using [Flow](https://kotlinlang.org/docs/reference/coroutines/flow.html).
+
+```
++------+   LiveData    +-----------+   Flow    +------------+   Flow    +--------------------+
+| View | ------------> | ViewModel | --------> | Repository | --------> | Remote Data Source |
++------+               +-----------+           +------------+           +--------------------+
+                                                     |
+                                                     | Flow
+                                                     |
+                                                     V
+                                                +----------+
+                                                | Database |
+                                                +----------+
+```
