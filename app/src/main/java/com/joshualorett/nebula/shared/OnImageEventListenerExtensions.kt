@@ -9,8 +9,18 @@ import kotlin.coroutines.resume
  * Created by Joshua on 7/18/2020.
  */
 
-/***
+/**
  * A Coroutine that waits until a [SubsamplingScaleImageView] is loaded to return.
+ *
+ * Example:
+ * ```
+ * suspend fun animatePicture() {
+ *     picture.run {
+ *         awaitImageReady()
+ *         animatePicture()
+ *     }
+ * }
+ * ```
  */
 suspend fun SubsamplingScaleImageView.awaitImageReady() = suspendCancellableCoroutine<Unit> { cont ->
     val listener = object: SubsamplingScaleImageView.OnImageEventListener {
