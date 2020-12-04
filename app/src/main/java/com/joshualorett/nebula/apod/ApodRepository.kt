@@ -80,6 +80,9 @@ class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSou
         }
     }
 
+    /***
+     * Cache the apod and return the auto generated primary key.
+     */
     private suspend fun cacheApod(apod: Apod): Long {
         apodDao.delete(apod.toEntity())
         return apodDao.insertApod(apod.toEntity())
