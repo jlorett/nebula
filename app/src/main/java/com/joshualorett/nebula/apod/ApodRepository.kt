@@ -24,7 +24,7 @@ class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSou
      */
     fun getApod(date: LocalDate): Flow<Resource<Apod, String>> {
         if (date.isBefore(earliestDate)) {
-            return flowOf(Resource.Error("Date can't be before 1995-06-16."))
+            return flowOf(Resource.Error("Date can't be before $earliestDate."))
         }
         return apodDao.loadByDate(date.toString())
             .flatMapLatest { entity ->
@@ -42,7 +42,7 @@ class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSou
      */
     fun getFreshApod(date: LocalDate): Flow<Resource<Apod, String>> {
         if (date.isBefore(earliestDate)) {
-            return flowOf(Resource.Error("Date can't be before 1995-06-16."))
+            return flowOf(Resource.Error("Date can't be before $earliestDate."))
         }
         return getApodByDataSource(date)
     }
