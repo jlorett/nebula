@@ -69,7 +69,8 @@ class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSou
                 if (networkApod == null) {
                     flowOf(Resource.Error("Empty network body."))
                 } else {
-                    cacheApod(networkApod)
+                    val id = cacheApod(networkApod)
+                    getCachedApod(id)
                 }
             } else {
                 flowOf(Resource.Error("Error getting apod with status ${response.code()}."))
@@ -79,10 +80,9 @@ class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSou
         }
     }
 
-    private suspend fun cacheApod(apod: Apod): Flow<Resource<Apod, String>> {
+    private suspend fun cacheApod(apod: Apod): Long {
         apodDao.delete(apod.toEntity())
-        val id = apodDao.insertApod(apod.toEntity())
-        return getCachedApod(id)
+        return apodDao.insertApod(apod.toEntity())
     }
 
     /***
