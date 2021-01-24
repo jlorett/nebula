@@ -35,28 +35,24 @@ class PictureViewModelTest: ViewModelTest() {
     private val entity = TestData.apodEntity
 
     @Test
-    fun `gets picture from database`() =  coroutineRule.dispatcher.runBlockingTest {
+    fun getsPictureFromDatabase() =  coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(entity))
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         `when`(lifecycle.currentState).thenReturn(Lifecycle.State.RESUMED)
         `when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
-        viewModel = PictureViewModel(apodRepo)
+        viewModel = PictureViewModel(apodRepo, coroutineRule.dispatcher)
         viewModel.load(entity.id)
-        viewModel.picture.observe(lifecycleOwner, { result ->
-            assertEquals(entity.toApod().hdurl, result.data?.hdurl)
-        })
+        assertEquals(entity.toApod().hdurl, viewModel.picture.getOrAwaitValue(1).data?.hdurl)
     }
 
     @Test
-    fun `error if database fetch fails`() =  coroutineRule.dispatcher.runBlockingTest {
+    fun errorIfDatabaseFetchFails() =  coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(null))
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         `when`(lifecycle.currentState).thenReturn(Lifecycle.State.RESUMED)
         `when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
-        viewModel = PictureViewModel(apodRepo)
+        viewModel = PictureViewModel(apodRepo, coroutineRule.dispatcher)
         viewModel.load(entity.id)
-        viewModel.picture.observe(lifecycleOwner, { result ->
-            assertNotNull(result?.error)
-        })
+        assertNotNull(viewModel.picture.getOrAwaitValue(1).error)
     }
 }

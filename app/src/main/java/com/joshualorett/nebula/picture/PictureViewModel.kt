@@ -15,9 +15,11 @@ import kotlinx.coroutines.flow.*
  */
 
 class PictureViewModel @ViewModelInject constructor(private val apodRepository: ApodRepository): ViewModel() {
+    constructor(apodRepository: ApodRepository, bgDispatcher: CoroutineDispatcher): this(apodRepository) {
+        this.bgDispatcher = bgDispatcher
+    }
     private val id = MutableStateFlow(-1L)
-    var bgDispatcher: CoroutineDispatcher = Dispatchers.IO
-
+    private var bgDispatcher: CoroutineDispatcher = Dispatchers.IO
     val picture: LiveData<Resource<Apod, String>> = id.filter { id -> id > -1L }
         .flatMapLatest { id ->
             apodRepository.getCachedApod(id)
