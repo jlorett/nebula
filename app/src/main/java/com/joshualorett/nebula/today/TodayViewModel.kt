@@ -48,9 +48,8 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
     private val _navigateFullPicture: MutableLiveData<OneShotEvent<Long>> = MutableLiveData()
     val navigateFullPicture: LiveData<OneShotEvent<Long>> = _navigateFullPicture
 
-    fun currentDate(): LocalDate? {
-        return _date.value
-    }
+    private val _showDatePicker: MutableLiveData<OneShotEvent<LocalDate>> = MutableLiveData()
+    val showDatePicker: LiveData<OneShotEvent<LocalDate>> = _showDatePicker
 
     fun videoLinkClicked() {
         currentApod?.let {
@@ -64,6 +63,10 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
         currentApod?.let {
             _navigateFullPicture.value = OneShotEvent(it.id)
         }
+    }
+
+    fun onChooseDate() {
+        _showDatePicker.value = OneShotEvent(_date.value ?: LocalDate.now())
     }
 
     fun updateDate(date: LocalDate) {

@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -55,7 +54,7 @@ class TodayPhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.apod.observe(viewLifecycleOwner, Observer { resource ->
+        viewModel.apod.observe(viewLifecycleOwner, { resource ->
             when(resource) {
                 is Resource.Success -> {
                     showApod(resource.data)
@@ -80,7 +79,9 @@ class TodayPhotoFragment : Fragment() {
             val action = TodayPhotoFragmentDirections.actionTodayPhotoFragmentToPictureFragment(id)
             requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
         })
-
+        viewModel.showDatePicker.observe(viewLifecycleOwner, OneShotEventObserver{ date ->
+            showDatePicker(date)
+        })
         todayCollapsingToolbar.setExpandedTitleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
         todayToolbar.inflateMenu(R.menu.today)
         todayToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
@@ -96,7 +97,7 @@ class TodayPhotoFragment : Fragment() {
                         true
                     }
                     R.id.action_choose_day -> {
-                        showDatePicker()
+                        viewModel.onChooseDate()
                         true
                     }
                     else -> {
@@ -141,8 +142,8 @@ class TodayPhotoFragment : Fragment() {
         requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
     }
 
-    private fun showDatePicker() {
-        val datePicker = ApodDatePickerFactory.create(viewModel.currentDate() ?: LocalDate.now())
+    private fun showDatePicker(date: LocalDate) {
+        val datePicker = ApodDatePickerFactory.create(date)
         datePicker.addOnPositiveButtonClickListener { selection: Long ->
             viewModel.updateDate(Instant.ofEpochMilli(selection).atZone(ZoneId.ofOffset("UTC", ZoneOffset.UTC)).toLocalDate())
         }
