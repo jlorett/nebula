@@ -17,13 +17,21 @@ import java.time.LocalDate
  * Created by Joshua on 1/11/2020.
  */
 class TodayViewModel @ViewModelInject constructor(private val apodRepository: ApodRepository): ViewModel() {
+    constructor(apodRepository: ApodRepository, bgDispatcher: CoroutineDispatcher): this(apodRepository) {
+        this.bgDispatcher = bgDispatcher
+    }
     private var currentApod: Apod? = null
     private val today = LocalDate.now()
-    private val _date: MutableLiveData<LocalDate> = MutableLiveData(today)
+    private val _date = MutableStateFlow(today)
     private var refresh = false
-    var bgDispatcher: CoroutineDispatcher = Dispatchers.IO
-
-    val apod = _date.asFlow()
+    private var bgDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val _navigateVideoLink: MutableLiveData<OneShotEvent<String?>> = MutableLiveData()
+    val navigateVideoLink: LiveData<OneShotEvent<String?>> = _navigateVideoLink
+    private val _navigateFullPicture: MutableLiveData<OneShotEvent<Long>> = MutableLiveData()
+    val navigateFullPicture: LiveData<OneShotEvent<Long>> = _navigateFullPicture
+    private val _showDatePicker: MutableLiveData<OneShotEvent<LocalDate>> = MutableLiveData()
+    val showDatePicker: LiveData<OneShotEvent<LocalDate>> = _showDatePicker
+    val apod = _date
         .filter { date -> date != null }
         .flatMapLatest {  date ->
             if(refresh) {
@@ -41,15 +49,6 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
         .flowOn(bgDispatcher)
         .conflate()
         .asLiveData()
-
-    private val _navigateVideoLink: MutableLiveData<OneShotEvent<String?>> = MutableLiveData()
-    val navigateVideoLink: LiveData<OneShotEvent<String?>> = _navigateVideoLink
-
-    private val _navigateFullPicture: MutableLiveData<OneShotEvent<Long>> = MutableLiveData()
-    val navigateFullPicture: LiveData<OneShotEvent<Long>> = _navigateFullPicture
-
-    private val _showDatePicker: MutableLiveData<OneShotEvent<LocalDate>> = MutableLiveData()
-    val showDatePicker: LiveData<OneShotEvent<LocalDate>> = _showDatePicker
 
     fun videoLinkClicked() {
         currentApod?.let {
