@@ -8,8 +8,9 @@ import com.joshualorett.nebula.R
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
-import com.joshualorett.nebula.apod.database.ApodDatabaseProvider
 import com.joshualorett.nebula.apod.hasImage
+import com.joshualorett.nebula.di.ApodDaoModule
+import com.joshualorett.nebula.di.ImageCacheModule
 import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
@@ -29,7 +30,7 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
         return withContext(Dispatchers.IO) {
             val imageCache = GlideImageCache(Dispatchers.IO)
             imageCache.attachApplicationContext(applicationContext)
-           val resource = getApod(imageCache)
+           val resource = getApod(applicationContext, imageCache)
             when {
                 resource.successful() -> {
                     val apod = (resource as Resource.Success).data
@@ -52,12 +53,12 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
         }
     }
 
-    private suspend fun getApod(imageCache: ImageCache): Resource<Apod, String> = withContext(Dispatchers.IO) {
+    private suspend fun getApod(context: Context, imageCache: ImageCache): Resource<Apod, String> = withContext(Dispatchers.IO) {
         val dataSource = ApodRemoteDataSource(
             NasaRetrofitClient,
             applicationContext.getString(R.string.key)
         )
-        val apodDao = ApodDatabaseProvider.getDatabase(applicationContext).apodDao()
+        val apodDao = ApodDaoModule.provideDatabase(context).apodDao()
         val apodRepository = ApodRepository(dataSource, apodDao, imageCache)
         val resource = apodRepository.getApod(LocalDate.now()).first()
         resource
