@@ -11,7 +11,6 @@ import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import com.joshualorett.nebula.apod.hasImage
 import com.joshualorett.nebula.di.ApodDaoModule
 import com.joshualorett.nebula.di.ImageCacheModule
-import com.joshualorett.nebula.shared.GlideImageCache
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +27,7 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
 
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
-            val imageCache = GlideImageCache(Dispatchers.IO)
+            val imageCache = ImageCacheModule.provide()
             imageCache.attachApplicationContext(applicationContext)
            val resource = getApod(applicationContext, imageCache)
             when {
