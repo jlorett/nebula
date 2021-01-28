@@ -2,7 +2,6 @@ package com.joshualorett.nebula.picture
 
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.joshualorett.nebula.shared.awaitImageReady
-import kotlinx.android.synthetic.main.fragment_picture.*
 
 /**
  * Extensions for [PictureFragment].
@@ -10,11 +9,11 @@ import kotlinx.android.synthetic.main.fragment_picture.*
  */
 
 fun PictureFragment.preparePictureAnimation() {
-    apodPicture.alpha = 0F
+    binding.apodPicture.alpha = 0F
 }
 
 suspend fun PictureFragment.animatePicture() {
-    apodPicture.run {
+    binding.apodPicture.run {
         awaitImageReady()
         animate()
             .alpha(1F)
@@ -24,13 +23,13 @@ suspend fun PictureFragment.animatePicture() {
 }
 
 fun PictureFragment.prepareErrorAnimation() {
-    pictureError.alpha = 0F
+    binding.pictureError.alpha = 0F
 }
 
 fun PictureFragment.animateError() {
     val interpolator = LinearOutSlowInInterpolator()
     val duration = 300L
-    pictureError.animate()
+    binding.pictureError.animate()
         .alpha(1F)
         .setInterpolator(interpolator)
         .setDuration(duration)

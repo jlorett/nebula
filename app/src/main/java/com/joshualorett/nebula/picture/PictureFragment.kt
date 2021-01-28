@@ -23,10 +23,10 @@ import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.joshualorett.nebula.R
+import com.joshualorett.nebula.databinding.FragmentPictureBinding
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_picture.*
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -41,22 +41,26 @@ class PictureFragment : Fragment() {
     private val viewModel: PictureViewModel by viewModels()
     @Inject lateinit var imageCache: ImageCache
 
+    private var _binding: FragmentPictureBinding? = null
+    val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_picture, container, false)
+        _binding = FragmentPictureBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        pictureToolbar.title = ""
-        pictureToolbar.setNavigationOnClickListener {
+        binding.pictureToolbar.title = ""
+        binding.pictureToolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
         }
-        pictureToolbar.inflateMenu(R.menu.picture)
-        pictureToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
+        binding.pictureToolbar.inflateMenu(R.menu.picture)
+        binding.pictureToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
             androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
             override fun onMenuItemClick(item: MenuItem?): Boolean {
                 return when(item?.itemId) {
@@ -70,8 +74,8 @@ class PictureFragment : Fragment() {
                 }
             }
         })
-        apodPicture.setDoubleTapZoomScale(1.4f)
-        apodPicture.setDoubleTapZoomDuration(resources.getInteger(android.R.integer.config_shortAnimTime))
+        binding.apodPicture.setDoubleTapZoomScale(1.4f)
+        binding.apodPicture.setDoubleTapZoomDuration(resources.getInteger(android.R.integer.config_shortAnimTime))
         imageCache.attachApplicationContext(requireContext().applicationContext)
         if(savedInstanceState == null) {
             val id = args.id
@@ -94,6 +98,11 @@ class PictureFragment : Fragment() {
         })
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onDestroy() {
         imageUri = null
         imageCache.detachApplicationContext()
@@ -114,12 +123,12 @@ class PictureFragment : Fragment() {
     }
 
     private fun updateImage(url: String) {
-        pictureError.visibility = View.GONE
-        apodPicture.visibility = View.VISIBLE
+        binding.pictureError.visibility = View.GONE
+        binding.apodPicture.visibility = View.VISIBLE
         Glide.with(this)
             .asFile()
             .load(GlideUrl(url))
-            .into(object: CustomViewTarget<SubsamplingScaleImageView, File>(apodPicture) {
+            .into(object: CustomViewTarget<SubsamplingScaleImageView, File>(binding.apodPicture) {
                 override fun onLoadFailed(errorDrawable: Drawable?) {
                     showError(getString(R.string.picture_error))
                 }
@@ -133,7 +142,7 @@ class PictureFragment : Fragment() {
                         lifecycleScope.launch {
                             animatePicture()
                         }
-                        apodPicture.setImage(ImageSource.uri(it))
+                        binding.apodPicture.setImage(ImageSource.uri(it))
                     }
                 }
             })
@@ -141,9 +150,9 @@ class PictureFragment : Fragment() {
 
     private fun showError(error: String) {
         prepareErrorAnimation()
-        apodPicture.visibility = View.GONE
-        pictureError.visibility = View.VISIBLE
-        pictureError.text = error
+        binding.apodPicture.visibility = View.GONE
+        binding.pictureError.visibility = View.VISIBLE
+        binding.pictureError.text = error
         animateError()
     }
 }
