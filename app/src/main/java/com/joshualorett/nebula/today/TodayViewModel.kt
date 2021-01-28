@@ -41,13 +41,12 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
                 apodRepository.getApod(date)
             }
         }
+        .flowOn(bgDispatcher)
         .onEach { res ->
             currentApod = res.data
         }
         .onStart { emit(Resource.Loading) }
         .catch { throwable -> emit(Resource.Error("Couldn't fetch apod.")) }
-        .flowOn(bgDispatcher)
-        .conflate()
         .asLiveData()
 
     fun videoLinkClicked() {
@@ -75,6 +74,7 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
     fun refresh() {
         refresh = true
         _date.value?.let {
+            _date.value = null
             updateDate(it)
         }
     }
