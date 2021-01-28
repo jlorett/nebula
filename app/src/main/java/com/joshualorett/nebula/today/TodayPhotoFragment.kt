@@ -19,12 +19,12 @@ import com.joshualorett.nebula.R
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.formattedDate
 import com.joshualorett.nebula.apod.hasImage
+import com.joshualorett.nebula.databinding.FragmentTodayPhotoBinding
 import com.joshualorett.nebula.date.ApodDatePickerFactory
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_today_photo.*
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -39,6 +39,9 @@ class TodayPhotoFragment : Fragment() {
     @Inject lateinit var imageCache: ImageCache
     private val viewModel: TodayViewModel by viewModels()
 
+    private var _binding: FragmentTodayPhotoBinding? = null
+    val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageCache.attachApplicationContext(requireContext().applicationContext)
@@ -49,7 +52,8 @@ class TodayPhotoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_today_photo, container, false)
+        _binding = FragmentTodayPhotoBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,8 +64,8 @@ class TodayPhotoFragment : Fragment() {
                     showApod(resource.data)
                 }
                 is Resource.Loading -> {
-                    if(!todaySwipeRefreshLayout.isRefreshing) {
-                        todaySwipeRefreshLayout.isRefreshing = true
+                    if(!binding.todaySwipeRefreshLayout.isRefreshing) {
+                        binding.todaySwipeRefreshLayout.isRefreshing = true
                     }
                 }
                 is Resource.Error -> {
@@ -82,9 +86,9 @@ class TodayPhotoFragment : Fragment() {
         viewModel.showDatePicker.observe(viewLifecycleOwner, OneShotEventObserver{ date ->
             showDatePicker(date)
         })
-        todayCollapsingToolbar.setExpandedTitleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
-        todayToolbar.inflateMenu(R.menu.today)
-        todayToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
+        binding.todayCollapsingToolbar.setExpandedTitleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+        binding.todayToolbar.inflateMenu(R.menu.today)
+        binding.todayToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
             androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
             override fun onMenuItemClick(item: MenuItem?): Boolean {
                 return when(item?.itemId) {
@@ -106,25 +110,30 @@ class TodayPhotoFragment : Fragment() {
                 }
             }
         })
-        todayVideoLinkBtn.setOnClickListener {
+        binding.todayVideoLinkBtn.setOnClickListener {
             viewModel.videoLinkClicked()
         }
-        todayVideoLinkBtn.hide()
+        binding.todayVideoLinkBtn.hide()
 
-        todayContainer.doOnPreDraw {
+        binding.todayContainer.doOnPreDraw {
             val isPortrait = it.height >= it.width
-            todayPicture.layoutParams.height = if(isPortrait) it.width / 4 * 3 else it.height
+            binding.todayPicture.layoutParams.height = if(isPortrait) it.width / 4 * 3 else it.height
         }
-        todayPicture.setOnClickListener {
+        binding.todayPicture.setOnClickListener {
             viewModel.onPhotoClicked()
         }
-        todaySwipeRefreshLayout.apply {
+        binding.todaySwipeRefreshLayout.apply {
             setColorSchemeResources(R.color.colorSecondary)
             setProgressBackgroundColorSchemeResource(R.color.colorSurface)
             setOnRefreshListener {
                 viewModel.refresh()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onDestroy() {
@@ -152,30 +161,30 @@ class TodayPhotoFragment : Fragment() {
 
     private fun showError(error: String) {
         prepareErrorAnimation()
-        todaySwipeRefreshLayout.isRefreshing = false
-        todayToolbar.title = getString(R.string.app_name)
-        todayCollapsingToolbar.isTitleEnabled = false
-        todayTitle.text = getString(R.string.today_error)
-        todayDescription.text = error
-        todayPicture.visibility = View.GONE
-        todayCopyright.text = ""
-        todayCopyright.visibility = View.INVISIBLE
-        todayDate.text = ""
-        todayVideoLinkBtn.hide()
+        binding.todaySwipeRefreshLayout.isRefreshing = false
+        binding.todayToolbar.title = getString(R.string.app_name)
+        binding.todayCollapsingToolbar.isTitleEnabled = false
+        binding.todayTitle.text = getString(R.string.today_error)
+        binding.todayDescription.text = error
+        binding.todayPicture.visibility = View.GONE
+        binding.todayCopyright.text = ""
+        binding.todayCopyright.visibility = View.INVISIBLE
+        binding.todayDate.text = ""
+        binding.todayVideoLinkBtn.hide()
         animateError()
     }
 
     private fun showApod(apod: Apod) {
         prepareApodAnimation()
-        todaySwipeRefreshLayout.isRefreshing = false
-        todayDate.text = apod.formattedDate("yyyy MMMM dd")
-        todayTitle.text = apod.title
-        todayDescription.text = apod.explanation
+        binding.todaySwipeRefreshLayout.isRefreshing = false
+        binding.todayDate.text = apod.formattedDate("yyyy MMMM dd")
+        binding.todayTitle.text = apod.title
+        binding.todayDescription.text = apod.explanation
         if(apod.copyright == null) {
-            todayCopyright.visibility = View.INVISIBLE
+            binding.todayCopyright.visibility = View.INVISIBLE
         } else {
-            todayCopyright.visibility = View.VISIBLE
-            todayCopyright.text = getString(R.string.today_copyright, apod.copyright)
+            binding.todayCopyright.visibility = View.VISIBLE
+            binding.todayCopyright.text = getString(R.string.today_copyright, apod.copyright)
         }
         if(apod.hasImage()) {
           showImage(apod.hdurl ?: apod.url)
@@ -186,21 +195,21 @@ class TodayPhotoFragment : Fragment() {
     }
 
     private fun showImage(url: String) {
-        todayToolbar.title = ""
-        todayPicture.visibility = View.VISIBLE
-        todayCollapsingToolbar.isTitleEnabled = true
-        todayVideoLinkBtn.hide()
+        binding.todayToolbar.title = ""
+        binding.todayPicture.visibility = View.VISIBLE
+        binding.todayCollapsingToolbar.isTitleEnabled = true
+        binding.todayVideoLinkBtn.hide()
         Glide.with(this)
             .load(url)
             .centerCrop()
             .transition(DrawableTransitionOptions.withCrossFade())
-            .into(todayPicture)
+            .into(binding.todayPicture)
     }
 
     private fun showVideo() {
-        todayPicture.visibility = View.GONE
-        todayToolbar.title = getString(R.string.app_name)
-        todayCollapsingToolbar.isTitleEnabled = false
-        todayVideoLinkBtn.show()
+        binding.todayPicture.visibility = View.GONE
+        binding.todayToolbar.title = getString(R.string.app_name)
+        binding.todayCollapsingToolbar.isTitleEnabled = false
+        binding.todayVideoLinkBtn.show()
     }
 }

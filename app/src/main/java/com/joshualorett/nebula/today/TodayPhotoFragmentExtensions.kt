@@ -1,7 +1,6 @@
 package com.joshualorett.nebula.today
 
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
-import kotlinx.android.synthetic.main.fragment_today_photo.*
 
 /**
  * Extensions for [TodayPhotoFragment].
@@ -9,46 +8,46 @@ import kotlinx.android.synthetic.main.fragment_today_photo.*
  */
 
 fun TodayPhotoFragment.prepareApodAnimation() {
-    todayDate.alpha = 0F
-    todayTitle.alpha = 0F
-    todayDescription.alpha = 0F
-    todayCopyright.alpha = 0F
+    binding.todayDate.alpha = 0F
+    binding.todayTitle.alpha = 0F
+    binding.todayDescription.alpha = 0F
+    binding.todayCopyright.alpha = 0F
 }
 
 fun TodayPhotoFragment.animateApod() {
     val interpolator = LinearOutSlowInInterpolator()
     val duration = 300L
-    todayDate.animate()
+    binding.todayDate.animate()
         .alpha(1F)
         .setInterpolator(interpolator)
         .setDuration(duration)
-    todayTitle.animate()
+    binding.todayTitle.animate()
         .alpha(1F)
         .setInterpolator(interpolator)
         .setDuration(duration)
-    todayDescription.animate()
+    binding.todayDescription.animate()
         .alpha(1F)
         .setInterpolator(interpolator)
         .setDuration(duration)
-    todayCopyright.animate()
+    binding.todayCopyright.animate()
         .alpha(1F)
         .setInterpolator(interpolator)
         .setDuration(duration)
 }
 
 fun TodayPhotoFragment.prepareErrorAnimation() {
-    todayTitle.alpha = 0F
-    todayDescription.alpha = 0F
+    binding.todayTitle.alpha = 0F
+    binding.todayDescription.alpha = 0F
 }
 
 fun TodayPhotoFragment.animateError() {
     val interpolator = LinearOutSlowInInterpolator()
     val duration = 300L
-    todayTitle.animate()
+    binding.todayTitle.animate()
         .alpha(1F)
         .setInterpolator(interpolator)
         .setDuration(duration)
-    todayDescription.animate()
+    binding.todayDescription.animate()
         .alpha(1F)
         .setInterpolator(interpolator)
         .setDuration(duration)
