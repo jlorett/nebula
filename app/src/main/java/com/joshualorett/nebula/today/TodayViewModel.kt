@@ -1,5 +1,6 @@
 package com.joshualorett.nebula.today
 
+import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.joshualorett.nebula.apod.Apod
@@ -16,13 +17,15 @@ import java.time.LocalDate
  * [ViewModel] show today's Astronomy Picture of the Day.
  * Created by Joshua on 1/11/2020.
  */
-class TodayViewModel @ViewModelInject constructor(private val apodRepository: ApodRepository): ViewModel() {
-    constructor(apodRepository: ApodRepository, bgDispatcher: CoroutineDispatcher): this(apodRepository) {
+class TodayViewModel @ViewModelInject constructor(private val apodRepository: ApodRepository,
+@Assisted private val savedStateHandle: SavedStateHandle): ViewModel() {
+    constructor(apodRepository: ApodRepository, bgDispatcher: CoroutineDispatcher, savedStateHandle: SavedStateHandle): this(apodRepository, savedStateHandle) {
         this.bgDispatcher = bgDispatcher
     }
-    private var currentApod: Apod? = null
+    private val dateKey = "date"
     private val today = LocalDate.now()
-    private val _date = MutableStateFlow(today)
+    private val _date = MutableStateFlow(savedStateHandle.get(dateKey) ?: today)
+    private var currentApod: Apod? = null
     private var refresh = false
     private var bgDispatcher: CoroutineDispatcher = Dispatchers.IO
     private val _navigateVideoLink: MutableLiveData<OneShotEvent<String?>> = MutableLiveData()
@@ -69,6 +72,7 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
 
     fun updateDate(date: LocalDate) {
         _date.value = date
+        savedStateHandle.set(dateKey, date)
     }
 
     fun refresh() {
