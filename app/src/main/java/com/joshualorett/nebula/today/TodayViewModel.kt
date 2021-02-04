@@ -22,11 +22,11 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
     constructor(apodRepository: ApodRepository, bgDispatcher: CoroutineDispatcher, savedStateHandle: SavedStateHandle): this(apodRepository, savedStateHandle) {
         this.bgDispatcher = bgDispatcher
     }
-    private val dateKey = "date"
-    private val today = LocalDate.now()
-    private val _date = MutableStateFlow(savedStateHandle.get(dateKey) ?: today)
+    private val dateKey: String = "date"
+    private val today: LocalDate = LocalDate.now()
+    private val _date: MutableStateFlow<LocalDate?> = MutableStateFlow(savedStateHandle.get(dateKey) ?: today)
     private var currentApod: Apod? = null
-    private var refresh = false
+    private var refresh: Boolean = false
     private var bgDispatcher: CoroutineDispatcher = Dispatchers.IO
     private val _navigateVideoLink: MutableLiveData<OneShotEvent<String?>> = MutableLiveData()
     val navigateVideoLink: LiveData<OneShotEvent<String?>> = _navigateVideoLink
@@ -34,19 +34,17 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
     val navigateFullPicture: LiveData<OneShotEvent<Long>> = _navigateFullPicture
     private val _showDatePicker: MutableLiveData<OneShotEvent<LocalDate>> = MutableLiveData()
     val showDatePicker: LiveData<OneShotEvent<LocalDate>> = _showDatePicker
-    val apod = _date
+    val apod: LiveData<Resource<Apod, String>> = _date
+        .asStateFlow()
         .filter { date -> date != null }
-        .flatMapLatest {  date ->
-            if(refresh) {
+        .map { date ->
+            val apodDate = date ?: throw NullPointerException("Date can't be null.")
+            if (refresh) {
                 refresh = false
-                apodRepository.getFreshApod(date)
+                apodRepository.getFreshApod(apodDate).first()
             } else {
-                apodRepository.getApod(date)
+                apodRepository.getApod(apodDate).first()
             }
-        }
-        .flowOn(bgDispatcher)
-        .onEach { res ->
-            currentApod = res.data
         }
         .onStart { emit(Resource.Loading) }
         .catch { throwable -> emit(Resource.Error("Couldn't fetch apod.")) }
