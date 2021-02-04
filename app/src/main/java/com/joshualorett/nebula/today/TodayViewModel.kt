@@ -23,8 +23,7 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
         this.bgDispatcher = bgDispatcher
     }
     private val dateKey: String = "date"
-    private val today: LocalDate = LocalDate.now()
-    private val _date: MutableStateFlow<LocalDate?> = MutableStateFlow(savedStateHandle.get(dateKey) ?: today)
+    private val _date: MutableStateFlow<LocalDate?> = MutableStateFlow(savedStateHandle.get(dateKey) ?: LocalDate.now())
     private var currentApod: Apod? = null
     private var refresh: Boolean = false
     private var bgDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -44,6 +43,11 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
                 apodRepository.getFreshApod(apodDate).first()
             } else {
                 apodRepository.getApod(apodDate).first()
+            }
+        }
+        .onEach { response ->
+            if(response.successful()) {
+                currentApod = response.data
             }
         }
         .onStart { emit(Resource.Loading) }
@@ -69,15 +73,13 @@ class TodayViewModel @ViewModelInject constructor(private val apodRepository: Ap
     }
 
     fun updateDate(date: LocalDate) {
+        _date.value = null
         _date.value = date
         savedStateHandle.set(dateKey, date)
     }
 
     fun refresh() {
         refresh = true
-        _date.value?.let {
-            _date.value = null
-            updateDate(it)
-        }
+        updateDate(_date.value ?: LocalDate.now())
     }
 }
