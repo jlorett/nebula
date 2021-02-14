@@ -21,7 +21,7 @@ class PictureViewModel @ViewModelInject constructor(private val apodRepository: 
     private val id = MutableStateFlow(-1L)
     private var bgDispatcher: CoroutineDispatcher = Dispatchers.IO
     val picture: LiveData<Resource<Apod, String>> = id.filter { id -> id > -1L }
-        .flatMapLatest { id ->
+        .map { id ->
             apodRepository.getCachedApod(id)
         }
         .onStart { emit(Resource.Loading) }
