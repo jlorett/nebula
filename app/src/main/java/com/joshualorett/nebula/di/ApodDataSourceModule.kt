@@ -8,15 +8,15 @@ import com.joshualorett.nebula.apod.api.ApodRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 
 /**
  * DI Module for data source.
  * Created by Joshua on 6/17/2020.
  */
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object ApodDataSourceModule {
     @Provides
     fun provide(@ApplicationContext context: Context): ApodDataSource {
