@@ -1,24 +1,25 @@
 package com.joshualorett.nebula.today
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.OneShotEvent
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.shared.data
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
+import javax.inject.Inject
 
 /**
  * [ViewModel] show today's Astronomy Picture of the Day.
  * Created by Joshua on 1/11/2020.
  */
-class TodayViewModel @ViewModelInject constructor(private val apodRepository: ApodRepository,
-@Assisted private val savedStateHandle: SavedStateHandle): ViewModel() {
+@HiltViewModel
+class TodayViewModel @Inject constructor(private val apodRepository: ApodRepository,
+                                         private val savedStateHandle: SavedStateHandle): ViewModel() {
     constructor(apodRepository: ApodRepository, bgDispatcher: CoroutineDispatcher, savedStateHandle: SavedStateHandle): this(apodRepository, savedStateHandle) {
         this.bgDispatcher = bgDispatcher
     }
