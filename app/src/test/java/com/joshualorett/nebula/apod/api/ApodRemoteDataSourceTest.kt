@@ -3,7 +3,6 @@ package com.joshualorett.nebula.apod.api
 import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.shared.RetrofitServiceDelegate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertFalse
@@ -42,7 +41,7 @@ class ApodRemoteDataSourceTest {
         val mockApodResponse = TestData.apodResponse
         val success: Response<ApodResponse> = Response.success(mockApodResponse)
         `when`(mockService.getApod(anyString(), anyString())).thenReturn(success)
-        val result = apodDataSource.getApod(testDate).first()
+        val result = apodDataSource.getApod(testDate)
         assertTrue(result.isSuccessful)
     }
 
@@ -50,7 +49,7 @@ class ApodRemoteDataSourceTest {
     fun `api error returns unsuccessful response`() = runBlockingTest {
         val error: Response<ApodResponse> = Response.error(500, "Error".toResponseBody())
         `when`(mockService.getApod(anyString(), anyString())).thenReturn(error)
-        val result = apodDataSource.getApod(testDate).first()
+        val result = apodDataSource.getApod(testDate)
         assertFalse(result.isSuccessful)
     }
 }

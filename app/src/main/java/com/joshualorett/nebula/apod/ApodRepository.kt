@@ -5,6 +5,7 @@ import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.shared.data
+import com.joshualorett.nebula.shared.error
 import kotlinx.coroutines.flow.*
 import java.io.IOException
 import java.time.LocalDate
@@ -29,15 +30,23 @@ class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSou
             return flowOf(Resource.Error("Date can't be before $earliestDate."))
         }
         return apodDao.loadByDate(date.toString())
-            .map { entity ->
-                val cachedApod = entity?.toApod()
+            .map { cachedEntity ->
+                val cachedApod = cachedEntity?.toApod()
                 if (cachedApod == null) {
-                    val id = getApodByDataSource(date).data ?: 0
-                    getCachedApod(id)
+                    val response = getApodByDataSource(date)
+                    if(response.successful()) {
+                        getCachedApod(response.data ?: 0L)
+                    } else {
+                        Resource.Error(response.error ?: "Error getting Apod from api.")
+                    }
                 } else {
                     Resource.Success(cachedApod)
                 }
             }
+    }
+
+    fun getApod(id: Long): Flow<Resource<Apod, String>> = flow {
+        emit(getCachedApod(id))
     }
 
     /***
@@ -47,20 +56,15 @@ class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSou
         if (date.isBefore(earliestDate)) {
             emit(Resource.Error("Date can't be before $earliestDate."))
         }
-        val id = getApodByDataSource(date).data ?: 0
-        emit(getCachedApod(id))
-    }
-
-    suspend fun getCachedApod(id: Long): Resource<Apod, String> {
-        val cachedEntity = apodDao.loadById(id).first()?.toApod()
-        return if(cachedEntity == null) {
-            Resource.Error("Apod not found in database.")
+        val response = getApodByDataSource(date)
+        if(response.successful()) {
+            emit(getCachedApod(response.data ?: 0L))
         } else {
-            Resource.Success(cachedEntity)
+            emit(Resource.Error(response.error ?: "Error getting Apod from api."))
         }
     }
 
-    suspend fun clearResources() {
+    suspend fun clearCache() {
         apodDao.deleteAll()
         imageCache.clear()
     }
@@ -88,5 +92,14 @@ class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSou
     private suspend fun cacheApod(apod: Apod): Long {
         apodDao.delete(apod.toEntity())
         return apodDao.insertApod(apod.toEntity())
+    }
+
+    private suspend fun getCachedApod(id: Long): Resource<Apod, String> {
+        val cachedEntity = apodDao.loadById(id).first()?.toApod()
+        return if(cachedEntity == null) {
+            Resource.Error("Apod not found in database.")
+        } else {
+            Resource.Success(cachedEntity)
+        }
     }
 }
