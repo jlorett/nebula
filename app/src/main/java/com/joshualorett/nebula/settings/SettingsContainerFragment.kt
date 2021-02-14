@@ -20,7 +20,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SettingsContainerFragment : Fragment() {
     private var _binding: FragmentSettingsContainerBinding? = null
-    val binding get() = _binding!!
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
