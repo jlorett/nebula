@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.target.CustomViewTarget
@@ -36,7 +35,6 @@ import javax.inject.Inject
  */
 @AndroidEntryPoint
 class PictureFragment : Fragment() {
-    private val args: PictureFragmentArgs by navArgs()
     private var imageUri: Uri? = null
     private val viewModel: PictureViewModel by viewModels()
     @Inject lateinit var imageCache: ImageCache
@@ -77,10 +75,6 @@ class PictureFragment : Fragment() {
         binding.apodPicture.setDoubleTapZoomScale(1.4f)
         binding.apodPicture.setDoubleTapZoomDuration(resources.getInteger(android.R.integer.config_shortAnimTime))
         imageCache.attachApplicationContext(requireContext().applicationContext)
-        if(savedInstanceState == null) {
-            val id = args.id
-            viewModel.load(id)
-        }
         viewModel.picture.observe(viewLifecycleOwner, Observer { resource ->
             when(resource) {
                 is Resource.Success -> {

@@ -2,6 +2,7 @@ package com.joshualorett.nebula.picture
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.SavedStateHandle
 import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.ViewModelTest
 import com.joshualorett.nebula.apod.ApodRepository
@@ -40,9 +41,8 @@ class PictureViewModelTest: ViewModelTest() {
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         `when`(lifecycle.currentState).thenReturn(Lifecycle.State.RESUMED)
         `when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
-        viewModel = PictureViewModel(apodRepo, coroutineRule.dispatcher)
-        viewModel.load(entity.id)
-        assertEquals(entity.toApod().hdurl, viewModel.picture.getOrAwaitValue(1).data?.hdurl)
+        viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)), coroutineRule.dispatcher)
+        assertEquals(entity.toApod().hdurl, viewModel.picture.getOrAwaitValue().data?.hdurl)
     }
 
     @Test
@@ -51,8 +51,7 @@ class PictureViewModelTest: ViewModelTest() {
         val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
         `when`(lifecycle.currentState).thenReturn(Lifecycle.State.RESUMED)
         `when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
-        viewModel = PictureViewModel(apodRepo, coroutineRule.dispatcher)
-        viewModel.load(entity.id)
-        assertNotNull(viewModel.picture.getOrAwaitValue(1).error)
+        viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)), coroutineRule.dispatcher)
+        assertNotNull(viewModel.picture.getOrAwaitValue().error)
     }
 }
