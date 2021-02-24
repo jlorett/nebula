@@ -13,7 +13,7 @@ buildscript {
     ext.material_components_version = '1.3.0-alpha02'
     ext.glide_version = '4.11.0'
     ext.subsampling_version = '3.10.0'
-    ext.work_manager_version = '2.4.0'
+    ext.work_manager_version = '2.5.0'
     ext.leak_canary_version = '2.4'
     ext.gson_version = '2.8.6'
     ext.retrofit_version = '2.9.0'
