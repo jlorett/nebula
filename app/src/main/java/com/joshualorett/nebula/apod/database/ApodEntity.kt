@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class ApodEntity(
-    @PrimaryKey val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "explanation") val explanation: String,
