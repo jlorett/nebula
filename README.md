@@ -11,17 +11,23 @@ Nebula is a showcase of one approach to Android application design using [Nasa's
 
 ## Architecture
 
-Nebula's architecture follows the [Android Guide to App Architecture](https://developer.android.com/jetpack/guide). [ViewModels](https://developer.android.com/topic/libraries/architecture/viewmodel) manage UI related data in a lifecycle conscious way. Activities and Fragments can observe the ViewModel using [LiveData](https://developer.android.com/topic/libraries/architecture/livedata) and change according to the UI model the ViewModel provides. The ViewModel also can communicate with the repository to perform business related tasks such as fetching the Apod. The repository can fetch data from both a remote API and local database using [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) and [Flow](https://kotlinlang.org/docs/reference/coroutines/flow.html). When a request is made, the repository will first search the Room database to see if an Apod for the given date exists, if it is found, the cached Apod is returned, otherwise the repository calls out to the Remote Data Source to get the Apod from Nasa's Api and finally caches the result for later use.
+Nebula's architecture follows [Android Jetpack's Guide to App Architecture](https://developer.android.com/jetpack/guide).
 
 ```
-+------+   LiveData    +-----------+   Flow    +------------+   Coroutine    +--------------------+
-| View | ------------> | ViewModel | --------> | Repository | -------------> | Remote Data Source |
-+------+               +-----------+           +------------+                +--------------------+
-                                                     |
-                                                     | Flow/Coroutine
-                                                     |
-                                                     V
-                                                +----------+
-                                                | Database |
-                                                +----------+
++------+   LiveData    +-----------+   Flow/Coroutine    +------------+   Flow/Coroutine    +--------------------+
+| View | ------------> | ViewModel | ------------------> | Repository | ------------------> | Remote Data Source |
++------+               +-----------+                     +------------+                     +--------------------+
+                                                               |
+                                                               | Flow/Coroutine
+                                                               |
+                                                               V
+                                                          +----------+
+                                                          | Database |
+                                                          +----------+
 ```
+
+- **View**: The view consists of Activities, Fragments, and other user interface (UI) related code. It relies on a [ViewModel]((https://developer.android.com/topic/libraries/architecture/viewmodel) to provide data for specific UI components via an observable data stream.
+- **ViewModel**: The ViewModel provides UI data to the view via an observable data stream known as [LiveData](https://developer.android.com/topic/libraries/architecture/livedata). It communicates with a repository to perform business related tasks such as fetching an Apod. Since the ViewModel provides data through an observable stream, it knows nothing about the view layer itself and isn't affected by configuration changes.
+- **Repository**: The Repository provides a clean API to post and retrieve data. It also acts as a mediator between the Remote Data Source and the Database. It can perform one time tasks using [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) or provide observable data streams using [Flow](https://kotlinlang.org/docs/reference/coroutines/flow.html).
+- **Remote Data Source**: The Remote Data Source reaches out to Nasa's API for Apods.
+- **Database**: The Database persists Apod data locally to prevent duplicate network requests.
