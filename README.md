@@ -9,6 +9,15 @@ Nebula is a showcase of one approach to Android application design using [Nasa's
 - Styled with [Material Components for Android](https://github.com/material-components/material-components-android)
 - Written in [Kotlin](https://kotlinlang.org/)
 
+## Setup
+
+- First, clone the project from `https://github.com/jlorett/nebula.git`
+- Import the project into Android Studio
+- Get a Nasa API Key from [Nasa's API](https://api.nasa.gov)
+- Add the key as a string resource `<string name="key">YOUR_API_KEY</string>`. (Note: if you change
+the key's resource name, make sure to update `app/src/main/java/com/joshualorett/nebula/di/ApodDataSourceModule.kt`)
+- You should now be able to run the application
+
 ## Architecture
 
 Nebula's architecture follows [Android Jetpack's Guide to App Architecture](https://developer.android.com/jetpack/guide).
