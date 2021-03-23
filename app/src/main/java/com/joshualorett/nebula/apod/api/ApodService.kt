@@ -11,9 +11,8 @@ import retrofit2.http.Query
 interface ApodService {
     /***
      * Get an [ApodResponse] from the api.
-     * @param key Nasa api key.
      * @param date The date of the Astronomy Picture of the Day.
      */
     @GET("planetary/apod")
-    suspend fun getApod(@Query("api_key") key: String, @Query("date") date: String): Response<ApodResponse>
+    suspend fun getApod(@Query("date") date: String): Response<ApodResponse>
 }

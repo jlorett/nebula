@@ -11,25 +11,8 @@ import org.junit.Test
  */
 class NasaRetrofitClientTest {
     @Test
-    fun `retrofit instance not null`() {
-        assertNotNull(NasaRetrofitClient.retrofit)
-    }
-
-    @Test
     fun `creates service class`() {
-        val service = NasaRetrofitClient.create(ApodService::class.java)
+        val service = NasaRetrofitClient.create("testKey", ApodService::class.java)
         assertNotNull(service)
-    }
-
-    @Test
-    fun `base url matches nasa api url`() {
-        val baseUrl = NasaRetrofitClient.retrofit.baseUrl()
-        assertEquals("https://api.nasa.gov/", baseUrl.toString())
-    }
-
-    @Test
-    fun `base url uses https`() {
-        val baseUrl = NasaRetrofitClient.retrofit.baseUrl()
-        assertTrue(baseUrl.isHttps)
     }
 }

@@ -29,7 +29,7 @@ class ApodRemoteDataSourceTest {
 
     @Before
     fun setup() {
-        `when`(mockRetrofitServiceDelegate.create(ApodService::class.java)).thenReturn(mockService)
+        `when`(mockRetrofitServiceDelegate.create(testKey, ApodService::class.java)).thenReturn(mockService)
         apodDataSource = ApodRemoteDataSource(
             mockRetrofitServiceDelegate,
             testKey
@@ -40,7 +40,7 @@ class ApodRemoteDataSourceTest {
     fun `api returns successful response`() = runBlockingTest {
         val mockApodResponse = TestData.apodResponse
         val success: Response<ApodResponse> = Response.success(mockApodResponse)
-        `when`(mockService.getApod(anyString(), anyString())).thenReturn(success)
+        `when`(mockService.getApod(anyString())).thenReturn(success)
         val result = apodDataSource.getApod(testDate)
         assertTrue(result.isSuccessful)
     }
@@ -48,7 +48,7 @@ class ApodRemoteDataSourceTest {
     @Test
     fun `api error returns unsuccessful response`() = runBlockingTest {
         val error: Response<ApodResponse> = Response.error(500, "Error".toResponseBody())
-        `when`(mockService.getApod(anyString(), anyString())).thenReturn(error)
+        `when`(mockService.getApod(anyString())).thenReturn(error)
         val result = apodDataSource.getApod(testDate)
         assertFalse(result.isSuccessful)
     }

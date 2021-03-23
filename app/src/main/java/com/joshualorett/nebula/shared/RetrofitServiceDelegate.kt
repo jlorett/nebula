@@ -5,5 +5,5 @@ package com.joshualorett.nebula.shared
  * Created by Joshua on 1/6/2020.
  */
 interface RetrofitServiceDelegate {
-    fun <T> create(service: Class<T>): T
+    fun <T> create(key: String, service: Class<T>): T
 }

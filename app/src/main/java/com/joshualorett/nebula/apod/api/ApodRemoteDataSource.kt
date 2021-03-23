@@ -12,6 +12,6 @@ class ApodRemoteDataSource(private val retrofitServiceDelegate: RetrofitServiceD
     ApodDataSource {
     override suspend fun getApod(date: LocalDate): Response<ApodResponse> {
         val dateStr = date.toString()
-        return retrofitServiceDelegate.create(ApodService::class.java).getApod(key, dateStr)
+        return retrofitServiceDelegate.create(key, ApodService::class.java).getApod(dateStr)
     }
 }
