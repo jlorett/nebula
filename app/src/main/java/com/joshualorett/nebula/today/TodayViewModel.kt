@@ -41,9 +41,9 @@ class TodayViewModel @Inject constructor(private val apodRepository: ApodReposit
             val apodDate = date ?: throw NullPointerException("Date can't be null.")
             if (refresh) {
                 refresh = false
-                apodRepository.getFreshApod(apodDate).first()
+                apodRepository.getFreshApod(apodDate).flowOn(bgDispatcher).first()
             } else {
-                apodRepository.getApod(apodDate).first()
+                apodRepository.getApod(apodDate).flowOn(bgDispatcher).first()
             }
         }
         .onEach { response ->
