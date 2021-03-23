@@ -6,7 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.ViewModelTest
 import com.joshualorett.nebula.apod.ApodRepository
-import com.joshualorett.nebula.apod.api.ApodDataSource
+import com.joshualorett.nebula.apod.api.ApodService
 import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.apod.toApod
 import com.joshualorett.nebula.shared.ImageCache
@@ -28,7 +28,7 @@ import org.mockito.Mockito.mock
 @ExperimentalCoroutinesApi
 class PictureViewModelTest: ViewModelTest() {
     private lateinit var viewModel: PictureViewModel
-    private val mockDataSource = mock(ApodDataSource::class.java)
+    private val mockApodService = mock(ApodService::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
     private val mockImageCache = mock(ImageCache::class.java)
     private val lifecycleOwner = mock(LifecycleOwner::class.java)
@@ -38,7 +38,7 @@ class PictureViewModelTest: ViewModelTest() {
     @Test
     fun getsPictureFromDatabase() =  coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(entity))
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         `when`(lifecycle.currentState).thenReturn(Lifecycle.State.RESUMED)
         `when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)), coroutineRule.dispatcher)
@@ -48,7 +48,7 @@ class PictureViewModelTest: ViewModelTest() {
     @Test
     fun errorIfDatabaseFetchFails() =  coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(null))
-        val apodRepo = ApodRepository(mockDataSource, mockApodDao, mockImageCache)
+        val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         `when`(lifecycle.currentState).thenReturn(Lifecycle.State.RESUMED)
         `when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)), coroutineRule.dispatcher)
