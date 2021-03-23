@@ -2,8 +2,8 @@ package com.joshualorett.nebula.apod
 
 import android.content.Context
 import com.joshualorett.nebula.TestData
-import com.joshualorett.nebula.apod.api.ApodDataSource
 import com.joshualorett.nebula.apod.api.ApodResponse
+import com.joshualorett.nebula.apod.api.ApodService
 import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
@@ -31,7 +31,7 @@ import java.time.LocalDate
 @ExperimentalCoroutinesApi
 class ApodRepositoryTest {
     private lateinit var repository: ApodRepository
-    private val apodDataSource = mock(ApodDataSource::class.java)
+    private val apodService = mock(ApodService::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
     private val mockImageCache = mock(ImageCache::class.java)
     private val testDate = LocalDate.of(2000, 1, 1)
@@ -39,7 +39,7 @@ class ApodRepositoryTest {
 
     @Before
     fun setUp() {
-        repository = ApodRepository(apodDataSource, mockApodDao, mockImageCache)
+        repository = ApodRepository(apodService, mockApodDao, mockImageCache)
     }
 
     @Test
@@ -47,7 +47,7 @@ class ApodRepositoryTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(flowOf(null))
         `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(mockApodResponse.toApod().toEntity()))
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
-        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(mockApodResponse))
         val resource = repository.getApod(testDate).first()
         assertEquals(Resource.Success(mockApodResponse.toApod()), resource)
         assertTrue(resource is Resource.Success)
@@ -56,7 +56,7 @@ class ApodRepositoryTest {
     @Test
     fun `returns error on null data`() = runBlockingTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(flowOf(null))
-        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(null))
+        `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(null))
         val resource = repository.getApod(testDate).first()
         assertTrue(resource is Resource.Error)
     }
@@ -65,7 +65,7 @@ class ApodRepositoryTest {
     fun `returns unsuccessful resource on network error`() = runBlockingTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(flowOf(null))
         val errorResponse: Response<ApodResponse> = Response.error(500, "Error".toResponseBody())
-        `when`(apodDataSource.getApod(testDate)).thenReturn(errorResponse)
+        `when`(apodService.getApod(testDate.toString())).thenReturn(errorResponse)
         val resource = repository.getApod(testDate).first()
         assertTrue(resource is Resource.Error)
     }
@@ -73,7 +73,7 @@ class ApodRepositoryTest {
     @Test
     fun `returns unsuccessful resource on exception`() = runBlockingTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(flowOf(null))
-        given(apodDataSource.getApod(testDate)).willAnswer {
+        given(apodService.getApod(testDate.toString())).willAnswer {
             flow<Unit> {
                 throw IOException()
             }
@@ -93,7 +93,7 @@ class ApodRepositoryTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(flowOf(null))
         `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(null))
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
-        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(mockApodResponse))
         val resource = repository.getApod(testDate).first()
         assertTrue(resource is Resource.Error)
     }
@@ -103,7 +103,7 @@ class ApodRepositoryTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(flowOf(null))
         `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(mockApodResponse.toApod().toEntity()))
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
-        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(mockApodResponse))
         repository.getApod(testDate).first()
         verify(mockApodDao).insertApod(mockApodResponse.toApod().toEntity())
     }
@@ -113,7 +113,7 @@ class ApodRepositoryTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(flowOf(null))
         `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(mockApodResponse.toApod().toEntity()))
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
-        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(mockApodResponse))
         repository.getApod(testDate).first()
         verify(mockApodDao).delete(mockApodResponse.toApod().toEntity())
     }
@@ -123,7 +123,7 @@ class ApodRepositoryTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(mockApodResponse.toApod().toEntity()))
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
-        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(mockApodResponse))
         mockImageCache.attachApplicationContext(mock(Context::class.java))
         repository.getApod(testDate)
         repository.clearCache()
@@ -157,7 +157,7 @@ class ApodRepositoryTest {
     fun `fresh returns successful resource`() = runBlockingTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(mockApodResponse.toApod().toEntity()))
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
-        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(mockApodResponse))
         val resource = repository.getFreshApod(testDate).first()
         assertEquals(Resource.Success(mockApodResponse.toApod()), resource)
         assertTrue(resource is Resource.Success)
@@ -171,7 +171,7 @@ class ApodRepositoryTest {
 
     @Test
     fun `fresh returns error on null data`() = runBlockingTest {
-        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(null))
+        `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(null))
         val resource = repository.getFreshApod(testDate).first()
         assertTrue(resource is Resource.Error)
     }
@@ -179,14 +179,14 @@ class ApodRepositoryTest {
     @Test
     fun `fresh returns unsuccessful resource on network error`() = runBlockingTest {
         val errorResponse: Response<ApodResponse> = Response.error(500, "Error".toResponseBody())
-        `when`(apodDataSource.getApod(testDate)).thenReturn(errorResponse)
+        `when`(apodService.getApod(testDate.toString())).thenReturn(errorResponse)
         val resource = repository.getFreshApod(testDate).first()
         assertTrue(resource is Resource.Error)
     }
 
     @Test
     fun `fresh returns unsuccessful resource on exception`() = runBlockingTest {
-        given(apodDataSource.getApod(testDate)).willAnswer {
+        given(apodService.getApod(testDate.toString())).willAnswer {
             flow<Unit> {
                 throw IOException()
             }
@@ -199,7 +199,7 @@ class ApodRepositoryTest {
     fun `fresh clears database before caching`() = runBlockingTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(mockApodResponse.toApod().toEntity()))
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
-        `when`(apodDataSource.getApod(testDate)).thenReturn(Response.success(mockApodResponse))
+        `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(mockApodResponse))
         repository.getFreshApod(testDate).first()
         verify(mockApodDao).delete(mockApodResponse.toApod().toEntity())
     }

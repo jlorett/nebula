@@ -1,6 +1,6 @@
 package com.joshualorett.nebula.apod
 
-import com.joshualorett.nebula.apod.api.ApodDataSource
+import com.joshualorett.nebula.apod.api.ApodService
 import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
@@ -15,7 +15,7 @@ import javax.inject.Inject
  * Single point of access to fetch an [Apod] from the ui.
  * Created by Joshua on 1/8/2020.
  */
-class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSource,
+class ApodRepository @Inject constructor(private val apodService: ApodService,
                                          private val apodDao: ApodDao,
                                          private val imageCache: ImageCache) {
     // The first APOD was 1995-06-16.
@@ -71,7 +71,7 @@ class ApodRepository @Inject constructor(private val apodDataSource: ApodDataSou
 
     private suspend fun getApodByDataSource(date: LocalDate): Resource<Long, String> {
         try {
-            val response = apodDataSource.getApod(date)
+            val response = apodService.getApod(date.toString())
             return if (response.isSuccessful) {
                 val networkApod = response.body()?.toApod()
                 if (networkApod == null) {
