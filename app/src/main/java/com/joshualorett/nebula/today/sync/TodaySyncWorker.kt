@@ -7,7 +7,7 @@ import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.hasImage
 import com.joshualorett.nebula.di.ApodDaoModule
-import com.joshualorett.nebula.di.ApodDataSourceModule
+import com.joshualorett.nebula.di.ApodServiceModule
 import com.joshualorett.nebula.di.ImageCacheModule
 import com.joshualorett.nebula.shared.Resource
 import kotlinx.coroutines.Dispatchers
@@ -26,9 +26,9 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
         return withContext(Dispatchers.IO) {
             val imageCache = ImageCacheModule.provide()
             imageCache.attachApplicationContext(applicationContext)
-            val dataSource = ApodDataSourceModule.provide(applicationContext)
+            val dataService = ApodServiceModule.provide(applicationContext)
             val apodDao = ApodDaoModule.provideDatabase(applicationContext).apodDao()
-            val apodRepository = ApodRepository(dataSource, apodDao, imageCache)
+            val apodRepository = ApodRepository(dataService, apodDao, imageCache)
             val resource = getApod(apodRepository)
             when {
                 resource.successful() -> {
