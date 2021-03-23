@@ -15,7 +15,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
- * DI Module for data source.
+ * DI Module for data service.
  * Created by Joshua on 6/17/2020.
  */
 @Module

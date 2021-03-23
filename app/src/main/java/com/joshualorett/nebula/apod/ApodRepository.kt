@@ -33,7 +33,7 @@ class ApodRepository @Inject constructor(private val apodService: ApodService,
             .map { cachedEntity ->
                 val cachedApod = cachedEntity?.toApod()
                 if (cachedApod == null) {
-                    val response = getApodByDataSource(date)
+                    val response = getApodByDataService(date)
                     if(response.successful()) {
                         getCachedApod(response.data ?: 0L)
                     } else {
@@ -56,7 +56,7 @@ class ApodRepository @Inject constructor(private val apodService: ApodService,
         if (date.isBefore(earliestDate)) {
             emit(Resource.Error("Date can't be before $earliestDate."))
         }
-        val response = getApodByDataSource(date)
+        val response = getApodByDataService(date)
         if(response.successful()) {
             emit(getCachedApod(response.data ?: 0L))
         } else {
@@ -69,7 +69,7 @@ class ApodRepository @Inject constructor(private val apodService: ApodService,
         imageCache.clear()
     }
 
-    private suspend fun getApodByDataSource(date: LocalDate): Resource<Long, String> {
+    private suspend fun getApodByDataService(date: LocalDate): Resource<Long, String> {
         try {
             val response = apodService.getApod(date.toString())
             return if (response.isSuccessful) {
