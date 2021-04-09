@@ -13,7 +13,8 @@ import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
@@ -22,10 +23,13 @@ import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.joshualorett.nebula.R
+import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.databinding.FragmentPictureBinding
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -45,7 +49,7 @@ class PictureFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentPictureBinding.inflate(inflater, container, false)
         return binding.root
@@ -75,21 +79,11 @@ class PictureFragment : Fragment() {
         binding.apodPicture.setDoubleTapZoomScale(1.4f)
         binding.apodPicture.setDoubleTapZoomDuration(resources.getInteger(android.R.integer.config_shortAnimTime))
         imageCache.attachApplicationContext(requireContext().applicationContext)
-        viewModel.picture.observe(viewLifecycleOwner, Observer { resource ->
-            when(resource) {
-                is Resource.Success -> {
-                    val url = resource.data.hdurl ?: resource.data.url
-                    if(url.isEmpty()) {
-                        showError(getString(R.string.error_empty_url))
-                    } else {
-                        updateImage(url)
-                    }
-                }
-                is Resource.Error -> {
-                    showError(getString(R.string.error_fetching))
-                }
+        viewModel.picture.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .onEach { resource ->
+                processResource(resource)
             }
-        })
+            .launchIn(lifecycleScope)
     }
 
     override fun onDestroyView() {
@@ -113,6 +107,22 @@ class PictureFragment : Fragment() {
 
             val chooser = Intent.createChooser(shareIntent, resources.getText(R.string.share))
             startActivity(chooser)
+        }
+    }
+
+    private fun processResource(resource: Resource<Apod, String>) {
+        when(resource) {
+            is Resource.Success -> {
+                val url = resource.data.hdurl ?: resource.data.url
+                if(url.isEmpty()) {
+                    showError(getString(R.string.error_empty_url))
+                } else {
+                    updateImage(url)
+                }
+            }
+            is Resource.Error -> {
+                showError(getString(R.string.error_fetching))
+            }
         }
     }
 

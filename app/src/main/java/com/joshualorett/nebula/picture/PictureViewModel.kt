@@ -22,9 +22,8 @@ class PictureViewModel @Inject constructor(apodRepository: ApodRepository, saved
     }
     private val id = savedStateHandle["id"] ?: -1L
     private var bgDispatcher: CoroutineDispatcher = Dispatchers.Default
-    val picture: LiveData<Resource<Apod, String>> = apodRepository.getApod(id)
+    val picture: Flow<Resource<Apod, String>> = apodRepository.getApod(id)
         .onStart { Resource.Loading }
         .flowOn(bgDispatcher)
         .conflate()
-        .asLiveData()
 }

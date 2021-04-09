@@ -1,8 +1,7 @@
 package com.joshualorett.nebula.picture
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.*
+import com.joshualorett.nebula.FakeLifecycleOwner
 import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.ViewModelTest
 import com.joshualorett.nebula.apod.ApodRepository
@@ -13,8 +12,8 @@ import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -31,27 +30,36 @@ class PictureViewModelTest: ViewModelTest() {
     private val mockApodService = mock(ApodService::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
     private val mockImageCache = mock(ImageCache::class.java)
-    private val lifecycleOwner = mock(LifecycleOwner::class.java)
-    private val lifecycle = mock(Lifecycle::class.java)
     private val entity = TestData.apodEntity
+    private val lifecycleOwner = FakeLifecycleOwner()
 
     @Test
     fun getsPictureFromDatabase() =  coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(entity))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
-        `when`(lifecycle.currentState).thenReturn(Lifecycle.State.RESUMED)
-        `when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
+        lifecycleOwner.setState(Lifecycle.State.STARTED)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)), coroutineRule.dispatcher)
-        assertEquals(entity.toApod().hdurl, viewModel.picture.getOrAwaitValue().data?.hdurl)
+        viewModel.picture
+            .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach {
+                assertEquals(entity.toApod().hdurl, it.data?.hdurl)
+            }
+            .launchIn(lifecycleOwner.lifecycleScope)
+        lifecycleOwner.setState(Lifecycle.State.DESTROYED)
     }
 
     @Test
     fun errorIfDatabaseFetchFails() =  coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(null))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
-        `when`(lifecycle.currentState).thenReturn(Lifecycle.State.RESUMED)
-        `when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
+        lifecycleOwner.setState(Lifecycle.State.STARTED)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)), coroutineRule.dispatcher)
-        assertNotNull(viewModel.picture.getOrAwaitValue().error)
+        viewModel.picture
+            .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach {
+                assertNotNull(viewModel.picture.conflate().first().error)
+            }
+            .launchIn(lifecycleOwner.lifecycleScope)
+        lifecycleOwner.setState(Lifecycle.State.DESTROYED)
     }
 }
