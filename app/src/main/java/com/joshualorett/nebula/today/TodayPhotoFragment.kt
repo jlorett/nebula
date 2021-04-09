@@ -12,7 +12,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -26,6 +28,8 @@ import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.OneShotEventObserver
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -59,22 +63,11 @@ class TodayPhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.apod.observe(viewLifecycleOwner, { resource ->
-            when(resource) {
-                is Resource.Success -> {
-                    showApod(resource.data)
-                }
-                is Resource.Loading -> {
-                    if(!binding.todaySwipeRefreshLayout.isRefreshing) {
-                        binding.todaySwipeRefreshLayout.isRefreshing = true
-                    }
-                }
-                is Resource.Error -> {
-                    val error = resource.error
-                    showError(error)
-                }
+        viewModel.apod.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .onEach { resource ->
+               processResource(resource)
             }
-        })
+            .launchIn(lifecycleScope)
         viewModel.navigateVideoLink.observe(viewLifecycleOwner, OneShotEventObserver { url ->
             url?.let {
                 navigateToLink(it)
@@ -158,6 +151,23 @@ class TodayPhotoFragment : Fragment() {
             viewModel.updateDate(Instant.ofEpochMilli(selection).atZone(ZoneId.ofOffset("UTC", ZoneOffset.UTC)).toLocalDate())
         }
         datePicker.show(parentFragmentManager, "datePicker")
+    }
+
+    private fun processResource(resource: Resource<Apod, String>) {
+        when(resource) {
+            is Resource.Success -> {
+                showApod(resource.data)
+            }
+            is Resource.Loading -> {
+                if(!binding.todaySwipeRefreshLayout.isRefreshing) {
+                    binding.todaySwipeRefreshLayout.isRefreshing = true
+                }
+            }
+            is Resource.Error -> {
+                val error = resource.error
+                showError(error)
+            }
+        }
     }
 
     private fun showError(error: String) {

@@ -34,7 +34,7 @@ class TodayViewModel @Inject constructor(private val apodRepository: ApodReposit
     val navigateFullPicture: LiveData<OneShotEvent<Long>> = _navigateFullPicture
     private val _showDatePicker: MutableLiveData<OneShotEvent<LocalDate>> = MutableLiveData()
     val showDatePicker: LiveData<OneShotEvent<LocalDate>> = _showDatePicker
-    val apod: LiveData<Resource<Apod, String>> = _date
+    val apod: Flow<Resource<Apod, String>> = _date
         .asStateFlow()
         .filter { date -> date != null }
         .map { date ->
@@ -53,7 +53,6 @@ class TodayViewModel @Inject constructor(private val apodRepository: ApodReposit
         }
         .onStart { emit(Resource.Loading) }
         .catch { throwable -> emit(Resource.Error("Couldn't fetch apod.")) }
-        .asLiveData()
 
     fun videoLinkClicked() {
         currentApod?.let {
