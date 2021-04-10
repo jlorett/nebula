@@ -1,7 +1,6 @@
 package com.joshualorett.nebula.picture
 
 import androidx.lifecycle.*
-import com.joshualorett.nebula.FakeLifecycleOwner
 import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.ViewModelTest
 import com.joshualorett.nebula.apod.ApodRepository
@@ -31,35 +30,22 @@ class PictureViewModelTest: ViewModelTest() {
     private val mockApodDao = mock(ApodDao::class.java)
     private val mockImageCache = mock(ImageCache::class.java)
     private val entity = TestData.apodEntity
-    private val lifecycleOwner = FakeLifecycleOwner()
 
     @Test
     fun getsPictureFromDatabase() =  coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(entity))
-        val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
-        lifecycleOwner.setState(Lifecycle.State.STARTED)
-        viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)), coroutineRule.dispatcher)
-        viewModel.picture
-            .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach {
-                assertEquals(entity.toApod().hdurl, it.data?.hdurl)
-            }
-            .launchIn(lifecycleOwner.lifecycleScope)
-        lifecycleOwner.setState(Lifecycle.State.DESTROYED)
+        val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, coroutineRule.dispatcher)
+        viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)))
+        val url = viewModel.picture.conflate().first().data?.hdurl
+        assertEquals(entity.toApod().hdurl, url)
     }
 
     @Test
     fun errorIfDatabaseFetchFails() =  coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(null))
-        val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
-        lifecycleOwner.setState(Lifecycle.State.STARTED)
-        viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)), coroutineRule.dispatcher)
-        viewModel.picture
-            .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach {
-                assertNotNull(viewModel.picture.conflate().first().error)
-            }
-            .launchIn(lifecycleOwner.lifecycleScope)
-        lifecycleOwner.setState(Lifecycle.State.DESTROYED)
+        val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, coroutineRule.dispatcher)
+        viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)))
+        val error = viewModel.picture.conflate().first().error
+        assertNotNull(error)
     }
 }
