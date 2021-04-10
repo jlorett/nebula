@@ -1,4 +1,4 @@
-package com.joshualorett.nebula
+package com.joshualorett.nebula.testing
 
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.api.ApodResponse

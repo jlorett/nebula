@@ -1,4 +1,4 @@
-package com.joshualorett.nebula
+package com.joshualorett.nebula.testing
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

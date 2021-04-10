@@ -1,8 +1,8 @@
 package com.joshualorett.nebula.today
 
 import androidx.lifecycle.*
-import com.joshualorett.nebula.TestData
-import com.joshualorett.nebula.ViewModelTest
+import com.joshualorett.nebula.testing.TestData
+import com.joshualorett.nebula.testing.ViewModelTest
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodResponse
 import com.joshualorett.nebula.apod.api.ApodService

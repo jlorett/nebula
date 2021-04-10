@@ -1,7 +1,7 @@
 package com.joshualorett.nebula.apod
 
 import android.content.Context
-import com.joshualorett.nebula.TestData
+import com.joshualorett.nebula.testing.TestData
 import com.joshualorett.nebula.apod.api.ApodResponse
 import com.joshualorett.nebula.apod.api.ApodService
 import com.joshualorett.nebula.apod.database.ApodDao

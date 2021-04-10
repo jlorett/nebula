@@ -1,4 +1,4 @@
-package com.joshualorett.nebula
+package com.joshualorett.nebula.testing
 
 import androidx.annotation.VisibleForTesting
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
