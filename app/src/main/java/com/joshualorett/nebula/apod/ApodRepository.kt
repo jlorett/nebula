@@ -6,6 +6,8 @@ import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import java.io.IOException
 import java.time.LocalDate
@@ -18,6 +20,13 @@ import javax.inject.Inject
 class ApodRepository @Inject constructor(private val apodService: ApodService,
                                          private val apodDao: ApodDao,
                                          private val imageCache: ImageCache) {
+    private var dispatcher: CoroutineDispatcher = Dispatchers.Default
+    constructor(apodService: ApodService,
+                apodDao: ApodDao,
+                imageCache: ImageCache,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default): this(apodService, apodDao, imageCache) {
+                    this.dispatcher = dispatcher
+                }
     // The first APOD was 1995-06-16.
     private val earliestDate: LocalDate = LocalDate.of(1995, 6, 16)
 
@@ -42,12 +51,12 @@ class ApodRepository @Inject constructor(private val apodService: ApodService,
                 } else {
                     Resource.Success(cachedApod)
                 }
-            }
+            }.flowOn(dispatcher)
     }
 
     fun getApod(id: Long): Flow<Resource<Apod, String>> = flow {
         emit(getCachedApod(id))
-    }
+    }.flowOn(dispatcher)
 
     /***
      * Fetch a fresh [Apod] by date. This will always attempt to fetch the apod from the api.
@@ -62,7 +71,7 @@ class ApodRepository @Inject constructor(private val apodService: ApodService,
         } else {
             emit(Resource.Error(response.error ?: "Error getting Apod from api."))
         }
-    }
+    }.flowOn(dispatcher)
 
     suspend fun clearCache() {
         apodDao.deleteAll()
