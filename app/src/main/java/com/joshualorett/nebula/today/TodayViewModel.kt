@@ -3,12 +3,12 @@ package com.joshualorett.nebula.today
 import androidx.lifecycle.*
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
-import com.joshualorett.nebula.shared.OneShotEvent
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.shared.data
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 import javax.inject.Inject
@@ -28,12 +28,12 @@ class TodayViewModel @Inject constructor(private val apodRepository: ApodReposit
     private var currentApod: Apod? = null
     private var refresh: Boolean = false
     private var bgDispatcher: CoroutineDispatcher = Dispatchers.IO
-    private val _navigateVideoLink: MutableLiveData<OneShotEvent<String?>> = MutableLiveData()
-    val navigateVideoLink: LiveData<OneShotEvent<String?>> = _navigateVideoLink
-    private val _navigateFullPicture: MutableLiveData<OneShotEvent<Long>> = MutableLiveData()
-    val navigateFullPicture: LiveData<OneShotEvent<Long>> = _navigateFullPicture
-    private val _showDatePicker: MutableLiveData<OneShotEvent<LocalDate>> = MutableLiveData()
-    val showDatePicker: LiveData<OneShotEvent<LocalDate>> = _showDatePicker
+    private val _navigateVideoLink: Channel<String?> = Channel()
+    val navigateVideoLink: Flow<String?> = _navigateVideoLink.receiveAsFlow()
+    private val _navigateFullPicture: Channel<Long> = Channel()
+    val navigateFullPicture: Flow<Long> = _navigateFullPicture.receiveAsFlow()
+    private val _showDatePicker: Channel<LocalDate> = Channel()
+    val showDatePicker: Flow<LocalDate> = _showDatePicker.receiveAsFlow()
     val apod: Flow<Resource<Apod, String>> = _date
         .asStateFlow()
         .filter { date -> date != null }
@@ -57,19 +57,19 @@ class TodayViewModel @Inject constructor(private val apodRepository: ApodReposit
     fun videoLinkClicked() {
         currentApod?.let {
             if(it.mediaType == "video") {
-                _navigateVideoLink.value = OneShotEvent(it.url)
+                _navigateVideoLink.offer(it.url)
             }
         }
     }
 
     fun onPhotoClicked() {
         currentApod?.let {
-            _navigateFullPicture.value = OneShotEvent(it.id)
+            _navigateFullPicture.offer(it.id)
         }
     }
 
     fun onChooseDate() {
-        _showDatePicker.value = OneShotEvent(_date.value ?: LocalDate.now())
+        _showDatePicker.offer(_date.value ?: LocalDate.now())
     }
 
     fun updateDate(date: LocalDate) {

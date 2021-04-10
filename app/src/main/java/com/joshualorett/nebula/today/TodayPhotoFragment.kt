@@ -13,8 +13,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.addRepeatingJob
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -25,11 +24,9 @@ import com.joshualorett.nebula.apod.hasImage
 import com.joshualorett.nebula.databinding.FragmentTodayPhotoBinding
 import com.joshualorett.nebula.date.ApodDatePickerFactory
 import com.joshualorett.nebula.shared.ImageCache
-import com.joshualorett.nebula.shared.OneShotEventObserver
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -55,7 +52,7 @@ class TodayPhotoFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentTodayPhotoBinding.inflate(inflater, container, false)
         return binding.root
@@ -63,23 +60,29 @@ class TodayPhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.apod.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-            .onEach { resource ->
-               processResource(resource)
+        viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
+            viewModel.apod.collect { resource ->
+                processResource(resource)
             }
-            .launchIn(lifecycleScope)
-        viewModel.navigateVideoLink.observe(viewLifecycleOwner, OneShotEventObserver { url ->
-            url?.let {
-                navigateToLink(it)
+        }
+        viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
+            viewModel.navigateFullPicture.collect { id ->
+                val action = TodayPhotoFragmentDirections.actionTodayPhotoFragmentToPictureFragment(id)
+                requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
             }
-        })
-        viewModel.navigateFullPicture.observe(viewLifecycleOwner, OneShotEventObserver { id ->
-            val action = TodayPhotoFragmentDirections.actionTodayPhotoFragmentToPictureFragment(id)
-            requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
-        })
-        viewModel.showDatePicker.observe(viewLifecycleOwner, OneShotEventObserver{ date ->
-            showDatePicker(date)
-        })
+        }
+        viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
+            viewModel.navigateVideoLink.collect { url ->
+                url?.let {
+                    navigateToLink(it)
+                }
+            }
+        }
+        viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
+            viewModel.showDatePicker.collect { date ->
+                showDatePicker(date)
+            }
+        }
         binding.todayCollapsingToolbar.setExpandedTitleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
         binding.todayToolbar.inflateMenu(R.menu.today)
         binding.todayToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,

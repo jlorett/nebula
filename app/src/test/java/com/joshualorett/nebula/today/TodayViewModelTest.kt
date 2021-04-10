@@ -1,6 +1,6 @@
 package com.joshualorett.nebula.today
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.*
 import com.joshualorett.nebula.TestData
 import com.joshualorett.nebula.ViewModelTest
 import com.joshualorett.nebula.apod.ApodRepository
@@ -12,7 +12,7 @@ import com.joshualorett.nebula.apod.toEntity
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -22,8 +22,6 @@ import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.Mockito.*
 import retrofit2.Response
 import java.time.LocalDate
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 /**
  * Test [TodayViewModel].
@@ -37,7 +35,7 @@ class TodayViewModelTest: ViewModelTest() {
     private val mockImageCache = mock(ImageCache::class.java)
     private val today = LocalDate.now()
     private val mockApodResponse = TestData.apodResponse
-    
+
     @Test
     fun `factory creates ViewModel`() = coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadByDate(anyString())).thenReturn(flowOf(mockApodResponse.toApod().toEntity()))
@@ -93,25 +91,33 @@ class TodayViewModelTest: ViewModelTest() {
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         viewModel = TodayViewModel(apodRepo, coroutineRule.dispatcher, SavedStateHandle())
         viewModel.apod.conflate().first()
+        var url: String? = null
+        launch {
+            url = viewModel.navigateVideoLink.conflate().first()
+        }
         viewModel.videoLinkClicked()
-        assertEquals("https://example.com", viewModel.navigateVideoLink.getOrAwaitValue().peekContent())
+        assertEquals("https://example.com", url)
     }
 
-    @Test(expected = TimeoutException::class)
+    @Test
     fun `don't observe when non-video links clicked`() = coroutineRule.runBlockingTest {
-        val videoApod = ApodResponse(
+        val imageApod = ApodResponse(
             0, "2000-01-01", "apod", "testing", "image",
             "v1", "https://example.com","https://example.com/hd")
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(flowOf(null))
-        `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(videoApod.toApod().toEntity()))
-        `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(videoApod))
-        `when`(mockApodDao.insertApod(videoApod.toApod().toEntity())).thenReturn(1L)
+        `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(imageApod.toApod().toEntity()))
+        `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(imageApod))
+        `when`(mockApodDao.insertApod(imageApod.toApod().toEntity())).thenReturn(1L)
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         viewModel = TodayViewModel(apodRepo, coroutineRule.dispatcher, SavedStateHandle())
         viewModel.apod.conflate().first()
+        var url: String? = null
+        val job = launch {
+            url = viewModel.navigateVideoLink.conflate().firstOrNull()
+        }
         viewModel.videoLinkClicked()
-        viewModel.navigateVideoLink.getOrAwaitValue(time = 300, timeUnit = TimeUnit.MILLISECONDS)
-        fail("NavigateVideoLink shouldn't have been called.")
+        job.cancel()
+        assertNull(url)
     }
 
     @Test
@@ -123,19 +129,27 @@ class TodayViewModelTest: ViewModelTest() {
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         viewModel = TodayViewModel(apodRepo, coroutineRule.dispatcher, SavedStateHandle())
         viewModel.apod.conflate().first()
+        var id = 0L
+        launch {
+            id = viewModel.navigateFullPicture.conflate().first()
+        }
         viewModel.onPhotoClicked()
-        assertEquals(viewModel.navigateFullPicture.getOrAwaitValue().peekContent(), mockApodResponse.id)
+        assertEquals(mockApodResponse.id, id)
     }
 
-    @Test(expected = TimeoutException::class)
+    @Test
     fun `don't observe photo clicked on null apods`() = coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(flowOf(null))
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.error(500, "Error".toResponseBody()))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         viewModel = TodayViewModel(apodRepo, coroutineRule.dispatcher, SavedStateHandle())
+        var id = 0L
+        val job = launch {
+            id = viewModel.navigateFullPicture.firstOrNull() ?: 0L
+        }
         viewModel.onPhotoClicked()
-        viewModel.navigateFullPicture.getOrAwaitValue(time = 300, timeUnit = TimeUnit.MILLISECONDS)
-        fail("NavigateFullPicture shouldn't have been called.")
+        job.cancel()
+        assertEquals(0, id)
     }
 
     @Test
@@ -213,10 +227,13 @@ class TodayViewModelTest: ViewModelTest() {
     fun `date picker updates with today if current date null`() = coroutineRule.runBlockingTest {
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         viewModel = TodayViewModel(apodRepo, coroutineRule.dispatcher, SavedStateHandle())
+        var date: LocalDate? = null
+        launch {
+            date = viewModel.showDatePicker.conflate().first()
+        }
         viewModel.onChooseDate()
-        val event = viewModel.showDatePicker.getOrAwaitValue()
         val expected = LocalDate.now()
-        assertEquals(expected, event.peekContent())
+        assertEquals(expected, date)
     }
 
     @Test
@@ -225,8 +242,11 @@ class TodayViewModelTest: ViewModelTest() {
         val state = SavedStateHandle(mapOf("date" to testDate))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         viewModel = TodayViewModel(apodRepo, coroutineRule.dispatcher, state)
+        var date: LocalDate? = null
+        launch {
+            date = viewModel.showDatePicker.conflate().first()
+        }
         viewModel.onChooseDate()
-        val event = viewModel.showDatePicker.getOrAwaitValue()
-        assertEquals(testDate, event.peekContent())
+        assertEquals(testDate, date)
     }
 }
