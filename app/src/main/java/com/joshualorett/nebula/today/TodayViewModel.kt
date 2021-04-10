@@ -6,8 +6,6 @@ import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.shared.data
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
@@ -20,14 +18,10 @@ import javax.inject.Inject
 @HiltViewModel
 class TodayViewModel @Inject constructor(private val apodRepository: ApodRepository,
                                          private val savedStateHandle: SavedStateHandle): ViewModel() {
-    constructor(apodRepository: ApodRepository, bgDispatcher: CoroutineDispatcher, savedStateHandle: SavedStateHandle): this(apodRepository, savedStateHandle) {
-        this.bgDispatcher = bgDispatcher
-    }
     private val dateKey: String = "date"
     private val _date: MutableStateFlow<LocalDate?> = MutableStateFlow(savedStateHandle.get(dateKey) ?: LocalDate.now())
     private var currentApod: Apod? = null
     private var refresh: Boolean = false
-    private var bgDispatcher: CoroutineDispatcher = Dispatchers.IO
     private val _navigateVideoLink: Channel<String?> = Channel()
     val navigateVideoLink: Flow<String?> = _navigateVideoLink.receiveAsFlow()
     private val _navigateFullPicture: Channel<Long> = Channel()
@@ -41,9 +35,9 @@ class TodayViewModel @Inject constructor(private val apodRepository: ApodReposit
             val apodDate = date ?: throw NullPointerException("Date can't be null.")
             if (refresh) {
                 refresh = false
-                apodRepository.getFreshApod(apodDate).flowOn(bgDispatcher).first()
+                apodRepository.getFreshApod(apodDate).first()
             } else {
-                apodRepository.getApod(apodDate).flowOn(bgDispatcher).first()
+                apodRepository.getApod(apodDate).first()
             }
         }
         .onEach { response ->
