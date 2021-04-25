@@ -28,11 +28,11 @@ import com.joshualorett.nebula.databinding.FragmentPictureBinding
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import javax.inject.Inject
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.io.File
-import javax.inject.Inject
 
 /**
  * A full screen view of an [Apod] picture.
@@ -47,7 +47,8 @@ class PictureFragment : Fragment() {
     val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
@@ -62,20 +63,21 @@ class PictureFragment : Fragment() {
             requireActivity().onBackPressed()
         }
         binding.pictureToolbar.inflateMenu(R.menu.picture)
-        binding.pictureToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
-            androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
-            override fun onMenuItemClick(item: MenuItem?): Boolean {
-                return when(item?.itemId) {
-                    R.id.action_share_image -> {
-                        shareImage()
-                        true
-                    }
-                    else -> {
-                        false
+        binding.pictureToolbar.setOnMenuItemClickListener(object :
+                Toolbar.OnMenuItemClickListener,
+                androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
+                override fun onMenuItemClick(item: MenuItem?): Boolean {
+                    return when (item?.itemId) {
+                        R.id.action_share_image -> {
+                            shareImage()
+                            true
+                        }
+                        else -> {
+                            false
+                        }
                     }
                 }
-            }
-        })
+            })
         binding.apodPicture.setDoubleTapZoomScale(1.4f)
         binding.apodPicture.setDoubleTapZoomDuration(resources.getInteger(android.R.integer.config_shortAnimTime))
         imageCache.attachApplicationContext(requireContext().applicationContext)
@@ -111,10 +113,10 @@ class PictureFragment : Fragment() {
     }
 
     private fun processResource(resource: Resource<Apod, String>) {
-        when(resource) {
+        when (resource) {
             is Resource.Success -> {
                 val url = resource.data.hdurl ?: resource.data.url
-                if(url.isEmpty()) {
+                if (url.isEmpty()) {
                     showError(getString(R.string.error_empty_url))
                 } else {
                     updateImage(url)
@@ -132,7 +134,7 @@ class PictureFragment : Fragment() {
         Glide.with(this)
             .asFile()
             .load(GlideUrl(url))
-            .into(object: CustomViewTarget<SubsamplingScaleImageView, File>(binding.apodPicture) {
+            .into(object : CustomViewTarget<SubsamplingScaleImageView, File>(binding.apodPicture) {
                 override fun onLoadFailed(errorDrawable: Drawable?) {
                     showError(getString(R.string.picture_error))
                 }

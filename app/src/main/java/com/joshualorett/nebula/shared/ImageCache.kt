@@ -3,9 +3,9 @@ package com.joshualorett.nebula.shared
 import android.content.Context
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 /**
  * Cache image urls.
@@ -18,7 +18,7 @@ interface ImageCache {
     suspend fun clear()
 }
 
-class GlideImageCache @Inject constructor(private val dispatcher: CoroutineDispatcher): ImageCache {
+class GlideImageCache @Inject constructor(private val dispatcher: CoroutineDispatcher) : ImageCache {
     private var appContext: Context? = null
 
     override fun attachApplicationContext(appContext: Context) {
@@ -47,7 +47,7 @@ class GlideImageCache @Inject constructor(private val dispatcher: CoroutineDispa
             val cacheResult = imageFuture.get()
             cacheResult != null
         } catch (e: Exception) {
-           false
+            false
         }
     }
 }

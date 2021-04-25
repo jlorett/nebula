@@ -10,16 +10,16 @@ import com.joshualorett.nebula.di.ApodDaoModule
 import com.joshualorett.nebula.di.ApodServiceModule
 import com.joshualorett.nebula.di.ImageCacheModule
 import com.joshualorett.nebula.shared.Resource
+import java.time.LocalDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
 
 /**
  * Syncs Today's Astronomy Picture of the Day in the background.
  * Created by Joshua on 2/8/2020.
  */
-class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWorker(context, params) {
+class TodaySyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     private val maxRetryAttempts = 2
 
     override suspend fun doWork(): Result {
@@ -33,9 +33,9 @@ class TodaySyncWorker(context: Context, params: WorkerParameters): CoroutineWork
             when {
                 resource.successful() -> {
                     val apod = (resource as Resource.Success).data
-                    if(apod.hasImage()) {
+                    if (apod.hasImage()) {
                         val cacheSuccessful = imageCache.cache(apod.hdurl ?: apod.url)
-                        if(cacheSuccessful) Result.success() else Result.failure()
+                        if (cacheSuccessful) Result.success() else Result.failure()
                     } else {
                         Result.success()
                     }

@@ -1,8 +1,6 @@
 package com.joshualorett.nebula.today
 
 import androidx.lifecycle.*
-import com.joshualorett.nebula.testing.TestData
-import com.joshualorett.nebula.testing.ViewModelTest
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodResponse
 import com.joshualorett.nebula.apod.api.ApodService
@@ -12,6 +10,9 @@ import com.joshualorett.nebula.apod.toEntity
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
+import com.joshualorett.nebula.testing.TestData
+import com.joshualorett.nebula.testing.ViewModelTest
+import java.time.LocalDate
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runBlockingTest
@@ -21,14 +22,13 @@ import org.junit.Test
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.Mockito.*
 import retrofit2.Response
-import java.time.LocalDate
 
 /**
  * Test [TodayViewModel].
  * Created by Joshua on 1/12/2020.
  */
 @ExperimentalCoroutinesApi
-class TodayViewModelTest: ViewModelTest() {
+class TodayViewModelTest : ViewModelTest() {
     private lateinit var viewModel: TodayViewModel
     private val mockApodService = mock(ApodService::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
@@ -83,7 +83,8 @@ class TodayViewModelTest: ViewModelTest() {
     fun `observe when video links clicked`() = coroutineRule.runBlockingTest {
         val videoApod = ApodResponse(
             0, "2000-01-01", "apod", "testing", "video",
-            "v1", "https://example.com",null)
+            "v1", "https://example.com", null
+        )
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(flowOf(null))
         `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(videoApod.toApod().toEntity()))
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(videoApod))
@@ -103,7 +104,8 @@ class TodayViewModelTest: ViewModelTest() {
     fun `don't observe when non-video links clicked`() = coroutineRule.runBlockingTest {
         val imageApod = ApodResponse(
             0, "2000-01-01", "apod", "testing", "image",
-            "v1", "https://example.com","https://example.com/hd")
+            "v1", "https://example.com", "https://example.com/hd"
+        )
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(flowOf(null))
         `when`(mockApodDao.loadById(anyLong())).thenReturn(flowOf(imageApod.toApod().toEntity()))
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(imageApod))

@@ -5,10 +5,10 @@ package com.joshualorett.nebula.shared
  * Created by Joshua on 1/8/2020.
  */
 sealed class Resource<out T, out U> {
-    data class Success<out T>(val data: T): Resource<T, Nothing>()
+    data class Success<out T>(val data: T) : Resource<T, Nothing>()
     data class Error<out U>(val error: U) : Resource<Nothing, U>()
     object Loading : Resource<Nothing, Nothing>()
-    fun successful() : Boolean {
+    fun successful(): Boolean {
         return this is Success
     }
 }

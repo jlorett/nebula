@@ -26,12 +26,12 @@ import com.joshualorett.nebula.date.ApodDatePickerFactory
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collect
 
 /**
  * Displays Today's [Apod].
@@ -50,7 +50,8 @@ class TodayPhotoFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
@@ -85,28 +86,29 @@ class TodayPhotoFragment : Fragment() {
         }
         binding.todayCollapsingToolbar.setExpandedTitleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
         binding.todayToolbar.inflateMenu(R.menu.today)
-        binding.todayToolbar.setOnMenuItemClickListener(object: Toolbar.OnMenuItemClickListener,
-            androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
-            override fun onMenuItemClick(item: MenuItem?): Boolean {
-                return when(item?.itemId) {
-                    R.id.action_refresh -> {
-                        viewModel.refresh()
-                        true
-                    }
-                    R.id.action_settings -> {
-                        navigateToSettings()
-                        true
-                    }
-                    R.id.action_choose_day -> {
-                        viewModel.onChooseDate()
-                        true
-                    }
-                    else -> {
-                        false
+        binding.todayToolbar.setOnMenuItemClickListener(object :
+                Toolbar.OnMenuItemClickListener,
+                androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
+                override fun onMenuItemClick(item: MenuItem?): Boolean {
+                    return when (item?.itemId) {
+                        R.id.action_refresh -> {
+                            viewModel.refresh()
+                            true
+                        }
+                        R.id.action_settings -> {
+                            navigateToSettings()
+                            true
+                        }
+                        R.id.action_choose_day -> {
+                            viewModel.onChooseDate()
+                            true
+                        }
+                        else -> {
+                            false
+                        }
                     }
                 }
-            }
-        })
+            })
         binding.todayVideoLinkBtn.setOnClickListener {
             viewModel.videoLinkClicked()
         }
@@ -114,7 +116,7 @@ class TodayPhotoFragment : Fragment() {
 
         binding.todayContainer.doOnPreDraw {
             val isPortrait = it.height >= it.width
-            binding.todayPicture.layoutParams.height = if(isPortrait) it.width / 4 * 3 else it.height
+            binding.todayPicture.layoutParams.height = if (isPortrait) it.width / 4 * 3 else it.height
         }
         binding.todayPicture.setOnClickListener {
             viewModel.onPhotoClicked()
@@ -157,12 +159,12 @@ class TodayPhotoFragment : Fragment() {
     }
 
     private fun processResource(resource: Resource<Apod, String>) {
-        when(resource) {
+        when (resource) {
             is Resource.Success -> {
                 showApod(resource.data)
             }
             is Resource.Loading -> {
-                if(!binding.todaySwipeRefreshLayout.isRefreshing) {
+                if (!binding.todaySwipeRefreshLayout.isRefreshing) {
                     binding.todaySwipeRefreshLayout.isRefreshing = true
                 }
             }
@@ -194,14 +196,14 @@ class TodayPhotoFragment : Fragment() {
         binding.todayDate.text = apod.formattedDate("yyyy MMMM dd")
         binding.todayTitle.text = apod.title
         binding.todayDescription.text = apod.explanation
-        if(apod.copyright == null) {
+        if (apod.copyright == null) {
             binding.todayCopyright.visibility = View.INVISIBLE
         } else {
             binding.todayCopyright.visibility = View.VISIBLE
             binding.todayCopyright.text = getString(R.string.today_copyright, apod.copyright)
         }
-        if(apod.hasImage()) {
-          showImage(apod.hdurl ?: apod.url)
+        if (apod.hasImage()) {
+            showImage(apod.hdurl ?: apod.url)
         } else {
             showVideo()
         }

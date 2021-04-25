@@ -11,7 +11,7 @@ import com.joshualorett.nebula.R
  * Displays a dialog that allows users to clear app data.
  * Created by Joshua on 5/31/2020.
  */
-class ClearDataDialogFragment: DialogFragment() {
+class ClearDataDialogFragment : DialogFragment() {
     private var listener: Listener? = null
 
     interface Listener {
@@ -20,7 +20,7 @@ class ClearDataDialogFragment: DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun create() : ClearDataDialogFragment {
+        fun create(): ClearDataDialogFragment {
             return ClearDataDialogFragment()
         }
     }
@@ -40,7 +40,7 @@ class ClearDataDialogFragment: DialogFragment() {
         super.onDestroy()
     }
 
-    private fun buildDialog(context: Context) : Dialog {
+    private fun buildDialog(context: Context): Dialog {
         return MaterialAlertDialogBuilder(context)
             .setTitle(getString(R.string.clear_data))
             .setMessage(getString(R.string.clear_data_summary))

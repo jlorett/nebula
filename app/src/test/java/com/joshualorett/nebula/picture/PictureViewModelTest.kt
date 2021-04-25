@@ -1,8 +1,6 @@
 package com.joshualorett.nebula.picture
 
 import androidx.lifecycle.*
-import com.joshualorett.nebula.testing.TestData
-import com.joshualorett.nebula.testing.ViewModelTest
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.api.ApodService
 import com.joshualorett.nebula.apod.database.ApodDao
@@ -10,6 +8,8 @@ import com.joshualorett.nebula.apod.toApod
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
+import com.joshualorett.nebula.testing.TestData
+import com.joshualorett.nebula.testing.ViewModelTest
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -24,7 +24,7 @@ import org.mockito.Mockito.mock
  * Created by Joshua on 1/23/2020.
  */
 @ExperimentalCoroutinesApi
-class PictureViewModelTest: ViewModelTest() {
+class PictureViewModelTest : ViewModelTest() {
     private lateinit var viewModel: PictureViewModel
     private val mockApodService = mock(ApodService::class.java)
     private val mockApodDao = mock(ApodDao::class.java)
@@ -32,7 +32,7 @@ class PictureViewModelTest: ViewModelTest() {
     private val entity = TestData.apodEntity
 
     @Test
-    fun getsPictureFromDatabase() =  coroutineRule.runBlockingTest {
+    fun getsPictureFromDatabase() = coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(entity))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, coroutineRule.dispatcher)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)))
@@ -41,7 +41,7 @@ class PictureViewModelTest: ViewModelTest() {
     }
 
     @Test
-    fun errorIfDatabaseFetchFails() =  coroutineRule.runBlockingTest {
+    fun errorIfDatabaseFetchFails() = coroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(null))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, coroutineRule.dispatcher)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)))

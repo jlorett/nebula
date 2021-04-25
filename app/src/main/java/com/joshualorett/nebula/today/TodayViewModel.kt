@@ -6,18 +6,20 @@ import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.shared.data
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 
 /**
  * [ViewModel] show today's Astronomy Picture of the Day.
  * Created by Joshua on 1/11/2020.
  */
 @HiltViewModel
-class TodayViewModel @Inject constructor(private val apodRepository: ApodRepository,
-                                         private val savedStateHandle: SavedStateHandle): ViewModel() {
+class TodayViewModel @Inject constructor(
+    private val apodRepository: ApodRepository,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
     private val dateKey: String = "date"
     private val _date: MutableStateFlow<LocalDate?> = MutableStateFlow(savedStateHandle.get(dateKey) ?: LocalDate.now())
     private var currentApod: Apod? = null
@@ -41,7 +43,7 @@ class TodayViewModel @Inject constructor(private val apodRepository: ApodReposit
             }
         }
         .onEach { response ->
-            if(response.successful()) {
+            if (response.successful()) {
                 currentApod = response.data
             }
         }
@@ -50,7 +52,7 @@ class TodayViewModel @Inject constructor(private val apodRepository: ApodReposit
 
     fun videoLinkClicked() {
         currentApod?.let {
-            if(it.mediaType == "video") {
+            if (it.mediaType == "video") {
                 _navigateVideoLink.offer(it.url)
             }
         }

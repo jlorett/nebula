@@ -30,7 +30,7 @@ class SettingsContainerFragment : Fragment() {
         _binding = FragmentSettingsContainerBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.settingsToolbar.setNavigationOnClickListener {
@@ -56,9 +56,9 @@ class SettingsContainerFragment : Fragment() {
 
         private val listener: SharedPreferences.OnSharedPreferenceChangeListener =
             SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-                when(key) {
+                when (key) {
                     syncKey -> {
-                        if(syncPreference?.isChecked == true) {
+                        if (syncPreference?.isChecked == true) {
                             TodaySyncManager.setRecurringSyncAlarm(requireContext())
                         } else {
                             TodaySyncManager.cancelRecurringSyncAlarm(requireContext())
@@ -115,7 +115,7 @@ class SettingsContainerFragment : Fragment() {
 
         private fun updateUnmeteredState() {
             val syncOn = syncPreference?.isChecked == true
-            if(!syncOn) {
+            if (!syncOn) {
                 unmeteredPreference?.isChecked = false
             }
             unmeteredPreference?.isVisible = syncOn
@@ -123,7 +123,7 @@ class SettingsContainerFragment : Fragment() {
 
         private fun showClearDataDialog() {
             val dialog = ClearDataDialogFragment.create()
-            dialog.setListener(object: ClearDataDialogFragment.Listener {
+            dialog.setListener(object : ClearDataDialogFragment.Listener {
                 override fun onClear() {
                     settingsViewModel.clearData()
                 }

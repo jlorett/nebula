@@ -7,7 +7,7 @@ import okhttp3.Response
  * Attaches api key before making Apod network requests.
  * Created by Joshua on 3/22/2021.
  */
-class ApodAuthInterceptor(private val key: String): Interceptor {
+class ApodAuthInterceptor(private val key: String) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
         val url = request.url

@@ -12,9 +12,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             val syncKey = getString(R.string.settings_key_sync)
-            if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(syncKey, true)) {
+            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(syncKey, true)) {
                 TodaySyncManager.setRecurringSyncAlarm(this)
             }
         }

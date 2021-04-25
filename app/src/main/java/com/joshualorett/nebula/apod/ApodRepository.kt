@@ -6,29 +6,34 @@ import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
 import java.io.IOException
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 
 /**
  * Single point of access to fetch an [Apod] from the ui.
  * Created by Joshua on 1/8/2020.
  */
-class ApodRepository @Inject constructor(private val apodService: ApodService,
-                                         private val apodDao: ApodDao,
-                                         private val imageCache: ImageCache) {
-    private var dispatcher: CoroutineDispatcher = Dispatchers.Default
-    constructor(apodService: ApodService,
-                apodDao: ApodDao,
-                imageCache: ImageCache,
-                dispatcher: CoroutineDispatcher = Dispatchers.Default): this(apodService, apodDao, imageCache) {
-                    this.dispatcher = dispatcher
-                }
+class ApodRepository @Inject constructor(
+    private val apodService: ApodService,
+    private val apodDao: ApodDao,
+    private val imageCache: ImageCache
+) {
     // The first APOD was 1995-06-16.
     private val earliestDate: LocalDate = LocalDate.of(1995, 6, 16)
+    private var dispatcher: CoroutineDispatcher = Dispatchers.Default
+
+    constructor(
+        apodService: ApodService,
+        apodDao: ApodDao,
+        imageCache: ImageCache,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default
+    ) : this(apodService, apodDao, imageCache) {
+        this.dispatcher = dispatcher
+    }
 
     /***
      * Fetch [Apod] by date. This will attempt to get it from the database first and if not found,
@@ -43,7 +48,7 @@ class ApodRepository @Inject constructor(private val apodService: ApodService,
                 val cachedApod = cachedEntity?.toApod()
                 if (cachedApod == null) {
                     val response = getApodByDataService(date)
-                    if(response.successful()) {
+                    if (response.successful()) {
                         getCachedApod(response.data ?: 0L)
                     } else {
                         Resource.Error(response.error ?: "Error getting Apod from api.")
@@ -66,7 +71,7 @@ class ApodRepository @Inject constructor(private val apodService: ApodService,
             emit(Resource.Error("Date can't be before $earliestDate."))
         }
         val response = getApodByDataService(date)
-        if(response.successful()) {
+        if (response.successful()) {
             emit(getCachedApod(response.data ?: 0L))
         } else {
             emit(Resource.Error(response.error ?: "Error getting Apod from api."))
@@ -105,7 +110,7 @@ class ApodRepository @Inject constructor(private val apodService: ApodService,
 
     private suspend fun getCachedApod(id: Long): Resource<Apod, String> {
         val cachedEntity = apodDao.loadById(id).first()?.toApod()
-        return if(cachedEntity == null) {
+        return if (cachedEntity == null) {
             Resource.Error("Apod not found in database.")
         } else {
             Resource.Success(cachedEntity)

@@ -1,12 +1,14 @@
 package com.joshualorett.nebula.apod
 
 import android.content.Context
-import com.joshualorett.nebula.testing.TestData
 import com.joshualorett.nebula.apod.api.ApodResponse
 import com.joshualorett.nebula.apod.api.ApodService
 import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
+import com.joshualorett.nebula.testing.TestData
+import java.io.IOException
+import java.time.LocalDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -22,8 +24,6 @@ import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.*
 import retrofit2.Response
-import java.io.IOException
-import java.time.LocalDate
 
 /**
  * Test [ApodRepository].

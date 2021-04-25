@@ -1,8 +1,8 @@
 package com.joshualorett.nebula.shared
 
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
  * Extensions for [SubsamplingScaleImageView].
@@ -23,7 +23,7 @@ import kotlin.coroutines.resume
  * ```
  */
 suspend fun SubsamplingScaleImageView.awaitImageReady() = suspendCancellableCoroutine<Unit> { cont ->
-    val listener = object: SubsamplingScaleImageView.OnImageEventListener {
+    val listener = object : SubsamplingScaleImageView.OnImageEventListener {
         override fun onImageLoaded() {}
 
         override fun onReady() {

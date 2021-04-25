@@ -22,9 +22,11 @@ object ApodDaoModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext applicationContext: Context): ApodDatabase {
-        return  Room.databaseBuilder(applicationContext,
+        return Room.databaseBuilder(
+            applicationContext,
             ApodDatabase::class.java,
-            "apod").build()
+            "apod"
+        ).build()
     }
 
     @Provides

@@ -21,7 +21,7 @@ class ApodDateValidator() : CalendarConstraints.DateValidator {
         val today = LocalDate.now()
         val localDate = Instant.ofEpochMilli(date).atOffset(ZoneOffset.UTC).toLocalDate()
         return (earliestDate.isBefore(localDate) or earliestDate.isEqual(localDate)) and
-                (localDate.isBefore(today) or localDate.isEqual(today))
+            (localDate.isBefore(today) or localDate.isEqual(today))
     }
 
     override fun describeContents(): Int {

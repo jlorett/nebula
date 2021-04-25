@@ -4,11 +4,11 @@ import androidx.annotation.VisibleForTesting
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.Rule
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Rule
 
 /**
  * Inherit from this class when testing ViewModels.
@@ -38,7 +38,7 @@ open class ViewModelTest {
                 data = o
                 latch.countDown()
                 // CountDownLatch takes an int for count but returns a long?
-                if(latch.count.toInt() == latchCount ) {
+                if (latch.count.toInt() == latchCount) {
                     this@getOrAwaitValue.removeObserver(this)
                 }
             }
@@ -47,7 +47,7 @@ open class ViewModelTest {
         try {
             // Don't wait indefinitely if the LiveData is not set.
             if (!latch.await(time, timeUnit)) {
-                if(latchCount > 1) {
+                if (latchCount > 1) {
                     throw TimeoutException("LiveData value was never set after skipping $skip times.")
                 } else {
                     throw TimeoutException("LiveData value was never set.")

@@ -12,20 +12,26 @@ import java.time.format.DateTimeFormatter
 
 // Convert ApodResponse to an Apod.
 fun ApodResponse.toApod(): Apod {
-    return Apod(0, this.date, this.title, this.explanation, this.mediaType, this.url,
-        this.hdurl, this.copyright)
+    return Apod(
+        0, this.date, this.title, this.explanation, this.mediaType, this.url,
+        this.hdurl, this.copyright
+    )
 }
 
 // Convert an ApodEntity to an Apod.
 fun ApodEntity.toApod(): Apod {
-    return Apod(this.id, this.date, this.title, this.explanation, this.mediaType, this.url,
-        this.hdurl, this.copyright)
+    return Apod(
+        this.id, this.date, this.title, this.explanation, this.mediaType, this.url,
+        this.hdurl, this.copyright
+    )
 }
 
 // Convert an Apod to an ApodEntity.
 fun Apod.toEntity(): ApodEntity {
-    return ApodEntity(this.id, this.date, this.title, this.explanation, this.mediaType, this.url,
-        this.hdurl, this.copyright)
+    return ApodEntity(
+        this.id, this.date, this.title, this.explanation, this.mediaType, this.url,
+        this.hdurl, this.copyright
+    )
 }
 
 fun Apod.hasImage(): Boolean {

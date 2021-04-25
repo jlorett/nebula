@@ -8,5 +8,4 @@ import dagger.hilt.android.HiltAndroidApp
  * Created by Joshua on 6/16/2020.
  */
 @HiltAndroidApp
-class NebulaApplication: Application() {
-}
+class NebulaApplication : Application()
