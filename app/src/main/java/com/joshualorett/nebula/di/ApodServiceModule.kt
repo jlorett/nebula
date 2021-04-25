@@ -4,7 +4,8 @@ import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.joshualorett.nebula.R
-import com.joshualorett.nebula.apod.api.*
+import com.joshualorett.nebula.apod.api.ApodAuthInterceptor
+import com.joshualorett.nebula.apod.api.ApodService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

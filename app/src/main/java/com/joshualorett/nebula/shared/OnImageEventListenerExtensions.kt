@@ -22,7 +22,8 @@ import kotlinx.coroutines.suspendCancellableCoroutine
  * }
  * ```
  */
-suspend fun SubsamplingScaleImageView.awaitImageReady() = suspendCancellableCoroutine<Unit> { cont ->
+suspend fun SubsamplingScaleImageView.awaitImageReady() = suspendCancellableCoroutine<Unit> {
+    cont ->
     val listener = object : SubsamplingScaleImageView.OnImageEventListener {
         override fun onImageLoaded() {}
 

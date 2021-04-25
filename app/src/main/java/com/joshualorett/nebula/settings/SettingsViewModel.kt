@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
  * Created by Joshua on 5/31/2020.
  */
 @HiltViewModel
-class SettingsViewModel @Inject constructor(private val apodRepository: ApodRepository) : ViewModel() {
+class SettingsViewModel @Inject constructor(private val apodRepository: ApodRepository) :
+    ViewModel() {
     fun clearData() {
         viewModelScope.launch {
             apodRepository.clearCache()

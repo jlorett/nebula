@@ -18,7 +18,8 @@ interface ImageCache {
     suspend fun clear()
 }
 
-class GlideImageCache @Inject constructor(private val dispatcher: CoroutineDispatcher) : ImageCache {
+class GlideImageCache @Inject constructor(private val dispatcher: CoroutineDispatcher) :
+    ImageCache {
     private var appContext: Context? = null
 
     override fun attachApplicationContext(appContext: Context) {

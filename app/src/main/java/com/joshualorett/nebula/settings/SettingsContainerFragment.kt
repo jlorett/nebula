@@ -92,7 +92,10 @@ class SettingsContainerFragment : Fragment() {
             super.onViewCreated(view, savedInstanceState)
             val aboutPref = findPreference<Preference>(getString(R.string.settings_key_about))
             aboutPref?.let {
-                val version = requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0).versionName
+                val version = requireActivity()
+                    .packageManager
+                    .getPackageInfo(requireActivity().packageName, 0)
+                    .versionName
                 it.summary = version
             }
             imageCache.attachApplicationContext(requireContext().applicationContext)

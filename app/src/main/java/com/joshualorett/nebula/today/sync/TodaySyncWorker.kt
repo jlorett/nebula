@@ -19,7 +19,8 @@ import kotlinx.coroutines.withContext
  * Syncs Today's Astronomy Picture of the Day in the background.
  * Created by Joshua on 2/8/2020.
  */
-class TodaySyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+class TodaySyncWorker(context: Context, params: WorkerParameters) :
+    CoroutineWorker(context, params) {
     private val maxRetryAttempts = 2
 
     override suspend fun doWork(): Result {
@@ -52,7 +53,8 @@ class TodaySyncWorker(context: Context, params: WorkerParameters) : CoroutineWor
         }
     }
 
-    private suspend fun getApod(apodRepository: ApodRepository): Resource<Apod, String> = withContext(Dispatchers.IO) {
+    private suspend fun getApod(apodRepository: ApodRepository):
+        Resource<Apod, String> = withContext(Dispatchers.IO) {
         val resource = apodRepository.getApod(LocalDate.now()).first()
         resource
     }

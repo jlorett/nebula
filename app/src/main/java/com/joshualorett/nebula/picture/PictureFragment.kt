@@ -79,7 +79,10 @@ class PictureFragment : Fragment() {
                 }
             })
         binding.apodPicture.setDoubleTapZoomScale(1.4f)
-        binding.apodPicture.setDoubleTapZoomDuration(resources.getInteger(android.R.integer.config_shortAnimTime))
+        binding.apodPicture.setDoubleTapZoomDuration(
+            resources
+                .getInteger(android.R.integer.config_shortAnimTime)
+        )
         imageCache.attachApplicationContext(requireContext().applicationContext)
         viewModel.picture.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .onEach { resource ->
@@ -142,7 +145,10 @@ class PictureFragment : Fragment() {
                 override fun onResourceCleared(placeholder: Drawable?) {}
 
                 override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                    imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", resource)
+                    imageUri = FileProvider.getUriForFile(
+                        requireContext(),
+                        "${requireContext().packageName}.fileprovider", resource
+                    )
                     imageUri?.let {
                         preparePictureAnimation()
                         lifecycleScope.launch {

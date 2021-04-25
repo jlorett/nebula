@@ -15,7 +15,11 @@ object ApodDatePickerFactory {
         val zoneId = ZoneId.ofOffset("UTC", ZoneOffset.UTC)
         val todayEpochMilli = LocalDate.now().atStartOfDay(zoneId).toInstant().toEpochMilli()
         val selectionDateEpochMilli = selectionDate.atStartOfDay(zoneId).toInstant().toEpochMilli()
-        val earliestDateEpochMilli = LocalDate.of(1995, 6, 16).atStartOfDay(zoneId).toInstant().toEpochMilli()
+        val earliestDateEpochMilli = LocalDate
+            .of(1995, 6, 16)
+            .atStartOfDay(zoneId)
+            .toInstant()
+            .toEpochMilli()
         val calConstraints = CalendarConstraints.Builder()
             .setOpenAt(selectionDateEpochMilli)
             .setStart(earliestDateEpochMilli)

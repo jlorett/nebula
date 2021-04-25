@@ -68,8 +68,11 @@ class TodayPhotoFragment : Fragment() {
         }
         viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
             viewModel.navigateFullPicture.collect { id ->
-                val action = TodayPhotoFragmentDirections.actionTodayPhotoFragmentToPictureFragment(id)
-                requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
+                val action = TodayPhotoFragmentDirections
+                    .actionTodayPhotoFragmentToPictureFragment(id)
+                requireActivity()
+                    .findNavController(R.id.nav_host_fragment)
+                    .navigate(action)
             }
         }
         viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
@@ -84,7 +87,9 @@ class TodayPhotoFragment : Fragment() {
                 showDatePicker(date)
             }
         }
-        binding.todayCollapsingToolbar.setExpandedTitleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+        binding.todayCollapsingToolbar.setExpandedTitleColor(
+            ContextCompat.getColor(requireContext(), android.R.color.transparent)
+        )
         binding.todayToolbar.inflateMenu(R.menu.today)
         binding.todayToolbar.setOnMenuItemClickListener(object :
                 Toolbar.OnMenuItemClickListener,
@@ -116,7 +121,9 @@ class TodayPhotoFragment : Fragment() {
 
         binding.todayContainer.doOnPreDraw {
             val isPortrait = it.height >= it.width
-            binding.todayPicture.layoutParams.height = if (isPortrait) it.width / 4 * 3 else it.height
+            binding.todayPicture.layoutParams.height =
+                if (isPortrait) it.width / 4 * 3
+                else it.height
         }
         binding.todayPicture.setOnClickListener {
             viewModel.onPhotoClicked()
@@ -146,14 +153,22 @@ class TodayPhotoFragment : Fragment() {
     }
 
     private fun navigateToSettings() {
-        val action = TodayPhotoFragmentDirections.actionTodayPhotoFragmentToSettingsContainerFragment()
-        requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
+        val action = TodayPhotoFragmentDirections
+            .actionTodayPhotoFragmentToSettingsContainerFragment()
+        requireActivity()
+            .findNavController(R.id.nav_host_fragment)
+            .navigate(action)
     }
 
     private fun showDatePicker(date: LocalDate) {
         val datePicker = ApodDatePickerFactory.create(date)
         datePicker.addOnPositiveButtonClickListener { selection: Long ->
-            viewModel.updateDate(Instant.ofEpochMilli(selection).atZone(ZoneId.ofOffset("UTC", ZoneOffset.UTC)).toLocalDate())
+            viewModel.updateDate(
+                Instant
+                    .ofEpochMilli(selection)
+                    .atZone(ZoneId.ofOffset("UTC", ZoneOffset.UTC))
+                    .toLocalDate()
+            )
         }
         datePicker.show(parentFragmentManager, "datePicker")
     }

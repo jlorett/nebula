@@ -1,12 +1,15 @@
 package com.joshualorett.nebula.picture
 
-import androidx.lifecycle.*
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.onStart
 
 /**
  * [ViewModel] for fullscreen picture.

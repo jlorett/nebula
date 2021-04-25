@@ -14,7 +14,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) {
             val syncKey = getString(R.string.settings_key_sync)
-            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(syncKey, true)) {
+            if (PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .getBoolean(syncKey, true)
+            ) {
                 TodaySyncManager.setRecurringSyncAlarm(this)
             }
         }

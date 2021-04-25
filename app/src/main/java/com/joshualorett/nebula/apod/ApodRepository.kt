@@ -11,7 +11,12 @@ import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
 /**
  * Single point of access to fetch an [Apod] from the ui.
@@ -97,7 +102,8 @@ class ApodRepository @Inject constructor(
                 Resource.Error("Error getting apod with status ${response.code()}.")
             }
         } catch (ioException: IOException) {
-            return Resource.Error("Your network is unavailable. Check your data or wifi connection.")
+            return Resource
+                .Error("Your network is unavailable. Check your data or wifi connection.")
         } catch (exception: Exception) {
             return Resource.Error("An error occurred. $exception")
         }
