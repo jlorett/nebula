@@ -23,7 +23,7 @@ the key's resource name, make sure to update `app/src/main/java/com/joshualorett
 Nebula's architecture follows [Android Jetpack's Guide to App Architecture](https://developer.android.com/jetpack/guide).
 
 ```
-+------+   LiveData    +-----------+   Flow/Coroutine    +------------+   Flow/Coroutine    +--------------+
++------+     Flow      +-----------+   Flow/Coroutine    +------------+   Flow/Coroutine    +--------------+
 | View | ------------> | ViewModel | ------------------> | Repository | ------------------> | Data Service |
 +------+               +-----------+                     +------------+                     +--------------+
                                                                |
@@ -36,7 +36,7 @@ Nebula's architecture follows [Android Jetpack's Guide to App Architecture](http
 ```
 
 - **View**: The view consists of Activities, Fragments, and other user interface (UI) related code. It relies on a [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) to provide data for specific UI components via an observable data stream.
-- **ViewModel**: The ViewModel provides UI data to the view via an observable data stream known as [LiveData](https://developer.android.com/topic/libraries/architecture/livedata). It communicates with a repository to perform business related tasks such as fetching an Apod. Since the ViewModel provides data through an observable stream, it knows nothing about the view layer itself and isn't affected by configuration changes.
-- **Repository**: The Repository provides a clean API to post and retrieve data. It also acts as a mediator between the Data Service and the Database. It can perform one time tasks using [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) or provide observable data streams using [Flow](https://kotlinlang.org/docs/reference/coroutines/flow.html).
+- **ViewModel**: The ViewModel provides UI data to the view via an observable data stream known as a [Flow](https://kotlinlang.org/docs/reference/coroutines/flow.html). It communicates with a repository to perform business related tasks such as fetching an Apod. Since the ViewModel provides data through an observable stream, it knows nothing about the view layer itself and isn't affected by configuration changes.
+- **Repository**: The Repository provides a clean API to post and retrieve data. It also acts as a mediator between the Data Service and the Database. It can perform one time tasks using [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) or provide observable data streams using flow.
 - **Data Service**: The Data Service reaches out to Nasa's API for Apods.
 - **Database**: The Database persists Apod data locally to prevent duplicate network requests.
