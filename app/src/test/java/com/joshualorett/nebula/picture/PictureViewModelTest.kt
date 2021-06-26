@@ -10,6 +10,7 @@ import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
 import com.joshualorett.nebula.testing.TestData
 import com.joshualorett.nebula.testing.ViewModelTest
+import com.joshualorett.nebula.ui.picture.PictureViewModel
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

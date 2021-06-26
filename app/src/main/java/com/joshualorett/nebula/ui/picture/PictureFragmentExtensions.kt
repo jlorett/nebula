@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.picture
+package com.joshualorett.nebula.ui.picture
 
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.joshualorett.nebula.shared.awaitImageReady

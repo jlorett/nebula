@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/pictureBackground"
-    tools:context=".picture.PictureFragment">
+    tools:context=".ui.picture.PictureFragment">
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/apodPicture"
         android:layout_width="0dp"

@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.picture
+package com.joshualorett.nebula.ui.picture
 
 import android.content.Intent
 import android.graphics.drawable.Drawable

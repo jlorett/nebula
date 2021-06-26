@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/pictureFragment"
-        android:name="com.joshualorett.nebula.picture.PictureFragment"
+        android:name="com.joshualorett.nebula.ui.picture.PictureFragment"
         android:label="fragment_picture"
         tools:layout="@layout/fragment_picture" >
         <argument

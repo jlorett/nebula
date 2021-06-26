@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.picture
+package com.joshualorett.nebula.ui.picture
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
