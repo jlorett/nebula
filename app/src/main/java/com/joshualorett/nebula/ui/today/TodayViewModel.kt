@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.today
+package com.joshualorett.nebula.ui.today
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

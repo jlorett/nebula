@@ -12,6 +12,7 @@ import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
 import com.joshualorett.nebula.testing.TestData
 import com.joshualorett.nebula.testing.ViewModelTest
+import com.joshualorett.nebula.ui.today.TodayViewModel
 import java.time.LocalDate
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

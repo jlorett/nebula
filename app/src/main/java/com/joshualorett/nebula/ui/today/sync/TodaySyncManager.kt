@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.today.sync
+package com.joshualorett.nebula.ui.today.sync
 
 import android.app.AlarmManager
 import android.app.PendingIntent

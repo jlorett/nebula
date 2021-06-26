@@ -13,7 +13,7 @@ import androidx.preference.SwitchPreferenceCompat
 import com.joshualorett.nebula.R
 import com.joshualorett.nebula.databinding.FragmentSettingsContainerBinding
 import com.joshualorett.nebula.shared.ImageCache
-import com.joshualorett.nebula.today.sync.TodaySyncManager
+import com.joshualorett.nebula.ui.today.sync.TodaySyncManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
