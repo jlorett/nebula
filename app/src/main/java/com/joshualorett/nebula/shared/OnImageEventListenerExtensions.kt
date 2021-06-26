@@ -17,7 +17,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
  * suspend fun animatePicture() {
  *     picture.run {
  *         awaitImageReady()
- *         animatePicture()
+ *         // animate picture
  *     }
  * }
  * ```
