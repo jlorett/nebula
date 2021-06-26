@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.settings
+package com.joshualorett.nebula.ui.settings
 
 import android.app.Dialog
 import android.content.Context

@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingsContainerFragment"
-        android:name="com.joshualorett.nebula.settings.SettingsContainerFragment"
+        android:name="com.joshualorett.nebula.ui.settings.SettingsContainerFragment"
         android:label="SettingsContainerFragment" >
     </fragment>
 </navigation>

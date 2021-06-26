@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.settings
+package com.joshualorett.nebula.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
