@@ -2,10 +2,10 @@ package com.joshualorett.nebula.ui.today
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.Resource
-import com.joshualorett.nebula.shared.data
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import java.time.LocalDate
 import javax.inject.Inject
@@ -33,7 +33,6 @@ class TodayViewModel @Inject constructor(
     private val _date: MutableStateFlow<LocalDate?> = MutableStateFlow(
         savedStateHandle.get(dateKey) ?: LocalDate.now()
     )
-    private var currentApod: Apod? = null
     private var refresh: Boolean = false
     private val _navigateVideoLink: Channel<String?> = Channel()
     val navigateVideoLink: Flow<String?> = _navigateVideoLink.receiveAsFlow()
@@ -41,37 +40,45 @@ class TodayViewModel @Inject constructor(
     val navigateFullPicture: Flow<Long> = _navigateFullPicture.receiveAsFlow()
     private val _showDatePicker: Channel<LocalDate> = Channel()
     val showDatePicker: Flow<LocalDate> = _showDatePicker.receiveAsFlow()
-    val apod: Flow<Resource<Apod, String>> = _date
-        .asStateFlow()
-        .filter { date -> date != null }
-        .map { date ->
-            val apodDate = date ?: throw NullPointerException("Date can't be null.")
-            if (refresh) {
-                refresh = false
-                apodRepository.getFreshApod(apodDate)
-            } else {
-                apodRepository.getApod(apodDate)
+    private val _apod: MutableStateFlow<Resource<Apod, String>> = MutableStateFlow(Resource.Loading)
+    val apod: Flow<Resource<Apod, String>> = _apod
+
+    init {
+        _date
+            .asStateFlow()
+            .filter { date -> date != null }
+            .map { date ->
+                _apod.value = Resource.Loading
+                val apodDate = date ?: throw NullPointerException("Date can't be null.")
+                if (refresh) {
+                    refresh = false
+                    apodRepository.getFreshApod(apodDate)
+                } else {
+                    apodRepository.getApod(apodDate)
+                }
             }
-        }
-        .onEach { response ->
-            if (response.successful()) {
-                currentApod = response.data
+            .onEach { apod ->
+                _apod.value = apod
             }
-        }
-        .onStart { emit(Resource.Loading) }
-        .catch { throwable -> emit(Resource.Error("Couldn't fetch apod.")) }
+            .catch { throwable -> emit(Resource.Error("Couldn't fetch apod.")) }
+            .launchIn(viewModelScope)
+    }
 
     fun videoLinkClicked() {
-        currentApod?.let {
-            if (it.mediaType == "video") {
-                _navigateVideoLink.offer(it.url)
+        val resource = _apod.value
+        if (resource.successful()) {
+            val apod = (resource as Resource.Success).data
+            if (apod.mediaType == "video") {
+                _navigateVideoLink.offer(apod.url)
             }
         }
     }
 
     fun onPhotoClicked() {
-        currentApod?.let {
-            _navigateFullPicture.offer(it.id)
+        val resource = _apod.value
+        if (resource.successful()) {
+            val apod = (resource as Resource.Success).data
+            _navigateFullPicture.offer(apod.id)
         }
     }
 
