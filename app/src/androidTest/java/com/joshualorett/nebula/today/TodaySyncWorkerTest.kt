@@ -5,8 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.work.ListenableWorker
 import com.joshualorett.nebula.ui.today.sync.TodaySyncWorker
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -25,10 +24,11 @@ class TodaySyncWorkerTest {
 
     @Test
     fun testSleepWorker() {
-        val worker = androidx.work.testing.TestListenableWorkerBuilder<TodaySyncWorker>(context).build()
+        val worker = androidx.work.testing.TestListenableWorkerBuilder<TodaySyncWorker>(context)
+            .build()
         runBlocking {
             val result = worker.doWork()
-            assertThat(result, `is`(ListenableWorker.Result.success()))
+            assertTrue(result is ListenableWorker.Result.Success)
         }
     }
 }
