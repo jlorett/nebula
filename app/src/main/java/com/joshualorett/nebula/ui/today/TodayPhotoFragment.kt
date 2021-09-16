@@ -26,12 +26,12 @@ import com.joshualorett.nebula.date.ApodDatePickerFactory
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collect
 
 /**
  * Displays Today's [Apod].

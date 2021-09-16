@@ -34,7 +34,7 @@ class PictureViewModelTest : ViewModelTest() {
 
     @Test
     fun getsPictureFromDatabase() = coroutineRule.runBlockingTest {
-        `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(entity))
+        `when`(mockApodDao.loadById(entity.id)).thenReturn(entity)
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, coroutineRule.dispatcher)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)))
         val url = viewModel.picture.conflate().first().data?.hdurl
@@ -43,7 +43,7 @@ class PictureViewModelTest : ViewModelTest() {
 
     @Test
     fun errorIfDatabaseFetchFails() = coroutineRule.runBlockingTest {
-        `when`(mockApodDao.loadById(entity.id)).thenReturn(flowOf(null))
+        `when`(mockApodDao.loadById(entity.id)).thenReturn(null)
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, coroutineRule.dispatcher)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)))
         val error = viewModel.picture.conflate().first().error

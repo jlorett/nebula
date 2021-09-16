@@ -7,19 +7,18 @@ import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.shared.data
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDate
-import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
+import java.time.LocalDate
+import javax.inject.Inject
 
 /**
  * [ViewModel] show today's Astronomy Picture of the Day.
@@ -49,9 +48,9 @@ class TodayViewModel @Inject constructor(
             val apodDate = date ?: throw NullPointerException("Date can't be null.")
             if (refresh) {
                 refresh = false
-                apodRepository.getFreshApod(apodDate).first()
+                apodRepository.getFreshApod(apodDate)
             } else {
-                apodRepository.getApod(apodDate).first()
+                apodRepository.getApod(apodDate)
             }
         }
         .onEach { response ->

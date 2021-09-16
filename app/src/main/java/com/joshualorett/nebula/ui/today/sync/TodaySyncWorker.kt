@@ -10,10 +10,9 @@ import com.joshualorett.nebula.di.ApodDaoModule
 import com.joshualorett.nebula.di.ApodServiceModule
 import com.joshualorett.nebula.di.ImageCacheModule
 import com.joshualorett.nebula.shared.Resource
-import java.time.LocalDate
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 /**
  * Syncs Today's Astronomy Picture of the Day in the background.
@@ -55,7 +54,7 @@ class TodaySyncWorker(context: Context, params: WorkerParameters) :
 
     private suspend fun getApod(apodRepository: ApodRepository):
         Resource<Apod, String> = withContext(Dispatchers.IO) {
-        val resource = apodRepository.getApod(LocalDate.now()).first()
+        val resource = apodRepository.getApod(LocalDate.now())
         resource
     }
 }

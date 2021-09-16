@@ -1,8 +1,8 @@
 package com.joshualorett.nebula.shared
 
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 /**
  * Extensions for [SubsamplingScaleImageView].

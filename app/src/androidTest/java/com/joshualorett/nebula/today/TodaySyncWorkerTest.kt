@@ -10,7 +10,6 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 
-
 /**
  * Test [TodaySyncWorker].
  * Created by Joshua on 2/28/2020.

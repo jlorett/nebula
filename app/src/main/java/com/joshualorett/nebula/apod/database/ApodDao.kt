@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
 
 /**
  * Data access model for Apod database.
@@ -13,10 +12,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ApodDao {
     @Query("SELECT * FROM apodentity WHERE date LIKE :date LIMIT 1")
-    fun loadByDate(date: String): Flow<ApodEntity?>
+    suspend fun loadByDate(date: String): ApodEntity?
 
     @Query("SELECT * FROM apodentity WHERE id = :id LIMIT 1")
-    fun loadById(id: Long): Flow<ApodEntity?>
+    suspend fun loadById(id: Long): ApodEntity?
 
     @Insert
     suspend fun insertApod(apodEntity: ApodEntity): Long
