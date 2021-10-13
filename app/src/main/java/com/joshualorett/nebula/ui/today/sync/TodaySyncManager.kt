@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.work.WorkManager
-import java.util.*
+import java.util.Calendar
 
 /**
  * Manage when the [TodaySyncWorker] gets called.
@@ -17,7 +17,12 @@ object TodaySyncManager {
     fun setRecurringSyncAlarm(context: Context) {
         val ctx = context.applicationContext
         val syncIntent = Intent(ctx, TodaySyncBroadcastReceiver::class.java)
-        val pendingSyncIntent = PendingIntent.getBroadcast(ctx, requestCode, syncIntent, 0)
+        val pendingSyncIntent = PendingIntent.getBroadcast(
+            ctx,
+            requestCode,
+            syncIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
         val syncTime = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.HOUR_OF_DAY, 1)
