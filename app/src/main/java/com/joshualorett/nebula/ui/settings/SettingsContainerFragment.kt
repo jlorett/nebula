@@ -2,9 +2,7 @@ package com.joshualorett.nebula.ui.settings
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.preference.Preference
@@ -18,21 +16,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SettingsContainerFragment : Fragment() {
-    private var _binding: FragmentSettingsContainerBinding? = null
-    private val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentSettingsContainerBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+class SettingsContainerFragment : Fragment(R.layout.fragment_settings_container) {
+    private var settingsBinding: FragmentSettingsContainerBinding? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val binding = FragmentSettingsContainerBinding.bind(view)
+        settingsBinding = binding
         binding.settingsToolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
         }
@@ -43,7 +33,7 @@ class SettingsContainerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        settingsBinding = null
     }
 
     @AndroidEntryPoint
