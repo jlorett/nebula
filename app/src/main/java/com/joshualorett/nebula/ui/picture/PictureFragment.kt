@@ -105,7 +105,8 @@ class PictureFragment : Fragment(R.layout.fragment_picture) {
 
     private fun processResource(
         binding: FragmentPictureBinding,
-        resource: Resource<Apod, String>) {
+        resource: Resource<Apod, String>
+    ) {
         when (resource) {
             is Resource.Success -> {
                 val url = resource.data.hdurl ?: resource.data.url
@@ -123,7 +124,8 @@ class PictureFragment : Fragment(R.layout.fragment_picture) {
 
     private fun updateImage(
         binding: FragmentPictureBinding,
-        url: String) {
+        url: String
+    ) {
         binding.pictureError.visibility = View.GONE
         binding.apodPicture.visibility = View.VISIBLE
         Glide.with(this)
@@ -154,7 +156,8 @@ class PictureFragment : Fragment(R.layout.fragment_picture) {
 
     private fun showError(
         binding: FragmentPictureBinding,
-        error: String) {
+        error: String
+    ) {
         prepareErrorAnimation(binding)
         binding.apodPicture.visibility = View.GONE
         binding.pictureError.visibility = View.VISIBLE

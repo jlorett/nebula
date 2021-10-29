@@ -44,7 +44,12 @@ object TodaySyncManager {
         val ctx = context.applicationContext
         val alarmManager = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val syncIntent = Intent(ctx, TodaySyncBroadcastReceiver::class.java)
-        val pendingSyncIntent = PendingIntent.getBroadcast(ctx, requestCode, syncIntent, 0)
+        val pendingSyncIntent = PendingIntent.getBroadcast(
+            ctx,
+            requestCode,
+            syncIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
         alarmManager.cancel(pendingSyncIntent)
         WorkManager.getInstance(ctx).cancelUniqueWork(TodaySyncWorker::class.java.simpleName)
     }
