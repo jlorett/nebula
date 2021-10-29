@@ -13,7 +13,8 @@ import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.addRepeatingJob
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -27,6 +28,7 @@ import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -61,30 +63,34 @@ class TodayPhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
-            viewModel.apod.collect { resource ->
-                processResource(resource)
-            }
-        }
-        viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
-            viewModel.navigateFullPicture.collect { id ->
-                val action = TodayPhotoFragmentDirections
-                    .actionTodayPhotoFragmentToPictureFragment(id)
-                requireActivity()
-                    .findNavController(R.id.nav_host_fragment)
-                    .navigate(action)
-            }
-        }
-        viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
-            viewModel.navigateVideoLink.collect { url ->
-                url?.let {
-                    navigateToLink(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.apod.collect { resource ->
+                        processResource(resource)
+                    }
                 }
-            }
-        }
-        viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
-            viewModel.showDatePicker.collect { date ->
-                showDatePicker(date)
+                launch {
+                    viewModel.navigateFullPicture.collect { id ->
+                        val action = TodayPhotoFragmentDirections
+                            .actionTodayPhotoFragmentToPictureFragment(id)
+                        requireActivity()
+                            .findNavController(R.id.nav_host_fragment)
+                            .navigate(action)
+                    }
+                }
+                launch {
+                    viewModel.navigateVideoLink.collect { url ->
+                        url?.let {
+                            navigateToLink(it)
+                        }
+                    }
+                }
+                launch {
+                    viewModel.showDatePicker.collect { date ->
+                        showDatePicker(date)
+                    }
+                }
             }
         }
         binding.todayCollapsingToolbar.setExpandedTitleColor(
@@ -118,7 +124,6 @@ class TodayPhotoFragment : Fragment() {
             viewModel.videoLinkClicked()
         }
         binding.todayVideoLinkBtn.hide()
-
         binding.todayContainer.doOnPreDraw {
             val isPortrait = it.height >= it.width
             binding.todayPicture.layoutParams.height =

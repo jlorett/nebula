@@ -9,7 +9,7 @@ buildscript {
         hilt_version = '2.36'
         room_version = '2.3.0'
         legacy_support_v4_version = '1.0.0'
-        lifecycle_version = '2.4.0-alpha01'
+        lifecycle_version = '2.4.0'
         lifecycle_extensions_version = '2.2.0'
         nav_component_version = '2.3.5'
         material_components_version = '1.3.0'
