@@ -4,10 +4,8 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toolbar
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
@@ -38,26 +36,16 @@ import javax.inject.Inject
  * A full screen view of an [Apod] picture.
  */
 @AndroidEntryPoint
-class PictureFragment : Fragment() {
+class PictureFragment : Fragment(R.layout.fragment_picture) {
     private var imageUri: Uri? = null
     private val viewModel: PictureViewModel by viewModels()
     @Inject lateinit var imageCache: ImageCache
-
-    private var _binding: FragmentPictureBinding? = null
-    val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        _binding = FragmentPictureBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    private var pictureBinding: FragmentPictureBinding? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val binding = FragmentPictureBinding.bind(view)
+        pictureBinding = binding
         binding.pictureToolbar.title = ""
         binding.pictureToolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
@@ -86,14 +74,14 @@ class PictureFragment : Fragment() {
         imageCache.attachApplicationContext(requireContext().applicationContext)
         viewModel.picture.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .onEach { resource ->
-                processResource(resource)
+                processResource(binding, resource)
             }
             .launchIn(lifecycleScope)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        pictureBinding = null
     }
 
     override fun onDestroy() {
@@ -115,23 +103,27 @@ class PictureFragment : Fragment() {
         }
     }
 
-    private fun processResource(resource: Resource<Apod, String>) {
+    private fun processResource(
+        binding: FragmentPictureBinding,
+        resource: Resource<Apod, String>) {
         when (resource) {
             is Resource.Success -> {
                 val url = resource.data.hdurl ?: resource.data.url
                 if (url.isEmpty()) {
-                    showError(getString(R.string.error_empty_url))
+                    showError(binding, getString(R.string.error_empty_url))
                 } else {
-                    updateImage(url)
+                    updateImage(binding, url)
                 }
             }
             is Resource.Error -> {
-                showError(getString(R.string.error_fetching))
+                showError(binding, getString(R.string.error_fetching))
             }
         }
     }
 
-    private fun updateImage(url: String) {
+    private fun updateImage(
+        binding: FragmentPictureBinding,
+        url: String) {
         binding.pictureError.visibility = View.GONE
         binding.apodPicture.visibility = View.VISIBLE
         Glide.with(this)
@@ -139,7 +131,7 @@ class PictureFragment : Fragment() {
             .load(GlideUrl(url))
             .into(object : CustomViewTarget<SubsamplingScaleImageView, File>(binding.apodPicture) {
                 override fun onLoadFailed(errorDrawable: Drawable?) {
-                    showError(getString(R.string.picture_error))
+                    showError(binding, getString(R.string.picture_error))
                 }
 
                 override fun onResourceCleared(placeholder: Drawable?) {}
@@ -150,9 +142,9 @@ class PictureFragment : Fragment() {
                         "${requireContext().packageName}.fileprovider", resource
                     )
                     imageUri?.let {
-                        preparePictureAnimation()
+                        preparePictureAnimation(binding)
                         lifecycleScope.launch {
-                            animatePicture()
+                            animatePicture(binding)
                         }
                         binding.apodPicture.setImage(ImageSource.uri(it))
                     }
@@ -160,11 +152,13 @@ class PictureFragment : Fragment() {
             })
     }
 
-    private fun showError(error: String) {
-        prepareErrorAnimation()
+    private fun showError(
+        binding: FragmentPictureBinding,
+        error: String) {
+        prepareErrorAnimation(binding)
         binding.apodPicture.visibility = View.GONE
         binding.pictureError.visibility = View.VISIBLE
         binding.pictureError.text = error
-        animateError()
+        animateError(binding)
     }
 }
