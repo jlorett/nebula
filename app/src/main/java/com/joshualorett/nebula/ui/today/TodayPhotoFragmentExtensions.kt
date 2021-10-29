@@ -1,20 +1,21 @@
 package com.joshualorett.nebula.ui.today
 
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
+import com.joshualorett.nebula.databinding.FragmentTodayPhotoBinding
 
 /**
  * Extensions for [TodayPhotoFragment].
  * Created by Joshua on 7/15/2020.
  */
 
-fun TodayPhotoFragment.prepareApodAnimation() {
+fun TodayPhotoFragment.prepareApodAnimation(binding: FragmentTodayPhotoBinding) {
     binding.todayDate.alpha = 0F
     binding.todayTitle.alpha = 0F
     binding.todayDescription.alpha = 0F
     binding.todayCopyright.alpha = 0F
 }
 
-fun TodayPhotoFragment.animateApod() {
+fun TodayPhotoFragment.animateApod(binding: FragmentTodayPhotoBinding) {
     val interpolator = LinearOutSlowInInterpolator()
     val duration = 300L
     binding.todayDate.animate()
@@ -35,12 +36,12 @@ fun TodayPhotoFragment.animateApod() {
         .setDuration(duration)
 }
 
-fun TodayPhotoFragment.prepareErrorAnimation() {
+fun TodayPhotoFragment.prepareErrorAnimation(binding: FragmentTodayPhotoBinding) {
     binding.todayTitle.alpha = 0F
     binding.todayDescription.alpha = 0F
 }
 
-fun TodayPhotoFragment.animateError() {
+fun TodayPhotoFragment.animateError(binding: FragmentTodayPhotoBinding) {
     val interpolator = LinearOutSlowInInterpolator()
     val duration = 300L
     binding.todayTitle.animate()

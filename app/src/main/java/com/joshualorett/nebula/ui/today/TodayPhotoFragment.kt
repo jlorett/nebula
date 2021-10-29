@@ -3,10 +3,8 @@ package com.joshualorett.nebula.ui.today
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
@@ -39,35 +37,25 @@ import javax.inject.Inject
  * Displays Today's [Apod].
  */
 @AndroidEntryPoint
-class TodayPhotoFragment : Fragment() {
+class TodayPhotoFragment : Fragment(R.layout.fragment_today_photo) {
     @Inject lateinit var imageCache: ImageCache
     private val viewModel: TodayViewModel by viewModels()
-
-    private var _binding: FragmentTodayPhotoBinding? = null
-    val binding get() = _binding!!
+    private var todayBinding: FragmentTodayPhotoBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageCache.attachApplicationContext(requireContext().applicationContext)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        _binding = FragmentTodayPhotoBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val binding = FragmentTodayPhotoBinding.bind(view)
+        todayBinding = binding
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.apod.collect { resource ->
-                        processResource(resource)
+                        processResource(binding, resource)
                     }
                 }
                 launch {
@@ -144,7 +132,7 @@ class TodayPhotoFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        todayBinding = null
     }
 
     override fun onDestroy() {
@@ -178,10 +166,13 @@ class TodayPhotoFragment : Fragment() {
         datePicker.show(parentFragmentManager, "datePicker")
     }
 
-    private fun processResource(resource: Resource<Apod, String>) {
+    private fun processResource(
+        binding: FragmentTodayPhotoBinding,
+        resource: Resource<Apod, String>
+    ) {
         when (resource) {
             is Resource.Success -> {
-                showApod(resource.data)
+                showApod(binding, resource.data)
             }
             is Resource.Loading -> {
                 if (!binding.todaySwipeRefreshLayout.isRefreshing) {
@@ -190,13 +181,16 @@ class TodayPhotoFragment : Fragment() {
             }
             is Resource.Error -> {
                 val error = resource.error
-                showError(error)
+                showError(binding, error)
             }
         }
     }
 
-    private fun showError(error: String) {
-        prepareErrorAnimation()
+    private fun showError(
+        binding: FragmentTodayPhotoBinding,
+        error: String
+    ) {
+        prepareErrorAnimation(binding)
         binding.todaySwipeRefreshLayout.isRefreshing = false
         binding.todayToolbar.title = getString(R.string.app_name)
         binding.todayCollapsingToolbar.isTitleEnabled = false
@@ -207,11 +201,14 @@ class TodayPhotoFragment : Fragment() {
         binding.todayCopyright.visibility = View.INVISIBLE
         binding.todayDate.text = ""
         binding.todayVideoLinkBtn.hide()
-        animateError()
+        animateError(binding)
     }
 
-    private fun showApod(apod: Apod) {
-        prepareApodAnimation()
+    private fun showApod(
+        binding: FragmentTodayPhotoBinding,
+        apod: Apod
+    ) {
+        prepareApodAnimation(binding)
         binding.todaySwipeRefreshLayout.isRefreshing = false
         binding.todayDate.text = apod.formattedDate("yyyy MMMM dd")
         binding.todayTitle.text = apod.title
@@ -223,14 +220,17 @@ class TodayPhotoFragment : Fragment() {
             binding.todayCopyright.text = getString(R.string.today_copyright, apod.copyright)
         }
         if (apod.hasImage()) {
-            showImage(apod.hdurl ?: apod.url)
+            showImage(binding, apod.hdurl ?: apod.url)
         } else {
-            showVideo()
+            showVideo(binding)
         }
-        animateApod()
+        animateApod(binding)
     }
 
-    private fun showImage(url: String) {
+    private fun showImage(
+        binding: FragmentTodayPhotoBinding,
+        url: String
+    ) {
         binding.todayToolbar.title = ""
         binding.todayPicture.visibility = View.VISIBLE
         binding.todayCollapsingToolbar.isTitleEnabled = true
@@ -242,7 +242,7 @@ class TodayPhotoFragment : Fragment() {
             .into(binding.todayPicture)
     }
 
-    private fun showVideo() {
+    private fun showVideo(binding: FragmentTodayPhotoBinding) {
         binding.todayPicture.visibility = View.GONE
         binding.todayToolbar.title = getString(R.string.app_name)
         binding.todayCollapsingToolbar.isTitleEnabled = false
