@@ -2,7 +2,10 @@ package com.joshualorett.nebula.apod
 
 import com.joshualorett.nebula.apod.api.ApodResponse
 import com.joshualorett.nebula.apod.database.ApodEntity
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
