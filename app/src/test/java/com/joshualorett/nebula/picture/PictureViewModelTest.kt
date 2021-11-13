@@ -12,10 +12,9 @@ import com.joshualorett.nebula.testing.TestData
 import com.joshualorett.nebula.testing.mainCoroutineRule
 import com.joshualorett.nebula.ui.picture.PictureViewModel
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -42,7 +41,7 @@ class PictureViewModelTest {
             mockApodService,
             mockApodDao,
             mockImageCache,
-            Dispatchers.Main
+            mainCoroutineRule.dispatcher
         )
     }
 
@@ -50,15 +49,21 @@ class PictureViewModelTest {
     fun getsPictureFromDatabase() = mainCoroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(entity)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)))
-        val url = viewModel.picture.conflate().first().data?.hdurl
-        assertEquals(entity.toApod().hdurl, url)
+        val job = launch {
+            val url = viewModel.picture.last().data?.hdurl
+            assertEquals(entity.toApod().hdurl, url)
+        }
+        job.cancel()
     }
 
     @Test
     fun errorIfDatabaseFetchFails() = mainCoroutineRule.runBlockingTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(null)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)))
-        val error = viewModel.picture.conflate().first().error
-        assertNotNull(error)
+        val job = launch {
+            val error = viewModel.picture.last().error
+            assertNotNull(error)
+        }
+        job.cancel()
     }
 }

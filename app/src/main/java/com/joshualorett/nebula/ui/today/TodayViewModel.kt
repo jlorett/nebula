@@ -10,13 +10,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -30,9 +31,6 @@ class TodayViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val dateKey: String = "date"
-    private val _date: MutableStateFlow<LocalDate?> = MutableStateFlow(
-        savedStateHandle.get(dateKey) ?: LocalDate.now()
-    )
     private var refresh: Boolean = false
     private val _navigateVideoLink: Channel<String?> = Channel()
     val navigateVideoLink: Flow<String?> = _navigateVideoLink.receiveAsFlow()
@@ -40,32 +38,30 @@ class TodayViewModel @Inject constructor(
     val navigateFullPicture: Flow<Long> = _navigateFullPicture.receiveAsFlow()
     private val _showDatePicker: Channel<LocalDate> = Channel()
     val showDatePicker: Flow<LocalDate> = _showDatePicker.receiveAsFlow()
-    private val _apod: MutableStateFlow<Resource<Apod, String>> = MutableStateFlow(Resource.Loading)
-    val apod: Flow<Resource<Apod, String>> = _apod
-
-    init {
-        _date
-            .asStateFlow()
-            .filter { date -> date != null }
-            .map { date ->
-                _apod.value = Resource.Loading
-                val apodDate = date ?: throw NullPointerException("Date can't be null.")
-                if (refresh) {
-                    refresh = false
-                    apodRepository.getFreshApod(apodDate)
-                } else {
-                    apodRepository.getApod(apodDate)
-                }
+    private val date: MutableStateFlow<LocalDate?> = MutableStateFlow(
+        savedStateHandle.get(dateKey) ?: LocalDate.now()
+    )
+    val apod: StateFlow<Resource<Apod, String>> = date
+        .asStateFlow()
+        .filter { date -> date != null }
+        .map { date ->
+            val apodDate = date ?: throw NullPointerException("Date can't be null.")
+            if (refresh) {
+                refresh = false
+                apodRepository.getFreshApod(apodDate)
+            } else {
+                apodRepository.getApod(apodDate)
             }
-            .onEach { apod ->
-                _apod.value = apod
-            }
-            .catch { throwable -> emit(Resource.Error("Couldn't fetch apod.")) }
-            .launchIn(viewModelScope)
-    }
+        }
+        .catch { throwable -> emit(Resource.Error("Couldn't fetch apod.")) }
+        .stateIn(
+            initialValue = Resource.Loading,
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000)
+        )
 
     fun videoLinkClicked() {
-        val resource = _apod.value
+        val resource = apod.value
         if (resource.successful()) {
             val apod = (resource as Resource.Success).data
             if (apod.mediaType == "video") {
@@ -75,7 +71,7 @@ class TodayViewModel @Inject constructor(
     }
 
     fun onPhotoClicked() {
-        val resource = _apod.value
+        val resource = apod.value
         if (resource.successful()) {
             val apod = (resource as Resource.Success).data
             _navigateFullPicture.offer(apod.id)
@@ -83,17 +79,17 @@ class TodayViewModel @Inject constructor(
     }
 
     fun onChooseDate() {
-        _showDatePicker.offer(_date.value ?: LocalDate.now())
+        _showDatePicker.offer(date.value ?: LocalDate.now())
     }
 
     fun updateDate(date: LocalDate) {
-        _date.value = null
-        _date.value = date
+        this.date.value = null
+        this.date.value = date
         savedStateHandle.set(dateKey, date)
     }
 
     fun refresh() {
         refresh = true
-        updateDate(_date.value ?: LocalDate.now())
+        updateDate(date.value ?: LocalDate.now())
     }
 }

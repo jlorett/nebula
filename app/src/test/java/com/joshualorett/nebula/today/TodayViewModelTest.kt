@@ -10,20 +10,23 @@ import com.joshualorett.nebula.apod.toEntity
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
+import com.joshualorett.nebula.testing.MainCoroutineRule
 import com.joshualorett.nebula.testing.TestData
-import com.joshualorett.nebula.testing.mainCoroutineRule
 import com.joshualorett.nebula.ui.today.TodayViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.Mockito.`when`
@@ -45,6 +48,10 @@ class TodayViewModelTest {
     private val today = LocalDate.now()
     private val mockApodResponse = TestData.apodResponse
 
+    @ExperimentalCoroutinesApi
+    @get:Rule
+    val mainCoroutineRule = MainCoroutineRule()
+
     @Test
     fun `factory creates ViewModel`() = mainCoroutineRule.runBlockingTest {
         `when`(mockApodDao.loadByDate(anyString())).thenReturn(mockApodResponse.toApod().toEntity())
@@ -65,7 +72,10 @@ class TodayViewModelTest {
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(todayResponse))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, mainCoroutineRule.dispatcher)
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
-        assertEquals(todayResponse.toApod(), viewModel.apod.conflate().first().data)
+        val job = launch {
+            assertEquals(todayResponse.toApod(), viewModel.apod.last().data)
+        }
+        job.cancel()
     }
 
     @Test
@@ -76,7 +86,10 @@ class TodayViewModelTest {
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(mockApodResponse))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, mainCoroutineRule.dispatcher)
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
-        assertEquals(mockApodResponse.toApod(), viewModel.apod.conflate().first().data)
+        val job = launch {
+            assertEquals(mockApodResponse.toApod(), viewModel.apod.first().data)
+        }
+        job.cancel()
     }
 
     @Test
@@ -85,7 +98,10 @@ class TodayViewModelTest {
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.error(500, "Error".toResponseBody()))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, mainCoroutineRule.dispatcher)
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
-        assertEquals("Error getting apod with status 500.", viewModel.apod.conflate().first().error)
+        val job = launch {
+            assertEquals("Error getting apod with status 500.", viewModel.apod.first().error)
+        }
+        job.cancel()
     }
 
     @Test
@@ -100,7 +116,7 @@ class TodayViewModelTest {
         `when`(mockApodDao.insertApod(videoApod.toApod().toEntity())).thenReturn(1L)
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, mainCoroutineRule.dispatcher)
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
-        viewModel.apod.conflate().first()
+        viewModel.apod.first()
         var url: String? = null
         launch {
             url = viewModel.navigateVideoLink.conflate().first()
@@ -121,7 +137,7 @@ class TodayViewModelTest {
         `when`(mockApodDao.insertApod(imageApod.toApod().toEntity())).thenReturn(1L)
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, mainCoroutineRule.dispatcher)
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
-        viewModel.apod.conflate().first()
+        viewModel.apod.first()
         var url: String? = null
         val job = launch {
             url = viewModel.navigateVideoLink.conflate().firstOrNull()
@@ -139,7 +155,7 @@ class TodayViewModelTest {
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(mockApodResponse))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, mainCoroutineRule.dispatcher)
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
-        viewModel.apod.conflate().first()
+        viewModel.apod.first()
         var id = 0L
         launch {
             id = viewModel.navigateFullPicture.conflate().first()
@@ -179,7 +195,7 @@ class TodayViewModelTest {
         `when`(mockApodDao.insertApod(refreshedApodResponse.toApod().toEntity())).thenReturn(99L)
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(refreshedApodResponse))
         viewModel.refresh()
-        assertEquals(refreshedApodResponse.toApod(), viewModel.apod.conflate().first().data)
+        assertEquals(refreshedApodResponse.toApod(), viewModel.apod.first().data)
     }
 
     @Test
@@ -201,7 +217,7 @@ class TodayViewModelTest {
         `when`(mockApodDao.insertApod(updatedApodResponse.toApod().toEntity())).thenReturn(99L)
         `when`(mockApodService.getApod(testDate.toString())).thenReturn(Response.success(updatedApodResponse))
         viewModel.updateDate(testDate)
-        assertEquals(updatedApodResponse.toApod(), viewModel.apod.conflate().first().data)
+        assertEquals(updatedApodResponse.toApod(), viewModel.apod.first().data)
     }
 
     @Test
@@ -210,13 +226,13 @@ class TodayViewModelTest {
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.error(500, "Error".toResponseBody()))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, mainCoroutineRule.dispatcher)
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
-        viewModel.apod.conflate().first()
+        viewModel.apod.first()
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(mockApodResponse))
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
         viewModel.refresh()
-        assertNull(viewModel.apod.conflate().first().error)
+        assertNull(viewModel.apod.first().error)
     }
 
     @Test
@@ -225,13 +241,13 @@ class TodayViewModelTest {
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.error(500, "Error".toResponseBody()))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache, mainCoroutineRule.dispatcher)
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
-        viewModel.apod.conflate().first()
+        viewModel.apod.first()
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(mockApodResponse))
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
         viewModel.updateDate(today)
-        assertNull(viewModel.apod.conflate().first().error)
+        assertNull(viewModel.apod.first().error)
     }
 
     @Test
