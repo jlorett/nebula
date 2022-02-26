@@ -42,19 +42,15 @@ class SettingsContainerFragment : Fragment(R.layout.fragment_settings_container)
         private var syncPreference: SwitchPreferenceCompat? = null
         private var unmeteredPreference: SwitchPreferenceCompat? = null
         private lateinit var syncKey: String
+        private lateinit var unmeteredKey: String
         private val settingsViewModel: SettingsViewModel by viewModels()
         @Inject lateinit var imageCache: ImageCache
 
         private val listener: SharedPreferences.OnSharedPreferenceChangeListener =
             SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
                 when (key) {
-                    syncKey -> {
-                        if (syncPreference?.isChecked == true) {
-                            setupRecurringSyncWork(requireContext().applicationContext)
-                        } else {
-                            cancelRecurringSyncWork(requireContext().applicationContext)
-                        }
-                        updateUnmeteredState()
+                    syncKey, unmeteredKey -> {
+                       updateSyncWork(syncPreference?.isChecked == true)
                     }
                 }
             }
@@ -62,7 +58,7 @@ class SettingsContainerFragment : Fragment(R.layout.fragment_settings_container)
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.settings, rootKey)
             syncKey = getString(R.string.settings_key_sync)
-            val unmeteredKey = getString(R.string.settings_key_unmetered)
+            unmeteredKey = getString(R.string.settings_key_unmetered)
             val clearDataKey = getString(R.string.settings_key_clear)
             syncPreference = findPreference(syncKey)
             syncPreference?.setOnPreferenceClickListener {
@@ -92,19 +88,12 @@ class SettingsContainerFragment : Fragment(R.layout.fragment_settings_container)
             imageCache.attachApplicationContext(requireContext().applicationContext)
         }
 
-        override fun onResume() {
-            super.onResume()
-            preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-        }
-
-        override fun onPause() {
-            super.onPause()
-            preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
-        }
-
-        override fun onDestroy() {
-            imageCache.detachApplicationContext()
-            super.onDestroy()
+        private fun updateSyncWork(canSync: Boolean) {
+            cancelRecurringSyncWork(requireContext().applicationContext)
+            if (canSync) {
+                setupRecurringSyncWork(requireContext().applicationContext)
+            }
+            updateUnmeteredState()
         }
 
         private fun updateUnmeteredState() {
@@ -123,6 +112,21 @@ class SettingsContainerFragment : Fragment(R.layout.fragment_settings_container)
                 }
             })
             dialog.show(parentFragmentManager, "clearDataDialog")
+        }
+
+        override fun onResume() {
+            super.onResume()
+            preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        }
+
+        override fun onPause() {
+            super.onPause()
+            preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+
+        override fun onDestroy() {
+            imageCache.detachApplicationContext()
+            super.onDestroy()
         }
     }
 }
