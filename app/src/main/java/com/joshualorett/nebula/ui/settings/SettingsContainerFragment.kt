@@ -50,7 +50,7 @@ class SettingsContainerFragment : Fragment(R.layout.fragment_settings_container)
             SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
                 when (key) {
                     syncKey, unmeteredKey -> {
-                       updateSyncWork(syncPreference?.isChecked == true)
+                        updateSyncWork(syncPreference?.isChecked == true)
                     }
                 }
             }

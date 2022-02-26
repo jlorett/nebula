@@ -2,7 +2,7 @@ package com.joshualorett.nebula
 
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.*
+import androidx.work.Configuration
 import com.joshualorett.nebula.sync.setupRecurringSyncWork
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope

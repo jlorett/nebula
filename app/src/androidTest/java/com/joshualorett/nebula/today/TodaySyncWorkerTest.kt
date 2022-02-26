@@ -40,7 +40,7 @@ class TodaySyncWorkerTest {
     fun testSleepWorker() {
 
         val worker = TestListenableWorkerBuilder<TodaySyncWorker>(context)
-            .setWorkerFactory(object: WorkerFactory(){
+            .setWorkerFactory(object : WorkerFactory() {
                 override fun createWorker(
                     appContext: Context,
                     workerClassName: String,

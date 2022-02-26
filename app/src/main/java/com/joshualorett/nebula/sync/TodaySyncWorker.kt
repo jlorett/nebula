@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.preference.PreferenceManager
 import androidx.work.*
+import com.joshualorett.nebula.R
 import com.joshualorett.nebula.apod.Apod
 import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.apod.hasImage
@@ -15,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
-import com.joshualorett.nebula.R
 
 /**
  * Syncs Today's Astronomy Picture of the Day in the background.
@@ -59,7 +59,7 @@ class TodaySyncWorker @AssistedInject constructor(
     }
 }
 
-fun setupRecurringSyncWork(context: Context){
+fun setupRecurringSyncWork(context: Context) {
     val unmetered = PreferenceManager
         .getDefaultSharedPreferences(context)
         .getBoolean(context.getString(R.string.settings_key_unmetered), false)

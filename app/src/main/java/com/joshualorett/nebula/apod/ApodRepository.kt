@@ -6,8 +6,6 @@ import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import java.io.IOException
 import java.time.LocalDate
 import javax.inject.Inject
