@@ -32,6 +32,10 @@ class TodaySyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
+            val alreadyCached = apodRepository.hasCachedApod(LocalDate.now())
+            if (alreadyCached) {
+                return@withContext Result.success()
+            }
             imageCache.attachApplicationContext(applicationContext)
             val resource = getApod(apodRepository)
             when {
@@ -70,7 +74,7 @@ fun setupRecurringSyncWork(context: Context) {
             else NetworkType.CONNECTED
         )
         .build()
-    val syncRequest = PeriodicWorkRequestBuilder<TodaySyncWorker>(1, TimeUnit.HOURS)
+    val syncRequest = PeriodicWorkRequestBuilder<TodaySyncWorker>(1, TimeUnit.MINUTES)
         .setConstraints(workConstraints)
         .build()
     WorkManager.getInstance(context).enqueueUniquePeriodicWork(

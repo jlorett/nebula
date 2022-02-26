@@ -71,6 +71,13 @@ class ApodRepository @Inject constructor(
         }
     }
 
+    suspend fun hasCachedApod(date: LocalDate): Boolean {
+        if (date.isBefore(earliestDate)) {
+            return false
+        }
+        return apodDao.loadByDate(date.toString()) != null
+    }
+
     suspend fun clearCache() {
         apodDao.deleteAll()
         imageCache.clear()
