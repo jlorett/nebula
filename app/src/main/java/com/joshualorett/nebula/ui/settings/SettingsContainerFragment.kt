@@ -11,7 +11,8 @@ import androidx.preference.SwitchPreferenceCompat
 import com.joshualorett.nebula.R
 import com.joshualorett.nebula.databinding.FragmentSettingsContainerBinding
 import com.joshualorett.nebula.shared.ImageCache
-import com.joshualorett.nebula.ui.today.sync.TodaySyncManager
+import com.joshualorett.nebula.ui.today.sync.cancelRecurringSyncWork
+import com.joshualorett.nebula.ui.today.sync.setupRecurringSyncWork
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -49,9 +50,9 @@ class SettingsContainerFragment : Fragment(R.layout.fragment_settings_container)
                 when (key) {
                     syncKey -> {
                         if (syncPreference?.isChecked == true) {
-                            TodaySyncManager.setRecurringSyncAlarm(requireContext())
+                            setupRecurringSyncWork(requireContext().applicationContext)
                         } else {
-                            TodaySyncManager.cancelRecurringSyncAlarm(requireContext())
+                            cancelRecurringSyncWork(requireContext().applicationContext)
                         }
                         updateUnmeteredState()
                     }
