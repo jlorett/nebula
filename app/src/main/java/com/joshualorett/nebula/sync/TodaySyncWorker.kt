@@ -1,4 +1,4 @@
-package com.joshualorett.nebula.ui.today.sync
+package com.joshualorett.nebula.sync
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker

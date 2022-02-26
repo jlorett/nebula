@@ -11,8 +11,8 @@ import androidx.preference.SwitchPreferenceCompat
 import com.joshualorett.nebula.R
 import com.joshualorett.nebula.databinding.FragmentSettingsContainerBinding
 import com.joshualorett.nebula.shared.ImageCache
-import com.joshualorett.nebula.ui.today.sync.cancelRecurringSyncWork
-import com.joshualorett.nebula.ui.today.sync.setupRecurringSyncWork
+import com.joshualorett.nebula.sync.cancelRecurringSyncWork
+import com.joshualorett.nebula.sync.setupRecurringSyncWork
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
