@@ -8,16 +8,7 @@ import com.joshualorett.nebula.apod.ApodRepository
 import com.joshualorett.nebula.shared.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -43,17 +34,16 @@ class TodayViewModel @Inject constructor(
     )
     val apod: StateFlow<Resource<Apod, String>> = date
         .asStateFlow()
-        .filter { date -> date != null }
+        .filterNotNull()
         .map { date ->
-            val apodDate = date ?: throw NullPointerException("Date can't be null.")
             if (refresh) {
                 refresh = false
-                apodRepository.getFreshApod(apodDate)
+                apodRepository.getFreshApod(date)
             } else {
-                apodRepository.getApod(apodDate)
+                apodRepository.getApod(date)
             }
         }
-        .catch { throwable -> emit(Resource.Error("Couldn't fetch apod.")) }
+        .catch { emit(Resource.Error("Couldn't fetch apod.")) }
         .stateIn(
             initialValue = Resource.Loading,
             scope = viewModelScope,
@@ -65,7 +55,7 @@ class TodayViewModel @Inject constructor(
         if (resource.successful()) {
             val apod = (resource as Resource.Success).data
             if (apod.mediaType == "video") {
-                _navigateVideoLink.offer(apod.url)
+                _navigateVideoLink.trySend(apod.url)
             }
         }
     }
@@ -74,12 +64,12 @@ class TodayViewModel @Inject constructor(
         val resource = apod.value
         if (resource.successful()) {
             val apod = (resource as Resource.Success).data
-            _navigateFullPicture.offer(apod.id)
+            _navigateFullPicture.trySend(apod.id)
         }
     }
 
     fun onChooseDate() {
-        _showDatePicker.offer(date.value ?: LocalDate.now())
+        _showDatePicker.trySend(date.value ?: LocalDate.now())
     }
 
     fun updateDate(date: LocalDate) {
