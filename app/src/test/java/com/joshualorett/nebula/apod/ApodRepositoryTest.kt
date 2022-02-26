@@ -43,8 +43,7 @@ class ApodRepositoryTest {
         repository = ApodRepository(
             apodService,
             mockApodDao,
-            mockImageCache,
-            Dispatchers.Main
+            mockImageCache
         )
     }
 

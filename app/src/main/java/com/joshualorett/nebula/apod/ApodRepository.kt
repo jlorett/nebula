@@ -23,16 +23,6 @@ class ApodRepository @Inject constructor(
 ) {
     // The first APOD was 1995-06-16.
     private val earliestDate: LocalDate = LocalDate.of(1995, 6, 16)
-    private var dispatcher: CoroutineDispatcher = Dispatchers.Default
-
-    constructor(
-        apodService: ApodService,
-        apodDao: ApodDao,
-        imageCache: ImageCache,
-        dispatcher: CoroutineDispatcher = Dispatchers.Default
-    ) : this(apodService, apodDao, imageCache) {
-        this.dispatcher = dispatcher
-    }
 
     /***
      * Fetch [Apod] by date. This will attempt to get it from the database first and if not found,

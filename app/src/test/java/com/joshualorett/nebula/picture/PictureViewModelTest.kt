@@ -40,8 +40,7 @@ class PictureViewModelTest {
         apodRepo = ApodRepository(
             mockApodService,
             mockApodDao,
-            mockImageCache,
-            mainCoroutineRule.dispatcher
+            mockImageCache
         )
     }
 
