@@ -74,12 +74,12 @@ fun setupRecurringSyncWork(context: Context) {
             else NetworkType.CONNECTED
         )
         .build()
-    val syncRequest = PeriodicWorkRequestBuilder<TodaySyncWorker>(1, TimeUnit.HOURS)
+    val syncRequest = PeriodicWorkRequestBuilder<TodaySyncWorker>(1, TimeUnit.MINUTES)
         .setConstraints(workConstraints)
         .build()
     WorkManager.getInstance(context).enqueueUniquePeriodicWork(
         TodaySyncWorker::class.java.simpleName,
-        ExistingPeriodicWorkPolicy.REPLACE,
+        ExistingPeriodicWorkPolicy.KEEP,
         syncRequest
     )
 }

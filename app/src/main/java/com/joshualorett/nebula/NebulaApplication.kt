@@ -5,9 +5,6 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.joshualorett.nebula.sync.setupRecurringSyncWork
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -18,7 +15,6 @@ import javax.inject.Inject
 class NebulaApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
-    private val applicationScope = CoroutineScope(Dispatchers.Default)
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()
@@ -28,12 +24,6 @@ class NebulaApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        delayedInit()
-    }
-
-    private fun delayedInit() {
-        applicationScope.launch {
-            setupRecurringSyncWork(applicationContext)
-        }
+        setupRecurringSyncWork(applicationContext)
     }
 }

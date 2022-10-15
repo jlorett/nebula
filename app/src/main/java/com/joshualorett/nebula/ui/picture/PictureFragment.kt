@@ -119,6 +119,9 @@ class PictureFragment : Fragment(R.layout.fragment_picture) {
             is Resource.Error -> {
                 showError(binding, getString(R.string.error_fetching))
             }
+            Resource.Loading -> {
+                // no-op
+            }
         }
     }
 
