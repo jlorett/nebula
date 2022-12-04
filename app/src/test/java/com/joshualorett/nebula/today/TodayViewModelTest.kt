@@ -14,13 +14,13 @@ import com.joshualorett.nebula.testing.MainCoroutineRule
 import com.joshualorett.nebula.testing.TestData
 import com.joshualorett.nebula.ui.today.TodayViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -52,14 +52,14 @@ class TodayViewModelTest {
     val mainCoroutineRule = MainCoroutineRule()
 
     @Test
-    fun `factory creates ViewModel`() = mainCoroutineRule.runBlockingTest {
+    fun `factory creates ViewModel`() = runTest {
         `when`(mockApodDao.loadByDate(anyString())).thenReturn(mockApodResponse.toApod().toEntity())
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         assertNotNull(TodayViewModel(apodRepo, SavedStateHandle()))
     }
 
     @Test
-    fun `initial load uses today's date`() = mainCoroutineRule.runBlockingTest {
+    fun `initial load uses today's date`() = runTest {
         val todayResponse = ApodResponse(
             0, today.toString(), "apod", "testing",
             "image", "v1", "https://example.com",
@@ -78,7 +78,7 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun `success state hit`() = mainCoroutineRule.runBlockingTest {
+    fun `success state hit`() = runTest {
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(null)
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
@@ -92,7 +92,7 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun `error state hit`() = mainCoroutineRule.runBlockingTest {
+    fun `error state hit`() = runTest {
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(null)
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.error(500, "Error".toResponseBody()))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
@@ -104,7 +104,7 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun `observe when video links clicked`() = mainCoroutineRule.runBlockingTest {
+    fun `observe when video links clicked`() = runTest {
         val videoApod = ApodResponse(
             0, "2000-01-01", "apod", "testing", "video",
             "v1", "https://example.com", null
@@ -117,15 +117,16 @@ class TodayViewModelTest {
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
         viewModel.apod.first()
         var url: String? = null
-        launch {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             url = viewModel.navigateVideoLink.conflate().first()
         }
         viewModel.videoLinkClicked()
         assertEquals("https://example.com", url)
+        collectJob.cancel()
     }
 
     @Test
-    fun `don't observe when non-video links clicked`() = mainCoroutineRule.runBlockingTest {
+    fun `don't observe when non-video links clicked`() = runTest {
         val imageApod = ApodResponse(
             0, "2000-01-01", "apod", "testing", "image",
             "v1", "https://example.com", "https://example.com/hd"
@@ -147,7 +148,7 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun `observe photo clicked`() = mainCoroutineRule.runBlockingTest {
+    fun `observe photo clicked`() = runTest {
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(null)
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
@@ -156,15 +157,16 @@ class TodayViewModelTest {
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
         viewModel.apod.first()
         var id = 0L
-        launch {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             id = viewModel.navigateFullPicture.conflate().first()
         }
         viewModel.onPhotoClicked()
         assertEquals(mockApodResponse.id, id)
+        collectJob.cancel()
     }
 
     @Test
-    fun `don't observe photo clicked on null apods`() = mainCoroutineRule.runBlockingTest {
+    fun `don't observe photo clicked on null apods`() = runTest {
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(null)
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.error(500, "Error".toResponseBody()))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
@@ -179,7 +181,7 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun `refresh updates data`() = mainCoroutineRule.runBlockingTest {
+    fun `refresh updates data`() = runTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.success(mockApodResponse))
@@ -198,7 +200,7 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun `update date hit`() = mainCoroutineRule.runBlockingTest {
+    fun `update date hit`() = runTest {
         val testDate = LocalDate.of(2000, 2, 1)
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(null)
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
@@ -220,7 +222,7 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun `refresh clears error`() = mainCoroutineRule.runBlockingTest {
+    fun `refresh clears error`() = runTest {
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(null)
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.error(500, "Error".toResponseBody()))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
@@ -235,7 +237,7 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun `update clears error`() = mainCoroutineRule.runBlockingTest {
+    fun `update clears error`() = runTest {
         `when`(mockApodDao.loadByDate(today.toString())).thenReturn(null)
         `when`(mockApodService.getApod(today.toString())).thenReturn(Response.error(500, "Error".toResponseBody()))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
@@ -250,29 +252,32 @@ class TodayViewModelTest {
     }
 
     @Test
-    fun `date picker updates with today if current date null`() = mainCoroutineRule.runBlockingTest {
+    fun `date picker updates with today if current date null`() = runTest {
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         viewModel = TodayViewModel(apodRepo, SavedStateHandle())
         var date: LocalDate? = null
-        launch {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             date = viewModel.showDatePicker.conflate().first()
         }
         viewModel.onChooseDate()
         val expected = LocalDate.now()
         assertEquals(expected, date)
+        collectJob.cancel()
     }
 
     @Test
-    fun `uses date in SaveStateHandle`() = mainCoroutineRule.runBlockingTest {
+    fun `uses date in SaveStateHandle`() = runTest {
         val testDate = LocalDate.parse("2000-01-01")
         val state = SavedStateHandle(mapOf("date" to testDate))
         val apodRepo = ApodRepository(mockApodService, mockApodDao, mockImageCache)
         viewModel = TodayViewModel(apodRepo, state)
         var date: LocalDate? = null
-        launch {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             date = viewModel.showDatePicker.conflate().first()
+
         }
         viewModel.onChooseDate()
         assertEquals(testDate, date)
+        collectJob.cancel()
     }
 }

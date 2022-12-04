@@ -7,9 +7,8 @@ import com.joshualorett.nebula.apod.database.ApodDao
 import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.Resource
 import com.joshualorett.nebula.testing.TestData
-import com.joshualorett.nebula.testing.mainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -47,7 +46,7 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `returns successful resource`() = mainCoroutineRule.runBlockingTest {
+    fun `returns successful resource`() = runTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
@@ -58,7 +57,7 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `returns error on null data`() = mainCoroutineRule.runBlockingTest {
+    fun `returns error on null data`() = runTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(null))
         val resource = repository.getApod(testDate)
@@ -66,7 +65,7 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `returns unsuccessful resource on network error`() = mainCoroutineRule.runBlockingTest {
+    fun `returns unsuccessful resource on network error`() = runTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         val errorResponse: Response<ApodResponse> = Response.error(500, "Error".toResponseBody())
         `when`(apodService.getApod(testDate.toString())).thenReturn(errorResponse)
@@ -75,7 +74,7 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `returns unsuccessful resource on exception`() = mainCoroutineRule.runBlockingTest {
+    fun `returns unsuccessful resource on exception`() = runTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         given(apodService.getApod(testDate.toString())).willAnswer {
             throw IOException()
@@ -85,13 +84,13 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `returns error if date too early`() = mainCoroutineRule.runBlockingTest {
+    fun `returns error if date too early`() = runTest {
         val resource = repository.getApod(LocalDate.of(1995, 1, 15))
         assertTrue(resource is Resource.Error)
     }
 
     @Test
-    fun `returns error if cache fails to load`() = mainCoroutineRule.runBlockingTest {
+    fun `returns error if cache fails to load`() = runTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         `when`(mockApodDao.loadById(anyLong())).thenReturn(null)
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
@@ -101,7 +100,7 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `caches apod from network`() = mainCoroutineRule.runBlockingTest {
+    fun `caches apod from network`() = runTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
@@ -111,7 +110,7 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `clears database before caching`() = mainCoroutineRule.runBlockingTest {
+    fun `clears database before caching`() = runTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
@@ -121,7 +120,7 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `clears cache`() = mainCoroutineRule.runBlockingTest {
+    fun `clears cache`() = runTest {
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(null)
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
@@ -134,21 +133,21 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `gets apod from database by id`() = mainCoroutineRule.runBlockingTest {
+    fun `gets apod from database by id`() = runTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         val cachedApod = repository.getCachedApod(mockApodResponse.id) as Resource.Success<Apod>
         assertEquals(mockApodResponse.toApod(), cachedApod.data)
     }
 
     @Test
-    fun `errors getting apod from database by id`() = mainCoroutineRule.runBlockingTest {
+    fun `errors getting apod from database by id`() = runTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(null)
         val resource = repository.getCachedApod(mockApodResponse.id)
         assertTrue(resource is Resource.Error)
     }
 
     @Test
-    fun `gets cached apod by date`() = mainCoroutineRule.runBlockingTest {
+    fun `gets cached apod by date`() = runTest {
         val entity = TestData.apodEntity
         `when`(mockApodDao.loadByDate(testDate.toString())).thenReturn(entity)
         val resource = repository.getApod(testDate) as Resource.Success<Apod>
@@ -156,7 +155,7 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `fresh returns successful resource`() = mainCoroutineRule.runBlockingTest {
+    fun `fresh returns successful resource`() = runTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
         `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(mockApodResponse))
@@ -166,20 +165,20 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `fresh returns error if date too early`() = mainCoroutineRule.runBlockingTest {
+    fun `fresh returns error if date too early`() = runTest {
         val resource = repository.getFreshApod(LocalDate.of(1995, 1, 15))
         assertTrue(resource is Resource.Error)
     }
 
     @Test
-    fun `fresh returns error on null data`() = mainCoroutineRule.runBlockingTest {
+    fun `fresh returns error on null data`() = runTest {
         `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(null))
         val resource = repository.getFreshApod(testDate)
         assertTrue(resource is Resource.Error)
     }
 
     @Test
-    fun `fresh returns unsuccessful resource on network error`() = mainCoroutineRule.runBlockingTest {
+    fun `fresh returns unsuccessful resource on network error`() = runTest {
         val errorResponse: Response<ApodResponse> = Response.error(500, "Error".toResponseBody())
         `when`(apodService.getApod(testDate.toString())).thenReturn(errorResponse)
         val resource = repository.getFreshApod(testDate)
@@ -187,7 +186,7 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `fresh returns unsuccessful resource on exception`() = mainCoroutineRule.runBlockingTest {
+    fun `fresh returns unsuccessful resource on exception`() = runTest {
         given(apodService.getApod(testDate.toString())).willAnswer {
             throw IOException()
         }
@@ -196,7 +195,7 @@ class ApodRepositoryTest {
     }
 
     @Test
-    fun `fresh clears database before caching`() = mainCoroutineRule.runBlockingTest {
+    fun `fresh clears database before caching`() = runTest {
         `when`(mockApodDao.loadById(anyLong())).thenReturn(mockApodResponse.toApod().toEntity())
         `when`(mockApodDao.insertApod(mockApodResponse.toApod().toEntity())).thenReturn(1L)
         `when`(apodService.getApod(testDate.toString())).thenReturn(Response.success(mockApodResponse))

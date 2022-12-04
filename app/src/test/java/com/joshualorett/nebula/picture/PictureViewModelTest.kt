@@ -9,13 +9,12 @@ import com.joshualorett.nebula.shared.ImageCache
 import com.joshualorett.nebula.shared.data
 import com.joshualorett.nebula.shared.error
 import com.joshualorett.nebula.testing.TestData
-import com.joshualorett.nebula.testing.mainCoroutineRule
 import com.joshualorett.nebula.ui.picture.PictureViewModel
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -45,7 +44,7 @@ class PictureViewModelTest {
     }
 
     @Test
-    fun getsPictureFromDatabase() = mainCoroutineRule.runBlockingTest {
+    fun getsPictureFromDatabase() = runTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(entity)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)))
         val job = launch {
@@ -56,7 +55,7 @@ class PictureViewModelTest {
     }
 
     @Test
-    fun errorIfDatabaseFetchFails() = mainCoroutineRule.runBlockingTest {
+    fun errorIfDatabaseFetchFails() = runTest {
         `when`(mockApodDao.loadById(entity.id)).thenReturn(null)
         viewModel = PictureViewModel(apodRepo, SavedStateHandle(mapOf("id" to entity.id)))
         val job = launch {
